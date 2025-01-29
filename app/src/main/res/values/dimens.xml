@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spacing -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">16dp</dimen>
+    <dimen name="spacing_large">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+
+    <!-- Button sizes -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="icon_size_small">20dp</dimen>
+    <dimen name="icon_size_medium">24dp</dimen>
+    <dimen name="icon_size_large">36dp</dimen>
+
+    <!-- Text sizes -->
+    <dimen name="text_xs">13sp</dimen>
+    <dimen name="text_small">14sp</dimen>
+    <dimen name="text_medium">15sp</dimen>
+    <dimen name="text_large">21sp</dimen>
+    <dimen name="text_xl">24sp</dimen>
+</resources>

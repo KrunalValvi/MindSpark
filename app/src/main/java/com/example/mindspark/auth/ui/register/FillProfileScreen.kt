@@ -1,0 +1,141 @@
+package com.example.mindspark.auth.ui.register
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.mindspark.auth.components.AuthButton
+import com.example.mindspark.auth.components.AuthTextField
+import com.example.mindspark.auth.components.AuthTopBar
+import com.example.mindspark.auth.components.GenderDropdown
+
+private val LightBlueBackground = Color(0xFFF5F9FF)
+
+@Composable
+fun FillProfileScreen(navController: NavController) {
+    Scaffold(
+        modifier = Modifier.background(LightBlueBackground),
+        containerColor = LightBlueBackground,
+        topBar = {
+            AuthTopBar(
+                title = "Fill Your Profile",
+                onBackClick = { navController.navigateUp() }
+            )
+        }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(LightBlueBackground)
+                .padding(padding)
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            var fullName by remember { mutableStateOf("") }
+            var nickname by remember { mutableStateOf("") }
+            var dateOfBirth by remember { mutableStateOf("") }
+            var email by remember { mutableStateOf("") }
+            var phoneNumber by remember { mutableStateOf("") }
+            var gender by remember { mutableStateOf("") }
+
+            AuthTextField(
+                value = fullName,
+                onValueChange = { fullName = it },
+                placeholder = "Full Name",
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Full Name Icon"
+                    )
+                }
+            )
+
+            AuthTextField(
+                value = nickname,
+                onValueChange = { nickname = it },
+                placeholder = "Nickname",
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Nickname Icon"
+                    )
+                }
+            )
+
+            AuthTextField(
+                value = dateOfBirth,
+                onValueChange = { dateOfBirth = it },
+                placeholder = "Date of Birth",
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.DateRange,
+                        contentDescription = "Date of Birth Icon"
+                    )
+                }
+            )
+
+            AuthTextField(
+                value = email,
+                onValueChange = { email = it },
+                placeholder = "Email",
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Email,
+                        contentDescription = "Email Icon"
+                    )
+                }
+            )
+
+            AuthTextField(
+                value = phoneNumber,
+                onValueChange = { phoneNumber = it },
+                placeholder = "Phone Number",
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Phone,
+                        contentDescription = "Phone Number Icon"
+                    )
+                }
+            )
+
+            GenderDropdown(
+                selectedGender = gender,
+                onGenderSelected = { gender = it }
+            )
+
+            Spacer(modifier = Modifier.height(25.dp))
+
+            AuthButton(
+                text = "Continue",
+                onClick = { navController.navigate("CreatePinScreen") }
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun FillProfileScreenPreview() {
+    FillProfileScreen(navController = NavController(LocalContext.current))
+}
