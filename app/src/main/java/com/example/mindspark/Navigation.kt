@@ -1,8 +1,12 @@
 package com.example.mindspark
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.example.mindspark.auth.ui.login.LoginScreen
 import com.example.mindspark.auth.ui.login.SignInScreen
@@ -13,56 +17,79 @@ import com.example.mindspark.auth.ui.security.CreatePinScreen
 import com.example.mindspark.auth.ui.security.ForgotPasswordScreen
 import com.example.mindspark.auth.ui.security.SetFingerprintScreen
 import com.example.mindspark.auth.ui.security.VerifyForgotPasswordScreen
-import com.example.mindspark.courses.ui.CoursesFilterScreen
+import com.example.mindspark.communication.ui.InboxScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
-import com.example.mindspark.courses.ui.MentorListScreen
+import com.example.mindspark.courses.ui.PopularCoursesList
+import com.example.mindspark.courses.ui.TopMentorScreen
+import com.example.mindspark.home.ui.BottomNavigationBar
+import com.example.mindspark.home.ui.HomeScreen
+import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.onboarding.ui.IntroScreenStep1
 import com.example.mindspark.onboarding.ui.IntroScreenStep2
 import com.example.mindspark.onboarding.ui.IntroScreenStep3
 import com.example.mindspark.onboarding.ui.LaunchScreen
-import com.example.mindspark.home.ui.CategoriesScreen
-import com.example.mindspark.home.ui.HomeScreen
-import com.example.mindspark.home.ui.NotificationsScreen
-import com.example.mindspark.home.ui.PopularCoursesList
-import com.example.mindspark.home.ui.SearchScreen
-import com.example.mindspark.home.ui.TopMentorScreen
+import com.example.mindspark.profile.ui.ProfileScreen
+import com.example.mindspark.transactions.ui.TransactionsScreen
 
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
+    val currentBackStackEntry = navController.currentBackStackEntryAsState()
 
-    NavHost(navController = navController, startDestination = "splash") {
+    // Define which screens should NOT show the bottom nav bar
+    val noBottomBarRoutes = listOf(
+        "SignInScreen", "LoginScreen", "RegisterScreen",
+        "FillProfileScreen", "CreatePinScreen",
+        "SetFingerprintScreen", "ForgotPasswordScreen",
+        "VerifyForgotPasswordScreen", "CreateNewPassword",
+        "splash", "IntroScreen1", "IntroScreen2", "IntroScreen3"
+    )
 
-        //onboarding
-        composable("splash") { LaunchScreen(navController) }
-        composable("IntroScreen1") { IntroScreenStep1(navController) }
-        composable("IntroScreen2") { IntroScreenStep2(navController) }
-        composable("IntroScreen3") { IntroScreenStep3(navController) }
+    Scaffold(
+        bottomBar = {
+            val currentRoute = currentBackStackEntry.value?.destination?.route
+            if (currentRoute !in noBottomBarRoutes) {
+                BottomNavigationBar(navController)
+            }
+        }
+    ) { paddingValues ->
+        NavHost(
+            navController = navController,
+            startDestination = "HomeScreen",
+            modifier = Modifier.padding(paddingValues)
+        ) {
 
-        //auth
-        composable("LoginScreen") { LoginScreen(navController) }
-        composable("SignInScreen") { SignInScreen(navController) }
+            //onboarding
+            composable("splash") { LaunchScreen(navController) }
+            composable("IntroScreen1") { IntroScreenStep1(navController) }
+            composable("IntroScreen2") { IntroScreenStep2(navController) }
+            composable("IntroScreen3") { IntroScreenStep3(navController) }
 
-        composable("FillProfileScreen") { FillProfileScreen(navController) }
-        composable("RegisterScreen") { RegisterScreen(navController) }
+            //auth
+            composable("LoginScreen") { LoginScreen(navController) }
+            composable("SignInScreen") { SignInScreen(navController) }
+            composable("FillProfileScreen") { FillProfileScreen(navController) }
+            composable("RegisterScreen") { RegisterScreen(navController) }
+            composable("CreatePinScreen") { CreatePinScreen(navController) }
+            composable("SetFingerprintScreen") { SetFingerprintScreen(navController) }
+            composable("ForgotPasswordScreen") { ForgotPasswordScreen(navController) }
+            composable("VerifyForgotPasswordScreen") { VerifyForgotPasswordScreen(navController) }
+            composable("CreateNewPassword") { CreateNewPassword(navController) }
 
-        composable("CreatePinScreen") { CreatePinScreen(navController) }
-        composable("SetFingerprintScreen") { SetFingerprintScreen(navController) }
-        composable("ForgotPasswordScreen") { ForgotPasswordScreen(navController) }
-        composable("VerifyForgotPasswordScreen") { VerifyForgotPasswordScreen(navController) }
-        composable("CreateNewPassword") { CreateNewPassword(navController) }
+            //user
+            composable("HomeScreen") { HomeScreen(navController) }
+            composable("CoursesListScreen") { CoursesListScreen(navController) }
+            composable("InboxScreen") { InboxScreen(navController) }
+            composable("TransactionsScreen") { TransactionsScreen(navController) }
 
-        //user
-        composable("HomeScreen") { HomeScreen(navController) }
-        composable("CategoriesScreen") { CategoriesScreen(navController) }
-        composable("PopularCoursesList") { PopularCoursesList(navController) }
-        composable("TopMentorScreen") { TopMentorScreen(navController) }
-        composable("NotificationsScreen") { NotificationsScreen(navController) }
-        composable("SearchScreen") { SearchScreen(navController) }
-        composable("PopularCoursesList") { PopularCoursesList(navController) }
-        composable("CoursesListScreen") { CoursesListScreen(navController) }
-        composable("CoursesFilterScreen") { CoursesFilterScreen(navController) }
-        composable("MentorListScreen") { MentorListScreen(navController) }
 
+            composable("SearchScreen") { SearchScreen(navController) }
+            composable("PopularCoursesList") { PopularCoursesList(navController) }
+            composable("CoursesListScreen") { CoursesListScreen(navController) }
+            composable("TopMentorScreen") { TopMentorScreen(navController) }
+            composable("ProfileScreen") { ProfileScreen(navController) }
+
+
+        }
     }
 }

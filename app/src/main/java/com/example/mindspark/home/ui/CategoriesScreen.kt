@@ -35,7 +35,7 @@ import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.CustomTextField
 import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.home.data.CategoryData
+import com.example.mindspark.courses.data.CategoryData
 import com.example.mindspark.home.model.CategoryItem
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
@@ -59,14 +59,9 @@ fun CategoryCard(category: CategoryItem, onClick: (CategoryItem) -> Unit) {
                 .aspectRatio(1f),
             contentScale = ContentScale.Fit
         )
+
         Spacer(modifier = Modifier.height(8.dp))
-//        androidx.compose.material3.Text(
-//            text = category.title,
-//            fontSize = 14.sp,
-//            fontWeight = FontWeight.Bold,
-//            textAlign = TextAlign.Center,
-//            color = Color.Black
-//        )
+
         Text(
             text = category.title,
             style = MaterialTheme.customTypography.mulish.bold,

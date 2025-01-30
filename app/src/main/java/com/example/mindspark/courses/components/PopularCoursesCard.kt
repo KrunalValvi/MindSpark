@@ -1,4 +1,4 @@
-package com.example.mindspark.home.components
+package com.example.mindspark.courses.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.home.model.CourseModel
+import com.example.mindspark.courses.model.CourseModel
 
 @Composable
 fun PopularCourseCardHorizontal(course: CourseModel) {

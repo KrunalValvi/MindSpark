@@ -1,4 +1,4 @@
-package com.example.mindspark.home.components
+package com.example.mindspark.courses.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.home.model.SpecialOfferModel
+import com.example.mindspark.courses.model.SpecialOfferModel
 
 @Composable
 fun SpecialOfferCard(card: SpecialOfferModel) {

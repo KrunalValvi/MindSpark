@@ -1,4 +1,4 @@
-package com.example.mindspark.home.model
+package com.example.mindspark.notifications.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

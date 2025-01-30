@@ -1,4 +1,4 @@
-package com.example.mindspark.home.model
+package com.example.mindspark.courses.model
 
 //Home Screen
 enum class CourseCategory(val value: String) {

@@ -1,9 +1,9 @@
 package com.example.mindspark.home.components
 
 import androidx.compose.foundation.lazy.LazyRow
-import com.example.mindspark.home.model.CourseCategory
-import com.example.mindspark.home.model.CourseModel
-import com.example.mindspark.home.model.MentorModel
+import com.example.mindspark.courses.model.CourseCategory
+import com.example.mindspark.courses.model.CourseModel
+import com.example.mindspark.courses.model.MentorModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,8 +22,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
+import com.example.mindspark.courses.components.PopularCourseCardHorizontal
+import com.example.mindspark.courses.components.PopularCourseCardVertical
+import com.example.mindspark.courses.components.TopMentorCardHorizontal
+import com.example.mindspark.courses.components.TopMentorCardVertical
 import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.home.model.SpecialOfferModel
+import com.example.mindspark.courses.model.SpecialOfferModel
 
 @Composable
 fun HomeHeader(navController: NavController) {
@@ -66,7 +70,7 @@ fun SectionHeader(
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp)
-            .padding(top = 25.dp),
+            .padding(top = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Start
     ) {
@@ -170,7 +174,7 @@ fun SpecialOfferCard(cards: List<SpecialOfferModel>) {
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(cards) { card ->
-            SpecialOfferCard(card)
+            com.example.mindspark.courses.components.SpecialOfferCard(card)
         }
     }
 }

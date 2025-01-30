@@ -1,4 +1,4 @@
-package com.example.mindspark.home.components
+package com.example.mindspark.courses.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.home.model.MentorModel
+import com.example.mindspark.courses.model.MentorModel
 
 @Composable
 fun TopMentorCardHorizontal(mentor: MentorModel) {

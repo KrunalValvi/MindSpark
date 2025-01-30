@@ -19,9 +19,9 @@ import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.CustomTextField
 import com.example.mindspark.home.components.*
-import com.example.mindspark.home.data.CardData
-import com.example.mindspark.home.data.CourseData
-import com.example.mindspark.home.data.MentorData
+import com.example.mindspark.courses.data.CardData
+import com.example.mindspark.courses.data.CourseData
+import com.example.mindspark.courses.data.MentorData
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -70,7 +70,13 @@ fun HomeScreen(navController: NavController) {
             // Popular Courses Section
             SectionHeader(
                 title = "Popular Courses",
-                onSeeAllClick = { navController.navigate("PopularCoursesList") }
+                onSeeAllClick = {
+                    navController.navigate("PopularCoursesList"){
+                        popUpTo(navController.graph.startDestinationId) {saveState = true}
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                }
             )
 
             // Categories List

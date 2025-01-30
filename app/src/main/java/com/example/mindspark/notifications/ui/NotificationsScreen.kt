@@ -1,4 +1,4 @@
-package com.example.mindspark.home.ui
+package com.example.mindspark.notifications.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,10 +33,10 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.home.data.olderNotifications
-import com.example.mindspark.home.data.todayNotifications
-import com.example.mindspark.home.data.yesterdayNotifications
-import com.example.mindspark.home.model.Notification
+import com.example.mindspark.notifications.data.olderNotifications
+import com.example.mindspark.notifications.data.todayNotifications
+import com.example.mindspark.notifications.data.yesterdayNotifications
+import com.example.mindspark.notifications.model.Notification
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 

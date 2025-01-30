@@ -1,11 +1,11 @@
-package com.example.mindspark.home.data
+package com.example.mindspark.notifications.data
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ConfirmationNumber
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.icons.filled.Wallet
-import com.example.mindspark.home.model.Notification
+import com.example.mindspark.notifications.model.Notification
 
 val todayNotifications = listOf(
     Notification(

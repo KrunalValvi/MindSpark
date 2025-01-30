@@ -32,10 +32,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
+import com.example.mindspark.communication.components.CallsSection
+import com.example.mindspark.communication.components.ChatSection
+import com.example.mindspark.communication.data.callsList
+import com.example.mindspark.communication.data.chatList
 import com.example.mindspark.courses.components.CustomTextField_Image
 import com.example.mindspark.courses.components.ToggleSelectionRowCourses
 import com.example.mindspark.home.components.SectionHeader
-import com.example.mindspark.home.data.CourseData
+import com.example.mindspark.courses.data.CourseData
+import com.example.mindspark.courses.data.MentorData
+import com.example.mindspark.home.components.TopMentorsListVertical
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
@@ -43,9 +49,7 @@ private val LightBlueBackground = Color(0xFFF5F9FF)
 fun CoursesListScreen(navController: NavController) {
 
     var search by remember { mutableStateOf("") }
-    var selectedOption by remember { mutableStateOf("Courses") } // Default selection
-    var selectedCategory by remember { mutableStateOf("All") }
-
+    var selectedOption by remember { mutableStateOf("Courses") }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -86,7 +90,7 @@ fun CoursesListScreen(navController: NavController) {
                             .size(38.dp) // Size of the box for the image
                             .offset(x = (-6).dp) // Shift the image a little to the left
                             .clip(RoundedCornerShape(20)) // Round corners for the image
-                            .clickable {navController.navigate("FilterScreen")}
+                            .clickable { navController.navigate("FilterScreen") }
                     ) {
                         Image(
                             painter = painterResource(id = R.drawable.ic_filter),
@@ -107,18 +111,37 @@ fun CoursesListScreen(navController: NavController) {
                 onOptionSelected = { selectedOption = it }, // Update selection on click
             )
 
-            Spacer(modifier = Modifier.height(10.dp))
+            when (selectedOption) {
+                "Courses" -> {
 
-            // Popular Courses Section
-            SectionHeader(
-                title = "Result for \"Graphic Design\"",
-                onSeeAllClick = { navController.navigate("PopularCoursesList") }
-            )
+                    // Popular Courses Section
+                    SectionHeader(
+                        title = "Result for \"Graphic Design\"",
+                        onSeeAllClick = { navController.navigate("PopularCoursesList") }
+                    )
 
-            // Popular Courses List
-            com.example.mindspark.home.components.PopularCoursesListVertical(
-                courses = CourseData.getPopularCourses()
-            )
+                    // Popular Courses List
+                    com.example.mindspark.home.components.PopularCoursesListVertical(
+                        courses = CourseData.getPopularCourses()
+                    )
+                }
+
+                "Mentors" -> {
+
+                    // Popular Courses Section
+                    SectionHeader(
+                        title = "Result for \"3D Design\"",
+                        onSeeAllClick = { navController.navigate("TopMentorScreen") }
+                    )
+
+                    // Mentors List
+                    TopMentorsListVertical(
+                        mentors = MentorData.getTopMentors()
+                    )
+
+                }
+            }
+
 
         }
     }

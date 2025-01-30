@@ -1,7 +1,7 @@
-package com.example.mindspark.home.data
+package com.example.mindspark.courses.data
 
-import com.example.mindspark.home.model.CourseCategory
-import com.example.mindspark.home.model.CourseModel
+import com.example.mindspark.courses.model.CourseCategory
+import com.example.mindspark.courses.model.CourseModel
 
 object CourseData {
 

@@ -1,7 +1,7 @@
-package com.example.mindspark.home.data
+package com.example.mindspark.courses.data
 
 import com.example.mindspark.R
-import com.example.mindspark.home.model.SpecialOfferModel
+import com.example.mindspark.courses.model.SpecialOfferModel
 
 object CardData {
     fun getCardDetails(): List<SpecialOfferModel> = listOf(

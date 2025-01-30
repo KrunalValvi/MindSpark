@@ -1,6 +1,6 @@
-package com.example.mindspark.home.data
+package com.example.mindspark.courses.data
 
-import com.example.mindspark.home.model.MentorModel
+import com.example.mindspark.courses.model.MentorModel
 
 object MentorData {
 

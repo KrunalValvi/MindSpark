@@ -29,11 +29,7 @@ fun CourseDetailScreen() {
         ) {
             Text("Image Placeholder", color = Color.White)
         }
-
-
     }
-
-
 }
 
 
