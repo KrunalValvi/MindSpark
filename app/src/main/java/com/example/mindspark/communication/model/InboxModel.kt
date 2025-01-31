@@ -1,9 +1,5 @@
 package com.example.mindspark.communication.model
 
-import android.graphics.Bitmap
-import android.graphics.Picture
-import com.google.android.play.integrity.internal.n
-
 data class ChatModel(
     val name: String,
     val description: String,

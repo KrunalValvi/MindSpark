@@ -33,7 +33,7 @@ import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
 
 @Composable
-fun AppNavigation(context: Context) {
+fun AppNavigation() {
     val navController = rememberNavController()
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
 

@@ -1,6 +1,5 @@
 package com.example.mindspark.communication.data
 
-import android.content.Context
 import com.example.mindspark.communication.model.CallModel
 import com.example.mindspark.communication.model.CallType
 import com.example.mindspark.communication.model.ChatModel
