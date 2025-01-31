@@ -77,7 +77,7 @@ fun SectionHeader(
         Text(
             text = title,
             style = MaterialTheme.customTypography.jost.semiBold,
-            fontSize = 18.sp,
+            fontSize = 15.sp,
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(

@@ -1,19 +1,26 @@
 package com.example.mindspark.auth.ui.login
 
-import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,48 +39,9 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(navController: NavController) {
-    val context = LocalContext.current
-    val scope = rememberCoroutineScope()
-    var isSignedIn by remember { mutableStateOf(false) }
-
-    val googleSignInLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
-        try {
-            val account = task.getResult(ApiException::class.java)
-            // Handle successful sign-in here
-            if (account != null) {
-                isSignedIn = true
-            }
-        } catch (e: ApiException) {
-            // Handle sign-in failure here
-            isSignedIn = false
-        }
-    }
-
-    fun launchGoogleSignIn() {
-        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(context.getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
-        val googleSignInClient = GoogleSignIn.getClient(context, gso)
-        googleSignInLauncher.launch(googleSignInClient.signInIntent)
-    }
-
-    LaunchedEffect(isSignedIn) {
-        if (isSignedIn) {
-            navController.navigate("HomeScreen") // Replace "HomeScreen" with your target screen route
-        }
-    }
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
         Box(
@@ -99,7 +67,7 @@ fun SignInScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
-                        .clickable { launchGoogleSignIn() }
+                        .clickable { }
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center

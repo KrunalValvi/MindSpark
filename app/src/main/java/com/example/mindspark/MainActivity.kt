@@ -3,6 +3,7 @@ package com.example.mindspark
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.example.mindspark.navigation.AppNavigation
 import com.example.mindspark.ui.theme.MindSparkTheme
 
 class MainActivity : ComponentActivity() {
@@ -10,7 +11,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MindSparkTheme {
-                AppNavigation()
+                AppNavigation(context = this)
             }
         }
     }

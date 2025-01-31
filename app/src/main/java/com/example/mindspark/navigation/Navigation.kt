@@ -1,5 +1,6 @@
-package com.example.mindspark
+package com.example.mindspark.navigation
 
+import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -21,9 +22,9 @@ import com.example.mindspark.communication.ui.InboxScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
 import com.example.mindspark.courses.ui.PopularCoursesList
 import com.example.mindspark.courses.ui.TopMentorScreen
-import com.example.mindspark.home.ui.BottomNavigationBar
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.home.ui.SearchScreen
+import com.example.mindspark.notifications.ui.NotificationsScreen
 import com.example.mindspark.onboarding.ui.IntroScreenStep1
 import com.example.mindspark.onboarding.ui.IntroScreenStep2
 import com.example.mindspark.onboarding.ui.IntroScreenStep3
@@ -32,7 +33,7 @@ import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(context: Context) {
     val navController = rememberNavController()
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
 
@@ -55,7 +56,9 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = "HomeScreen",
+//            startDestination = "splash",
+            startDestination = "SignInScreen",
+//            startDestination = "HomeScreen",
             modifier = Modifier.padding(paddingValues)
         ) {
 
@@ -66,8 +69,8 @@ fun AppNavigation() {
             composable("IntroScreen3") { IntroScreenStep3(navController) }
 
             //auth
-            composable("LoginScreen") { LoginScreen(navController) }
             composable("SignInScreen") { SignInScreen(navController) }
+            composable("LoginScreen") { LoginScreen(navController) }
             composable("FillProfileScreen") { FillProfileScreen(navController) }
             composable("RegisterScreen") { RegisterScreen(navController) }
             composable("CreatePinScreen") { CreatePinScreen(navController) }
@@ -88,6 +91,8 @@ fun AppNavigation() {
             composable("CoursesListScreen") { CoursesListScreen(navController) }
             composable("TopMentorScreen") { TopMentorScreen(navController) }
             composable("ProfileScreen") { ProfileScreen(navController) }
+            composable("NotificationsScreen") { NotificationsScreen(navController) }
+            composable("NotificationsScreen") { NotificationsScreen(navController) }
 
 
         }

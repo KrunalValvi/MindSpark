@@ -79,13 +79,14 @@ fun NotificationCard(notification: Notification) {
                 Text(
                     text = notification.title,
                     style = MaterialTheme.customTypography.jost.semiBold,
-                    fontSize = 19.sp
+                    fontSize = 19.sp,
+                    color = Color(0xFF202244)
                 )
                 Text(
                     text = notification.message,
                     style = MaterialTheme.customTypography.mulish.bold,
                     fontSize = 14.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f),
+                    color = Color(0xFF545454),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

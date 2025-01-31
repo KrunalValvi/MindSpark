@@ -84,6 +84,7 @@ fun LoginScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 10.dp),
+                    color = Color(0xFF545454),
                     text = "Login to Your Account to Continue your Courses",
                     style = MaterialTheme.customTypography.mulish.bold,
                     fontSize = 14.sp
@@ -184,7 +185,7 @@ fun LoginScreen(navController: NavController) {
                         .padding(top = 10.dp)
                 ) {
                     Text(
-                        text = "Already have an Account? ",
+                        text = "Don't have an Account? ",
                         style = MaterialTheme.customTypography.mulish.regular,
                         fontSize = 14.sp
                     )
