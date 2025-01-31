@@ -18,7 +18,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mindspark.communication.data.callsList
 import com.example.mindspark.communication.data.chatList
 import com.example.mindspark.communication.model.ChatModel
 import com.example.mindspark.ui.theme.customTypography

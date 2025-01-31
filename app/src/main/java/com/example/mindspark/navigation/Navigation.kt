@@ -1,6 +1,5 @@
 package com.example.mindspark.navigation
 
-import android.content.Context
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable

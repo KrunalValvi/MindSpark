@@ -13,7 +13,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -29,7 +28,6 @@ import com.example.mindspark.ui.theme.LightBlueBackground
 @Composable
 fun InboxScreen(navController: NavController) {
     var selectedOption by remember { mutableStateOf("Chat") }
-    val context = LocalContext.current
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),

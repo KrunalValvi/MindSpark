@@ -25,7 +25,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.R
@@ -83,7 +82,7 @@ fun SettingsList() {
         SettingItem(icon = R.drawable.ic_payment, title = "Payment Option")
         SettingItem(icon = R.drawable.ic_notifications, title = "Notifications")
         SettingItem(icon = R.drawable.ic_security, title = "Security")
-        SettingItem(icon = R.drawable.ic_language, title = "Language", value = "English (US)")
+        SettingItem(icon = R.drawable.ic_language, title = "Language")
         SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode")
         SettingItem(icon = R.drawable.ic_terms, title = "Terms & Conditions")
         SettingItem(icon = R.drawable.ic_help, title = "Help Center")
@@ -92,7 +91,7 @@ fun SettingsList() {
 }
 
 @Composable
-fun SettingItem(icon: Int, title: String, value: String? = null) {
+fun SettingItem(icon: Int, title: String) {
     Row(
         modifier = Modifier
             .fillMaxWidth()

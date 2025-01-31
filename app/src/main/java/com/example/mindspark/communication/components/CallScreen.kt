@@ -29,14 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mindspark.communication.data.callsList
 import com.example.mindspark.communication.model.CallModel
 import com.example.mindspark.communication.model.CallType
-import com.example.mindspark.communication.model.ChatModel
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
