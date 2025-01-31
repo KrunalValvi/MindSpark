@@ -2,6 +2,7 @@ package com.example.mindspark.profile.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
 
@@ -67,9 +69,8 @@ fun ProfileHeader() {
     }
 }
 
-
 @Composable
-fun SettingsList() {
+fun SettingsList(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -78,33 +79,31 @@ fun SettingsList() {
             .background(Color.White, shape = RoundedCornerShape(16.dp))
             .padding(vertical = 16.dp)
     ) {
-        SettingItem(icon = R.drawable.ic_edit, title = "Edit Profile")
-        SettingItem(icon = R.drawable.ic_payment, title = "Payment Option")
-        SettingItem(icon = R.drawable.ic_notifications, title = "Notifications")
-        SettingItem(icon = R.drawable.ic_security, title = "Security")
-        SettingItem(icon = R.drawable.ic_language, title = "Language")
-        SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode")
-        SettingItem(icon = R.drawable.ic_terms, title = "Terms & Conditions")
-        SettingItem(icon = R.drawable.ic_help, title = "Help Center")
-        SettingItem(icon = R.drawable.ic_invite, title = "Invite Friends")
+        SettingItem(icon = R.drawable.ic_edit, title = "Edit Profile") { }
+        SettingItem(icon = R.drawable.ic_payment, title = "Payment Option") { }
+        SettingItem(icon = R.drawable.ic_notifications, title = "Notifications") { }
+        SettingItem(icon = R.drawable.ic_security, title = "Security") { }
+        SettingItem(icon = R.drawable.ic_language, title = "Language") { }
+        SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode") { }
+        SettingItem(icon = R.drawable.ic_terms, title = "Terms & Conditions") { navController.navigate("TermsScreen") }
+        SettingItem(icon = R.drawable.ic_help, title = "Help Center") { }
+        SettingItem(icon = R.drawable.ic_invite, title = "Invite Friends") { }
     }
 }
 
 @Composable
-fun SettingItem(icon: Int, title: String) {
+fun SettingItem(icon: Int, title: String, onClick: () -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 10.dp)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(painter = painterResource(id = icon), contentDescription = title, tint = Color.Black)
         Spacer(modifier = Modifier.width(16.dp))
         Text(title, style = MaterialTheme.customTypography.mulish.bold, fontSize = 15.sp, modifier = Modifier.weight(1f))
-//        if (value != null) {
-//            Text(value, fontSize = 14.sp, color = Color(0xFF202244))
-//        }
         Icon(
             painter = painterResource(id = R.drawable.ic_arrow_right),
             contentDescription = "Navigate",

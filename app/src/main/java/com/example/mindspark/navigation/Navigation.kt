@@ -30,6 +30,7 @@ import com.example.mindspark.onboarding.ui.IntroScreenStep2
 import com.example.mindspark.onboarding.ui.IntroScreenStep3
 import com.example.mindspark.onboarding.ui.LaunchScreen
 import com.example.mindspark.profile.ui.ProfileScreen
+import com.example.mindspark.profile.ui.TermsScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
 
 @Composable
@@ -93,6 +94,7 @@ fun AppNavigation() {
             composable("ProfileScreen") { ProfileScreen(navController) }
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("NotificationsScreen") { NotificationsScreen(navController) }
+            composable("TermsScreen") { TermsScreen(navController) }
 
 
         }

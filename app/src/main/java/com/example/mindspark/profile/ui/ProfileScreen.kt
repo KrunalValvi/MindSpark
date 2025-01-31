@@ -44,7 +44,7 @@ fun ProfileScreen(navController: NavController) {
         ) {
             ProfileHeader()
             Spacer(modifier = Modifier.height(10.dp))
-            SettingsList()
+            SettingsList(navController)
         }
     }
 }

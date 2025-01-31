@@ -54,25 +54,29 @@ val CustomThemeTypography = CustomTypography(
             fontFamily = JostFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = JostTextColor
         ),
         semiBold = TextStyle(
             fontFamily = JostFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = JostTextColor
         ),
         bold = TextStyle(
             fontFamily = JostFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = JostTextColor
         ),
         extraBold = TextStyle(
             fontFamily = JostFontFamily,
             fontWeight = FontWeight.ExtraBold,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = JostTextColor
         )
     ),
     mulish = MulishTypography(
@@ -80,25 +84,29 @@ val CustomThemeTypography = CustomTypography(
             fontFamily = MulishFontFamily,
             fontWeight = FontWeight.Normal,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = MulishTextColor
         ),
         semiBold = TextStyle(
             fontFamily = MulishFontFamily,
             fontWeight = FontWeight.SemiBold,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = MulishTextColor
         ),
         bold = TextStyle(
             fontFamily = MulishFontFamily,
             fontWeight = FontWeight.Bold,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = MulishTextColor
         ),
         extraBold = TextStyle(
             fontFamily = MulishFontFamily,
             fontWeight = FontWeight.ExtraBold,
             fontSize = 16.sp,
-            lineHeight = 24.sp
+            lineHeight = 24.sp,
+            color = MulishTextColor
         )
     )
 )
