@@ -56,8 +56,8 @@ fun AppNavigation() {
         NavHost(
             navController = navController,
 //            startDestination = "splash",
-            startDestination = "SignInScreen",
-//            startDestination = "HomeScreen",
+//            startDestination = "SignInScreen",
+            startDestination = "HomeScreen",
             modifier = Modifier.padding(paddingValues)
         ) {
 

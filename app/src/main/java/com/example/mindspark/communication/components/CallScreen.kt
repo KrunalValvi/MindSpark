@@ -13,12 +13,12 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.CallMade
+import androidx.compose.material.icons.automirrored.filled.CallMissed
+import androidx.compose.material.icons.automirrored.filled.CallReceived
 import androidx.compose.material.icons.filled.Call
-import androidx.compose.material.icons.filled.CallMade
-import androidx.compose.material.icons.filled.CallMissed
-import androidx.compose.material.icons.filled.CallReceived
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -73,9 +73,9 @@ fun CallItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 val icon = when (callType) {
-                    CallType.INCOMING -> Icons.Filled.CallReceived
-                    CallType.OUTGOING -> Icons.Filled.CallMade
-                    CallType.MISSED -> Icons.Filled.CallMissed
+                    CallType.INCOMING -> Icons.AutoMirrored.Filled.CallReceived
+                    CallType.OUTGOING -> Icons.AutoMirrored.Filled.CallMade
+                    CallType.MISSED -> Icons.AutoMirrored.Filled.CallMissed
                 }
 
                 val color = when (callType) {
@@ -135,7 +135,7 @@ fun CallsSection(callsList: List<CallModel>) {
                 date = call.date
             )
             if (callsList.indexOf(call) < callsList.lastIndex) {
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     color = Color.LightGray.copy(alpha = 0.5f)
                 )
