@@ -5,10 +5,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.mindspark.auth.ui.login.LoginScreen
 import com.example.mindspark.auth.ui.login.SignInScreen
 import com.example.mindspark.auth.ui.register.FillProfileScreen
@@ -96,8 +98,11 @@ fun AppNavigation() {
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("TermsScreen") { TermsScreen(navController) }
-            composable("CourseDetailScreen") { CourseDetailScreen(navController) }
 
+            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.IntType })) { backStackEntry ->
+                val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+                CourseDetailScreen(navController, courseId)
+            }
 
         }
     }

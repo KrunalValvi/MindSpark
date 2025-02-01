@@ -59,6 +59,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.CourseVideoSection
@@ -66,6 +67,8 @@ import com.example.mindspark.courses.components.FeaturesSection
 import com.example.mindspark.courses.components.InstructorSection
 import com.example.mindspark.courses.components.MainContentCard
 import com.example.mindspark.courses.components.ReviewsSection
+import com.example.mindspark.courses.data.CourseData
+import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.home.components.SectionHeader
@@ -74,8 +77,11 @@ import com.example.mindspark.ui.theme.customTypography
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
-fun CourseDetailScreen(navController: NavController) {
+fun CourseDetailScreen(navController: NavController, id: Int) {
     var selectedTab by rememberSaveable { mutableStateOf(0) }
+
+    val course = CourseData.getPopularCourses().find { it.id == id }
+    val mentor = MentorData.getTopMentors().find { it.id == course?.id }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -93,29 +99,20 @@ fun CourseDetailScreen(navController: NavController) {
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            CourseVideoSection()
-            MainContentCard(selectedTab = selectedTab, onTabSelected = { selectedTab = it },course = CourseModel(
-                category = "Graphic Design",
-                title = "Graphic Design Advanced",
-                price = "850/-",
-                rating = "4.2",
-                students = "7830 Std",
-                videos = "21",
-                hours = "42",
-                difficultyLevel = "Intermediate",
-                language = "English",
-                certification = "Yes",
-                about = "Graphic design is now a popular profession, offering vast career opportunities. " +
-                        "This course will help you master advanced graphic design skills, from typography to branding."
-            )
-            )
-            InstructorSection(mentor = MentorModel(
-                name = "John Doe",
-                profession = "Graphic Designer",
-                id = 1
-            ))
-            FeaturesSection()
-            ReviewsSection()
+            if (course != null && mentor != null) {
+                CourseVideoSection()
+                MainContentCard(
+                    selectedTab = selectedTab,
+                    onTabSelected = { selectedTab = it },
+                    course = course
+                )
+                InstructorSection(mentor = mentor)
+                FeaturesSection()
+                ReviewsSection()
+            } else {
+                // Handle case when course or mentor is not found
+                Text("Course or Mentor not found")
+            }
         }
     }
 }
@@ -124,6 +121,6 @@ fun CourseDetailScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun CourseDetailScreenPreview() {
-    CourseDetailScreen(navController = NavController(LocalContext.current))
+    CourseDetailScreen(navController = rememberNavController(), id = 1)
 }
 
