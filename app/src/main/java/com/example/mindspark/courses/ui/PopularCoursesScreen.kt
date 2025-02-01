@@ -22,6 +22,8 @@ import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.home.components.CategoriesList
 import com.example.mindspark.courses.data.CourseData
+import com.example.mindspark.home.components.PopularCoursesListHorizontal
+import com.example.mindspark.home.components.PopularCoursesListVertical
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
@@ -59,8 +61,12 @@ fun PopularCoursesList(navController: NavController) {
             Spacer(modifier = Modifier.height(10.dp))
 
             // Popular Courses List
-            com.example.mindspark.home.components.PopularCoursesListVertical(
-                courses = CourseData.getPopularCourses()
+            PopularCoursesListVertical(
+                courses = CourseData.getPopularCourses(),
+                onCourseClick = { course ->
+                    // Pass course.id to the CourseDetailScreen
+                    navController.navigate("CourseDetailScreen")
+                }
             )
 
 

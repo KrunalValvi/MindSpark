@@ -21,7 +21,7 @@ import com.example.mindspark.ui.theme.customTypography
 import com.example.mindspark.courses.model.CourseModel
 
 @Composable
-fun PopularCourseCardHorizontal(course: CourseModel) {
+fun PopularCourseCardHorizontal(course: CourseModel, onCourseClick: (CourseModel) -> Unit) {
 
     var isChecked by remember { mutableStateOf(false) }
     val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
@@ -31,7 +31,8 @@ fun PopularCourseCardHorizontal(course: CourseModel) {
         modifier = Modifier
             .padding(8.dp)
             .width(250.dp)
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .clickable{ onCourseClick(course)},
         shape = RoundedCornerShape(12.dp),
 //        elevation = 4.dp
     ) {
@@ -140,7 +141,7 @@ fun PopularCourseCardHorizontal(course: CourseModel) {
 }
 
 @Composable
-fun PopularCourseCardVertical(course: CourseModel) {
+fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) -> Unit) {
 
     var isChecked by remember { mutableStateOf(false) }
     val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
@@ -150,7 +151,8 @@ fun PopularCourseCardVertical(course: CourseModel) {
         modifier = Modifier
             .fillMaxWidth()
 //            .padding(8.dp)
-            .wrapContentHeight(),
+            .wrapContentHeight()
+            .clickable{ onCourseClick(course)},
         shape = RoundedCornerShape(12.dp),
 //        elevation = 4.dp
     ) {

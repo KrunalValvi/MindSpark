@@ -19,6 +19,7 @@ import com.example.mindspark.auth.ui.security.ForgotPasswordScreen
 import com.example.mindspark.auth.ui.security.SetFingerprintScreen
 import com.example.mindspark.auth.ui.security.VerifyForgotPasswordScreen
 import com.example.mindspark.communication.ui.InboxScreen
+import com.example.mindspark.courses.ui.CourseDetailScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
 import com.example.mindspark.courses.ui.PopularCoursesList
 import com.example.mindspark.courses.ui.TopMentorScreen
@@ -95,6 +96,7 @@ fun AppNavigation() {
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("TermsScreen") { TermsScreen(navController) }
+            composable("CourseDetailScreen") { CourseDetailScreen(navController) }
 
 
         }

@@ -180,7 +180,7 @@ fun SpecialOfferCard(cards: List<SpecialOfferModel>) {
 }
 
 @Composable
-fun PopularCoursesListHorizontal(courses: List<CourseModel>) {
+fun PopularCoursesListHorizontal(courses: List<CourseModel>, onCourseClick: (CourseModel) -> Unit) {
     LazyRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -189,13 +189,14 @@ fun PopularCoursesListHorizontal(courses: List<CourseModel>) {
     ) {
         items(courses.size) { index ->
             val course = courses[index]
-            PopularCourseCardHorizontal(course)
+            PopularCourseCardHorizontal(course, onCourseClick)
         }
     }
 }
 
+
 @Composable
-fun PopularCoursesListVertical(courses: List<CourseModel>) {
+fun PopularCoursesListVertical(courses: List<CourseModel>, onCourseClick: (CourseModel) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
@@ -204,7 +205,7 @@ fun PopularCoursesListVertical(courses: List<CourseModel>) {
     ) {
         items(courses.size) { index ->
             val course = courses[index]
-            PopularCourseCardVertical(course)
+            PopularCourseCardVertical(course,onCourseClick)
         }
     }
 }
