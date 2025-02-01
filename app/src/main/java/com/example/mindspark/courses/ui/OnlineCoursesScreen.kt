@@ -1,5 +1,3 @@
-@file:Suppress("UNREACHABLE_CODE")
-
 package com.example.mindspark.courses.ui
 
 import androidx.compose.foundation.Image
@@ -32,17 +30,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.communication.components.CallsSection
-import com.example.mindspark.communication.components.ChatSection
-import com.example.mindspark.communication.data.callsList
-import com.example.mindspark.communication.data.chatList
 import com.example.mindspark.courses.components.CustomTextField_Image
 import com.example.mindspark.courses.components.ToggleSelectionRowCourses
-import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
-import com.example.mindspark.home.components.PopularCoursesListHorizontal
 import com.example.mindspark.home.components.PopularCoursesListVertical
+import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.TopMentorsListVertical
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
@@ -127,7 +120,7 @@ fun CoursesListScreen(navController: NavController) {
                         courses = CourseData.getPopularCourses(),
                         onCourseClick = { course ->
                             // Pass course.id to the CourseDetailScreen
-                            navController.navigate("CourseDetailScreen")
+                            navController.navigate("CourseDetailScreen/${course.id}")
                         }
                     )
                 }

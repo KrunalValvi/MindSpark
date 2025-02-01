@@ -205,7 +205,7 @@ fun PopularCoursesListVertical(courses: List<CourseModel>, onCourseClick: (Cours
     ) {
         items(courses.size) { index ->
             val course = courses[index]
-            PopularCourseCardVertical(course,onCourseClick)
+            PopularCourseCardVertical(course, onCourseClick)
         }
     }
 }
