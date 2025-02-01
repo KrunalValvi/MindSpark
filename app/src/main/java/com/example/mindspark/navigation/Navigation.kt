@@ -89,7 +89,6 @@ fun AppNavigation() {
             composable("InboxScreen") { InboxScreen(navController) }
             composable("TransactionsScreen") { TransactionsScreen(navController) }
 
-
             composable("SearchScreen") { SearchScreen(navController) }
             composable("PopularCoursesList") { PopularCoursesList(navController) }
             composable("CoursesListScreen") { CoursesListScreen(navController) }
@@ -103,7 +102,6 @@ fun AppNavigation() {
                 val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
                 CourseDetailScreen(navController, courseId)
             }
-
         }
     }
 }
