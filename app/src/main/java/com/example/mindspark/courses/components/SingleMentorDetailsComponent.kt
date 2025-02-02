@@ -1,11 +1,13 @@
 package com.example.mindspark.courses.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -31,7 +33,7 @@ import com.example.mindspark.ui.theme.customTypography
 @Composable
 fun CourseDetailComponents(course: CourseModel) {
     var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("About", "Curriculum")
+    val tabs = listOf("Courses", "Ratings")
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -175,6 +177,10 @@ fun Reviews() {
 
 @Composable
 private fun ReviewItems(review: Review) {
+
+    var isLiked by remember { mutableStateOf(false) }
+    var likeCount by remember { mutableStateOf(review.likes.toInt()) }
+
     Row(modifier = Modifier.padding(vertical = 8.dp)) {
         Image(
             painter = painterResource(id = R.drawable.ic_profile_placeholder),
@@ -199,24 +205,20 @@ private fun ReviewItems(review: Review) {
             Spacer(modifier = Modifier.height(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    imageVector = Icons.Default.Favorite,
-                    contentDescription = "Likes",
-                    tint = Color.Red,
-                    modifier = Modifier.size(16.dp)
+                    imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "Like",
+                    tint = if (isLiked) Color.Red else Color.Gray,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable {
+                            isLiked = !isLiked
+                            likeCount += if (isLiked) 1 else -1
+                        }
                 )
-                Spacer(Modifier.width(4.dp))
-                Text(
-                    review.likes,
-                    style = MaterialTheme.customTypography.mulish.extraBold,
-                    fontSize = 12.sp
-                )
-                Spacer(Modifier.width(20.dp))
-                Text(
-                    review.timeAgo,
-                    style = MaterialTheme.customTypography.mulish.extraBold,
-                    fontSize = 12.sp,
-                    color = Color.Gray
-                )
+                Spacer(Modifier.width(5.dp))
+                Text(likeCount.toString(), style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp)
+                Spacer(Modifier.width(25.dp))
+                Text(review.timeAgo, style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp, color = Color.Gray)
             }
         }
     }

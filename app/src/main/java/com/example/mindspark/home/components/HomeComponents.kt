@@ -213,25 +213,25 @@ fun PopularCoursesListVertical(courses: List<CourseModel>, onCourseClick: (Cours
 }
 
 @Composable
-fun TopMentorsListHorizontal(mentors: List<MentorModel>) {
+fun TopMentorsListHorizontal(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         items(mentors.size) { index ->
-            TopMentorCardHorizontal(mentors[index])
+            TopMentorCardHorizontal(mentors[index], onClick = onMentorClick)
         }
     }
 }
 
 @Composable
-fun TopMentorsListVertical(mentors: List<MentorModel>) {
+fun TopMentorsListVertical(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp) // Add spacing between items
     ) {
         items(mentors.size) { index ->
-            TopMentorCardVertical(mentors[index])
+            TopMentorCardVertical(mentors[index], onClick = onMentorClick)
         }
     }
 }

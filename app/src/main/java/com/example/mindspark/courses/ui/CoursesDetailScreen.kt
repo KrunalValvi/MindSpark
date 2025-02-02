@@ -41,7 +41,9 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
                 .verticalScroll(rememberScrollState())
         ) {
             if (course != null && mentor != null) {
-                CourseDetailComponents(course, mentor)
+                CourseDetailComponents(course, mentor, onMentorClick = {
+                    navController.navigate("SingleMentorDetails/${it.id}")
+                })
             } else {
                 Text("Course or Mentor not found")
             }

@@ -107,7 +107,11 @@ fun HomeScreen(navController: NavController) {
 
             // Mentors List
             TopMentorsListHorizontal(
-                mentors = MentorData.getTopMentors()
+                mentors = MentorData.getTopMentors(),
+                onMentorClick = { mentor ->
+                    // Navigate to SingleMentorDetails with the mentor's ID
+                    navController.navigate("SingleMentorDetails/${mentor.id}")
+                }
             )
         }
     }

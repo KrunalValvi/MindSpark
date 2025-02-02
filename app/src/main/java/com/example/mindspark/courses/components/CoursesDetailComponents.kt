@@ -2,6 +2,7 @@ package com.example.mindspark.courses.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,15 +16,18 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.example.mindspark.R
+import com.example.mindspark.auth.ui.login.LoginScreen
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun CourseDetailComponents(course: CourseModel, mentor: MentorModel) {
+fun CourseDetailComponents(course: CourseModel, mentor: MentorModel, onMentorClick: (MentorModel) -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
     var expanded by remember { mutableStateOf(false) }
     val words = course.about.split(" ")
@@ -105,7 +109,7 @@ fun CourseDetailComponents(course: CourseModel, mentor: MentorModel) {
                 }
             }
         }
-        InstructorSection(mentor)
+        InstructorSection(mentor, onMentorClick = onMentorClick)
         FeaturesSection(course)
         ReviewsSection()
     }
@@ -255,12 +259,39 @@ private fun LessonItem(index: Int, title: String, duration: String) {
     }
 }
 
+//@Composable
+//private fun InstructorSection(mentor: MentorModel) {
+//    Column(modifier = Modifier.padding(16.dp)) {
+//        Text("Instructor", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
+//        Spacer(Modifier.height(8.dp))
+//        Row(verticalAlignment = Alignment.CenterVertically) {
+//            Image(
+//                painter = painterResource(id = R.drawable.ic_profile_placeholder),
+//                contentDescription = "Instructor",
+//                modifier = Modifier
+//                    .size(50.dp)
+//                    .clip(CircleShape)
+//            )
+//            Spacer(Modifier.width(8.dp))
+//            Column {
+//                Text(text = mentor.name, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 17.sp)
+//                Text(text = mentor.profession, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp, color = Color.Gray)
+//            }
+//        }
+//    }
+//}
+
 @Composable
-private fun InstructorSection(mentor: MentorModel) {
-    Column(modifier = Modifier.padding(16.dp)) {
+private fun InstructorSection(mentor: MentorModel, onMentorClick: (MentorModel) -> Unit) {
+    Column(modifier = Modifier
+        .padding(16.dp)
+    ) {
         Text("Instructor", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
         Spacer(Modifier.height(8.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            modifier = Modifier.fillMaxWidth().clickable { onMentorClick(mentor) },
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_profile_placeholder),
                 contentDescription = "Instructor",
@@ -314,6 +345,9 @@ data class Review(val name: String, val review: String, val likes: String, val t
 
 @Composable
 private fun ReviewItem(review: Review) {
+    var isLiked by remember { mutableStateOf(false) }
+    var likeCount by remember { mutableStateOf(review.likes.toInt()) }
+
     Row(modifier = Modifier.padding(vertical = 8.dp)) {
         Image(
             painter = painterResource(id = R.drawable.ic_profile_placeholder),
@@ -321,20 +355,43 @@ private fun ReviewItem(review: Review) {
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-        )
+            )
         Spacer(Modifier.width(8.dp))
         Column {
-            Text(text = review.name, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 17.sp)
+            Text(
+                text = review.name,
+                style = MaterialTheme.customTypography.jost.semiBold,
+                fontSize = 17.sp,
+            )
+
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = review.review, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp)
-            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = review.review, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp)
+            Spacer(modifier = Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Favorite, contentDescription = "Likes", tint = Color.Red, modifier = Modifier.size(16.dp))
-                Spacer(Modifier.width(4.dp))
-                Text(review.likes, style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp)
-                Spacer(Modifier.width(20.dp))
+                Icon(
+                    imageVector = if (isLiked) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                    contentDescription = "Like",
+                    tint = if (isLiked) Color.Red else Color.Gray,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .clickable {
+                            isLiked = !isLiked
+                            likeCount += if (isLiked) 1 else -1
+                        }
+                )
+                Spacer(Modifier.width(5.dp))
+                Text(likeCount.toString(), style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp)
+                Spacer(Modifier.width(25.dp))
                 Text(review.timeAgo, style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp, color = Color.Gray)
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview2323() {
+    ReviewItem(Review("Will", "This course has been very useful. Mentor was well spoken totally loved it.", "578", "2 Weeks Ago"))
 }

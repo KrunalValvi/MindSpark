@@ -24,6 +24,7 @@ import com.example.mindspark.communication.ui.InboxScreen
 import com.example.mindspark.courses.ui.CourseDetailScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
 import com.example.mindspark.courses.ui.PopularCoursesList
+import com.example.mindspark.courses.ui.SingleMentorDetails
 import com.example.mindspark.courses.ui.TopMentorScreen
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.home.ui.SearchScreen
@@ -101,6 +102,16 @@ fun AppNavigation() {
             composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.IntType })) { backStackEntry ->
                 val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
                 CourseDetailScreen(navController, courseId)
+            }
+
+            composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
+                val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
+                SingleMentorDetails(navController, mentorId)
+            }
+
+            composable("CourseDetailScreen/{id}") { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
+                CourseDetailScreen(navController, id)
             }
         }
     }

@@ -1,13 +1,24 @@
 package com.example.mindspark.courses.data
 
+import com.example.mindspark.courses.model.MentorCourseModel
 import com.example.mindspark.courses.model.MentorModel
+import com.example.mindspark.courses.model.ReviewModel
 
 object MentorData {
 
     // Get top mentors
     fun getTopMentors(): List<MentorModel> = listOf(
-        MentorModel(id = 1, name = "Jiya", profession = "3D Design", courses = 10, students = 1500, ratings = 423),
-        MentorModel(id = 2, name = "Aman", profession = "Web Developer", courses = 8, students = 1200, ratings = 52),
+        MentorModel(
+            id = 1, name = "Jiya", profession = "3D Design", courses = 10, students = 1500, ratings = 423,
+            coursesList = listOf(
+                MentorCourseModel("3D Modeling Basics", "Beginner", "Free", "4.5", "20", "5 Hours"),
+                MentorCourseModel("Advanced 3D Design", "Advanced", "1200/-", "4.8", "30", "10 Hours")
+            ),
+            reviews = listOf(
+                ReviewModel("Alex", "Great mentor!", "2 days ago"),
+                ReviewModel("John", "Very helpful and knowledgeable.", "1 week ago")
+            )
+        ),        MentorModel(id = 2, name = "Aman", profession = "Web Developer", courses = 8, students = 1200, ratings = 52),
         MentorModel(id = 3, name = "Rahul", profession = "Android Developer", courses = 12, students = 2000, ratings = 55),
         MentorModel(id = 4, name = "Manev", profession = "UI/UX Designer", courses = 7, students = 950, ratings = 465),
         MentorModel(id = 5, name = "Raghav", profession = "Game Developer", courses = 15, students = 3000, ratings = 57),

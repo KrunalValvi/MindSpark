@@ -16,6 +16,7 @@ import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.home.components.TopMentorsListVertical
 import com.example.mindspark.courses.data.MentorData
+import com.example.mindspark.home.components.TopMentorsListHorizontal
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
@@ -42,7 +43,10 @@ fun TopMentorScreen(navController: NavController) {
 
             // Mentors List
             TopMentorsListVertical(
-                mentors = MentorData.getTopMentors()
+                mentors = MentorData.getTopMentors(),
+                onMentorClick = { mentor ->
+                    navController.navigate("SingleMentorDetails/${mentor.id}")
+                }
             )
 
 

@@ -26,11 +26,12 @@ import com.example.mindspark.ui.theme.customTypography
 import com.example.mindspark.courses.model.MentorModel
 
 @Composable
-fun TopMentorCardHorizontal(mentor: MentorModel) {
+fun TopMentorCardHorizontal(mentor: MentorModel, onClick: (MentorModel) -> Unit) {
     Column(
         modifier = Modifier
             .padding(top = 8.dp)
-            .width(80.dp),
+            .width(80.dp)
+            .clickable { onClick(mentor) }, // Add clickable modifier
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Card(
@@ -41,8 +42,7 @@ fun TopMentorCardHorizontal(mentor: MentorModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .background(Color.Black)
-                    .clickable { },
+                    .background(Color.Black),
                 contentAlignment = Alignment.Center
             ) {
                 // Empty for now
@@ -62,12 +62,13 @@ fun TopMentorCardHorizontal(mentor: MentorModel) {
 }
 
 @Composable
-fun TopMentorCardVertical(mentor: MentorModel) {
+fun TopMentorCardVertical(mentor: MentorModel, onClick: (MentorModel) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp)
-            .width(80.dp),
+            .width(80.dp)
+            .clickable { onClick(mentor) }, // Add clickable modifier
         verticalAlignment = Alignment.CenterVertically
     ) {
         Card(
@@ -78,8 +79,7 @@ fun TopMentorCardVertical(mentor: MentorModel) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.dp)
-                    .background(Color.Black)
-                    .clickable { },
+                    .background(Color.Black),
                 contentAlignment = Alignment.Center
             ) {
                 // Empty for now
@@ -95,8 +95,7 @@ fun TopMentorCardVertical(mentor: MentorModel) {
                 style = MaterialTheme.customTypography.jost.semiBold,
                 fontSize = 17.sp,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
 
             Text(
@@ -105,8 +104,7 @@ fun TopMentorCardVertical(mentor: MentorModel) {
                 style = MaterialTheme.customTypography.mulish.bold,
                 fontSize = 13.sp,
                 fontWeight = FontWeight.SemiBold,
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             )
         }
     }
