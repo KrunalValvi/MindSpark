@@ -1,9 +1,7 @@
 package com.example.mindspark.courses.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -15,21 +13,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.auth.ui.login.LoginScreen
-import com.example.mindspark.courses.components.*
+import com.example.mindspark.courses.components.CourseDetailComponents
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
-import com.example.mindspark.courses.model.CourseModel
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
-fun CourseDetailScreen(
-    navController: NavController,
-    id: Int,
-) {
-    val course = CourseData.getPopularCourses().find { it.id == id }
-    val mentor = MentorData.getTopMentors().find { it.id == course?.id }
+fun CourseDetailScreen(navController: NavController, id: Int) {
+    val course = CourseData.getPopularCourses().find { it.mentorId == id }
+    val mentor = MentorData.getTopMentors().find { it.id == course?.mentorId }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -48,11 +41,7 @@ fun CourseDetailScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             if (course != null && mentor != null) {
-                CourseVideoSection()
-                MainContentCard(course)
-                InstructorSection(mentor)
-                FeaturesSection(course)
-                ReviewsSection()
+                CourseDetailComponents(course, mentor)
             } else {
                 Text("Course or Mentor not found")
             }

@@ -65,7 +65,7 @@ fun PopularCoursesList(navController: NavController) {
                 courses = CourseData.getPopularCourses(),
                 onCourseClick = { course ->
                     // Pass course.id to the CourseDetailScreen
-                    navController.navigate("CourseDetailScreen/${course.id}")
+                    navController.navigate("CourseDetailScreen/${course.mentorId}")
                 }
             )
 
