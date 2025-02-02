@@ -28,12 +28,14 @@ import com.example.mindspark.courses.model.ReviewModel
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun MentorCourseItem(course: MentorCourseModel) {
+fun MentorCourseItem(course: MentorCourseModel, onClick: () -> Unit) {
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF4FD)),
         elevation = CardDefaults.cardElevation(4.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick)
     ) {
         Column(modifier = Modifier.padding(10.dp)) {
             Text(

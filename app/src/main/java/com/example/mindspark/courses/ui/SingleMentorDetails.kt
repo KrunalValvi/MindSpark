@@ -57,7 +57,7 @@ fun SingleMentorDetails(navController: NavController, mentorId: Int) {
             }
             item {
                 mentor?.let {
-                    CoursesSection(mentor)
+                    CoursesSection(navController, mentor) // Pass navController here
                     ReviewsSection(mentor)
                 }
             }
@@ -176,12 +176,14 @@ private fun MentorInfoSection(mentor: MentorModel) {
 }
 
 @Composable
-private fun CoursesSection(mentor: MentorModel) {
+private fun CoursesSection(navController: NavController, mentor: MentorModel) {
     Column(modifier = Modifier.padding(16.dp)) {
         Text("Courses", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
         Spacer(Modifier.height(8.dp))
         mentor.coursesList.forEach { course ->
-            MentorCourseItem(course)
+            MentorCourseItem(course = course) {
+                navController.navigate("CourseDetailScreen/${course.title}") // Navigate to CourseDetailScreen with course title
+            }
             Spacer(Modifier.height(8.dp))
         }
     }

@@ -99,19 +99,24 @@ fun AppNavigation() {
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("TermsScreen") { TermsScreen(navController) }
 
-            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.IntType })) { backStackEntry ->
-                val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
-                CourseDetailScreen(navController, courseId)
+//            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.IntType })) { backStackEntry ->
+//                val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+//                CourseDetailScreen(navController, courseId)
+//            }
+//
+//            composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
+//                val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
+//                SingleMentorDetails(navController, mentorId)
+//            }
+
+            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.StringType })) { backStackEntry ->
+                val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
+                CourseDetailScreen(navController, id)
             }
 
             composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
                 val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
                 SingleMentorDetails(navController, mentorId)
-            }
-
-            composable("CourseDetailScreen/{id}") { backStackEntry ->
-                val id = backStackEntry.arguments?.getString("id")?.toInt() ?: 0
-                CourseDetailScreen(navController, id)
             }
         }
     }
