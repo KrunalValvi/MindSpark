@@ -1,6 +1,5 @@
 package com.example.mindspark.courses.model
 
-
 data class MentorCourseModel(
     val title: String,
     val level: String,
@@ -20,11 +19,9 @@ data class MentorModel(
     val id: Int,
     val name: String,
     val profession: String,
-
     val courses: Int,
     val students: Int,
     val ratings: Int,
-
     val coursesList: List<MentorCourseModel>,
     val reviews: List<ReviewModel>
 )

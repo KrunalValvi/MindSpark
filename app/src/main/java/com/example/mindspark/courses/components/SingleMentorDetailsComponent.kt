@@ -20,109 +20,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.R
-import com.example.mindspark.courses.data.CourseData
-import com.example.mindspark.courses.model.CourseModel
-import com.example.mindspark.courses.model.FeatureModel
+import com.example.mindspark.courses.model.MentorCourseModel
+import com.example.mindspark.courses.model.ReviewModel
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun CourseDetailComponents(course: CourseModel) {
-    var selectedTab by remember { mutableStateOf(0) }
-    val tabs = listOf("Courses", "Ratings")
-
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.padding(16.dp)
-    ) {
-        Card(
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(4.dp),
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Column(
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text(
-                    text = "But how much. or rather, can it now do as much\n" +
-                            "as it did then? Nor am I unaware that there is\n" +
-                            "utility in history. not only pleasure.",
-                    style = MaterialTheme.customTypography.mulish.bold,
-                    fontSize = 13.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                TabRow(
-                    selectedTabIndex = selectedTab,
-                    containerColor = Color(0xFFF5F9FF)
-                ) {
-                    tabs.forEachIndexed { index, title ->
-                        Tab(
-                            selected = selectedTab == index,
-                            onClick = { selectedTab = index },
-                            text = {
-                                Text(
-                                    text = title,
-                                    style = MaterialTheme.customTypography.jost.semiBold
-                                )
-                            }
-                        )
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                when (selectedTab) {
-                    0 -> CourseList()
-                    1 -> Reviews()
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun CourseList() {
-
-    CourseData.getPopularCourses().forEach { course ->
-        CourseItem(course)
-        Spacer(modifier = Modifier.height(10.dp))
-    }
-
-}
-
-@Composable
-fun FollowButton(modifier: Modifier = Modifier) {
-    var isFollowing by remember { mutableStateOf(false) }
-
-    Button(
-        onClick = { isFollowing = !isFollowing },
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color(0xFFE8F1FF)
-        ),
-        modifier = modifier,
-        shape = RoundedCornerShape(40.dp)
-    ) {
-        Text(
-            text = if (isFollowing) "Unfollow" else "Follow",
-            style = MaterialTheme.customTypography.jost.semiBold,
-            fontSize = 18.sp
-        )
-    }
-}
-
-@Composable
-fun CourseItem(course: CourseModel) {
+fun MentorCourseItem(course: MentorCourseModel) {
     Card(
         shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF4FD)),
         elevation = CardDefaults.cardElevation(4.dp),
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -164,22 +73,30 @@ fun CourseItem(course: CourseModel) {
 }
 
 @Composable
-fun Reviews() {
-    Column(modifier = Modifier.padding(16.dp)) {
-        listOf(
-            Review("Will", "This course has been very useful. Mentor was well spoken totally loved it.", "578", "2 Weeks Ago"),
-            Review("Martha E. Thompson", "This course has been very useful. Mentor was well spoken totally loved it. It had fun sessions as well.", "492", "3 Weeks Ago")
-        ).forEach { review ->
-            ReviewItems(review)
-        }
+fun FollowButton(modifier: Modifier = Modifier) {
+    val isFollowing = remember { mutableStateOf(false) }
+
+    Button(
+        onClick = { isFollowing.value = !isFollowing.value },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color(0xFFE8F1FF)
+        ),
+        modifier = modifier.height(60.dp),
+        shape = RoundedCornerShape(40.dp)
+    ) {
+        Text(
+            text = if (isFollowing.value) "Unfollow" else "Follow",
+            style = MaterialTheme.customTypography.jost.semiBold,
+            fontSize = 18.sp
+        )
     }
 }
 
-@Composable
-private fun ReviewItems(review: Review) {
 
+@Composable
+fun ReviewItem(review: ReviewModel) {
     var isLiked by remember { mutableStateOf(false) }
-    var likeCount by remember { mutableStateOf(review.likes.toInt()) }
+    var likeCount by remember { mutableStateOf(0) }
 
     Row(modifier = Modifier.padding(vertical = 8.dp)) {
         Image(
@@ -192,13 +109,13 @@ private fun ReviewItems(review: Review) {
         Spacer(Modifier.width(8.dp))
         Column {
             Text(
-                text = review.name,
+                text = review.reviewerName,
                 style = MaterialTheme.customTypography.jost.semiBold,
                 fontSize = 17.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = review.review,
+                text = review.reviewText,
                 style = MaterialTheme.customTypography.mulish.bold,
                 fontSize = 13.sp
             )
@@ -216,38 +133,19 @@ private fun ReviewItems(review: Review) {
                         }
                 )
                 Spacer(Modifier.width(5.dp))
-                Text(likeCount.toString(), style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp)
+                Text(
+                    text = likeCount.toString(),
+                    style = MaterialTheme.customTypography.mulish.extraBold,
+                    fontSize = 12.sp
+                )
                 Spacer(Modifier.width(25.dp))
-                Text(review.timeAgo, style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp, color = Color.Gray)
+                Text(
+                    text = review.date,
+                    style = MaterialTheme.customTypography.mulish.extraBold,
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
             }
         }
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview() {
-    CourseDetailComponents(
-        course = CourseModel(
-            category = "Graphic Design",
-            title = "Photoshop for Beginners",
-            price = "1200/-",
-            rating = "4.5",
-            students = "3800 Std",
-            videos = "20",
-            hours = "40",
-            difficultyLevel = "Beginner",
-            language = "English",
-            certification = "Yes",
-            about = "Learn the basics of Photoshop, including photo editing and graphic creation.",
-            mentorId = 3,
-            features = listOf(
-                FeatureModel("20 Lessons", R.drawable.ic_lessons),
-                FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
-                FeatureModel("Beginner Level", R.drawable.ic_beginner_level),
-                FeatureModel("Certificate of Completion", R.drawable.ic_certificate)
-            )
-        )
-    )
 }

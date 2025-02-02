@@ -2,7 +2,7 @@ package com.example.mindspark.courses.model
 
 import androidx.annotation.DrawableRes
 
-//Home Screen
+// Home Screen
 enum class CourseCategory(val value: String) {
     All("All"),
     GraphicDesign("Graphic Design"),
@@ -26,14 +26,13 @@ data class FeatureModel(
     @DrawableRes val iconRes: Int // Use drawable resource for icon
 )
 
-//Courses Screen
+// Courses Screen
 data class CourseModel(
     val category: String,
     val title: String,
     val price: String,
     val rating: String,
     val students: String,
-
     val mentorId: Int,
     val videos: String,
     val hours: String,
@@ -41,6 +40,5 @@ data class CourseModel(
     val difficultyLevel: String,
     val certification: String,
     val language: String,
-
     val features: List<FeatureModel>
 )

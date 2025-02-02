@@ -301,7 +301,6 @@ object CourseData {
                 FeatureModel("Lifetime Access", R.drawable.ic_lifetime_access)
             )
         ),
-
         CourseModel(
             category = "Digital Marketing",
             title = "Content Marketing Mastery",
@@ -322,7 +321,11 @@ object CourseData {
                 FeatureModel("Certificate of Completion", R.drawable.ic_certificate),
                 FeatureModel("Lifetime Access", R.drawable.ic_lifetime_access)
             )
-        ),
-
+        )
     )
+
+    // Get courses by mentor ID
+    fun getCoursesByMentorId(mentorId: Int): List<CourseModel> {
+        return getPopularCourses().filter { it.mentorId == mentorId }
+    }
 }

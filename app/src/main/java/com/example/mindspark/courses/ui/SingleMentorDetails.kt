@@ -1,5 +1,6 @@
 package com.example.mindspark.courses.ui
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,25 +14,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.courses.components.CourseDetailComponents
 import com.example.mindspark.courses.components.FollowButton
+import com.example.mindspark.courses.components.MentorCourseItem
+import com.example.mindspark.courses.components.ReviewItem
 import com.example.mindspark.courses.data.MentorData
-import com.example.mindspark.courses.model.CourseModel
-import com.example.mindspark.courses.model.FeatureModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
 fun SingleMentorDetails(navController: NavController, mentorId: Int) {
-    val mentor = remember { MentorData.getTopMentors().find { it.id == mentorId } }
+    val mentor = remember { MentorData.getMentorById(mentorId) }
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -57,28 +56,10 @@ fun SingleMentorDetails(navController: NavController, mentorId: Int) {
                 }
             }
             item {
-                CourseDetailComponents(
-                    course = CourseModel(
-                        category = "Graphic Design",
-                        title = "Photoshop for Beginners",
-                        price = "1200/-",
-                        rating = "4.5",
-                        students = "3800 Std",
-                        videos = "20",
-                        hours = "40",
-                        difficultyLevel = "Beginner",
-                        language = "English",
-                        certification = "Yes",
-                        about = "Learn the basics of Photoshop, including photo editing and graphic creation.",
-                        mentorId = 3,
-                        features = listOf(
-                            FeatureModel("20 Lessons", R.drawable.ic_lessons),
-                            FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
-                            FeatureModel("Beginner Level", R.drawable.ic_beginner_level),
-                            FeatureModel("Certificate of Completion", R.drawable.ic_certificate)
-                        )
-                    )
-                )
+                mentor?.let {
+                    CoursesSection(mentor)
+                    ReviewsSection(mentor)
+                }
             }
         }
     }
@@ -190,6 +171,30 @@ private fun MentorInfoSection(mentor: MentorModel) {
                     fontSize = 18.sp
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun CoursesSection(mentor: MentorModel) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Courses", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
+        Spacer(Modifier.height(8.dp))
+        mentor.coursesList.forEach { course ->
+            MentorCourseItem(course)
+            Spacer(Modifier.height(8.dp))
+        }
+    }
+}
+
+@Composable
+private fun ReviewsSection(mentor: MentorModel) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Reviews", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
+        Spacer(Modifier.height(8.dp))
+        mentor.reviews.forEach { review ->
+            ReviewItem(review)
+            Spacer(Modifier.height(8.dp))
         }
     }
 }
