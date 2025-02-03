@@ -57,7 +57,7 @@ fun SingleMentorDetails(navController: NavController, mentorId: Int) {
             }
             item {
                 mentor?.let {
-                    CoursesSection(navController, mentor) // Pass navController here
+                    CoursesSection(navController, mentor)
                     ReviewsSection(mentor)
                 }
             }
@@ -182,7 +182,7 @@ private fun CoursesSection(navController: NavController, mentor: MentorModel) {
         Spacer(Modifier.height(8.dp))
         mentor.coursesList.forEach { course ->
             MentorCourseItem(course = course) {
-                navController.navigate("CourseDetailScreen/${course.id}") // Navigate to CourseDetailScreen with course title
+                navController.navigate("CourseDetailScreen/${course.id}")
             }
             Spacer(Modifier.height(8.dp))
         }

@@ -1,8 +1,7 @@
 package com.example.mindspark.courses.model
 
 data class MentorCourseModel(
-    val id: Int,
-
+    val id: Int, // Unique identifier for the course
     val title: String,
     val level: String,
     val price: String,
@@ -18,7 +17,7 @@ data class ReviewModel(
 )
 
 data class MentorModel(
-    val id: Int,
+    val id: Int, // Unique identifier for the mentor
     val name: String,
     val profession: String,
     val courses: Int,

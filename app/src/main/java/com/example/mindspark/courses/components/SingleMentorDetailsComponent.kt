@@ -94,7 +94,6 @@ fun FollowButton(modifier: Modifier = Modifier) {
     }
 }
 
-
 @Composable
 fun ReviewItem(review: ReviewModel) {
     var isLiked by remember { mutableStateOf(false) }

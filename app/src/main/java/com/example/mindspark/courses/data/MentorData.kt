@@ -6,7 +6,6 @@ import com.example.mindspark.courses.model.ReviewModel
 
 object MentorData {
 
-    // Get top mentors
     fun getTopMentors(): List<MentorModel> {
         val mentors = listOf(
             MentorModel(
@@ -59,7 +58,6 @@ object MentorData {
                     ReviewModel("John", "Very helpful and knowledgeable.", "1 week ago")
                 )
             ),
-            // Add other mentors similarly with correct course IDs
             MentorModel(
                 id = 2,
                 name = "Aman",
@@ -91,12 +89,33 @@ object MentorData {
                     ReviewModel("Sara", "In-depth and well-explained.", "3 days ago"),
                     ReviewModel("Mike", "Helped me land a job!", "1 month ago")
                 )
-            )
+            ),
             MentorModel(
-                id = 3, name = "Rahul", profession = "Android Developer", courses = 2, students = 2000, ratings = 55,
+                id = 3,
+                name = "Rahul",
+                profession = "Android Developer",
+                courses = 2,
+                students = 2000,
+                ratings = 55,
                 coursesList = listOf(
-                    MentorCourseModel("Photoshop for Beginners", "Beginner", "1200/-", "4.5", "20", "40 Hours"),
-                    MentorCourseModel("Advanced 3D Sculpting", "Advanced", "1700/-", "4.7", "28", "55 Hours")
+                    MentorCourseModel(
+                        id = 3, // Maps to "Photoshop for Beginners"
+                        title = "Photoshop for Beginners",
+                        level = "Beginner",
+                        price = "1200/-",
+                        rating = "4.5",
+                        videos = "20",
+                        hours = "40 Hours"
+                    ),
+                    MentorCourseModel(
+                        id = 7, // Maps to "Advanced 3D Sculpting"
+                        title = "Advanced 3D Sculpting",
+                        level = "Advanced",
+                        price = "1700/-",
+                        rating = "4.7",
+                        videos = "28",
+                        hours = "55 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Emma", "Great introduction to Photoshop.", "1 week ago"),
@@ -104,10 +123,31 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 4, name = "Manev", profession = "UI/UX Designer", courses = 2, students = 950, ratings = 465,
+                id = 4,
+                name = "Manev",
+                profession = "UI/UX Designer",
+                courses = 2,
+                students = 950,
+                ratings = 465,
                 coursesList = listOf(
-                    MentorCourseModel("Illustrator Mastery", "Advanced", "1800/-", "4.8", "30", "60 Hours"),
-                    MentorCourseModel("Graphic Design Basics", "Beginner", "1000/-", "4.4", "15", "30 Hours")
+                    MentorCourseModel(
+                        id = 4, // Maps to "Illustrator Mastery"
+                        title = "Illustrator Mastery",
+                        level = "Advanced",
+                        price = "1800/-",
+                        rating = "4.8",
+                        videos = "30",
+                        hours = "60 Hours"
+                    ),
+                    MentorCourseModel(
+                        id = 1, // Maps to "Graphic Design Basics"
+                        title = "Graphic Design Basics",
+                        level = "Beginner",
+                        price = "1000/-",
+                        rating = "4.4",
+                        videos = "15",
+                        hours = "30 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Sophia", "Amazing insights into UI/UX design.", "1 week ago"),
@@ -115,10 +155,31 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 5, name = "Raghav", profession = "Game Developer", courses = 2, students = 3000, ratings = 57,
+                id = 5,
+                name = "Raghav",
+                profession = "Game Developer",
+                courses = 2,
+                students = 3000,
+                ratings = 57,
                 coursesList = listOf(
-                    MentorCourseModel("Master 3D Animation with Blender", "Advanced", "1500/-", "4.8", "25", "50 Hours"),
-                    MentorCourseModel("3D Printing Essentials", "Intermediate", "1400/-", "4.5", "22", "45 Hours")
+                    MentorCourseModel(
+                        id = 5, // Maps to "Master 3D Animation with Blender"
+                        title = "Master 3D Animation with Blender",
+                        level = "Advanced",
+                        price = "1500/-",
+                        rating = "4.8",
+                        videos = "25",
+                        hours = "50 Hours"
+                    ),
+                    MentorCourseModel(
+                        id = 8, // Maps to "3D Printing Essentials"
+                        title = "3D Printing Essentials",
+                        level = "Intermediate",
+                        price = "1400/-",
+                        rating = "4.5",
+                        videos = "22",
+                        hours = "45 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("James", "Fantastic course on Blender!", "3 days ago"),
@@ -126,9 +187,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 6, name = "Mihir", profession = "Data Scientist", courses = 1, students = 1800, ratings = 42,
+                id = 6,
+                name = "Mihir",
+                profession = "Data Scientist",
+                courses = 1,
+                students = 1800,
+                ratings = 42,
                 coursesList = listOf(
-                    MentorCourseModel("3D Modeling for Beginners", "Beginner", "1300/-", "4.6", "20", "40 Hours")
+                    MentorCourseModel(
+                        id = 6, // Maps to "3D Modeling for Beginners"
+                        title = "3D Modeling for Beginners",
+                        level = "Beginner",
+                        price = "1300/-",
+                        rating = "4.6",
+                        videos = "20",
+                        hours = "40 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("David", "Very informative and well-structured.", "2 weeks ago"),
@@ -136,9 +210,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 7, name = "Mohit", profession = "AI Specialist", courses = 1, students = 2200, ratings = 54,
+                id = 7,
+                name = "Mohit",
+                profession = "AI Specialist",
+                courses = 1,
+                students = 2200,
+                ratings = 54,
                 coursesList = listOf(
-                    MentorCourseModel("Advanced 3D Sculpting", "Advanced", "1700/-", "4.7", "28", "55 Hours")
+                    MentorCourseModel(
+                        id = 7, // Maps to "Advanced 3D Sculpting"
+                        title = "Advanced 3D Sculpting",
+                        level = "Advanced",
+                        price = "1700/-",
+                        rating = "4.7",
+                        videos = "28",
+                        hours = "55 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Ethan", "Highly recommend this course.", "1 week ago"),
@@ -146,9 +233,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 8, name = "Sneha", profession = "Digital Marketing Specialist", courses = 1, students = 800, ratings = 44,
+                id = 8,
+                name = "Sneha",
+                profession = "Digital Marketing Specialist",
+                courses = 1,
+                students = 800,
+                ratings = 44,
                 coursesList = listOf(
-                    MentorCourseModel("3D Printing Essentials", "Intermediate", "1400/-", "4.5", "22", "45 Hours")
+                    MentorCourseModel(
+                        id = 8, // Maps to "3D Printing Essentials"
+                        title = "3D Printing Essentials",
+                        level = "Intermediate",
+                        price = "1400/-",
+                        rating = "4.5",
+                        videos = "22",
+                        hours = "45 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Henry", "Great insights on digital marketing.", "3 days ago"),
@@ -156,9 +256,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 9, name = "Pooja", profession = "Graphic Designer", courses = 1, students = 600, ratings = 325,
+                id = 9,
+                name = "Pooja",
+                profession = "Graphic Designer",
+                courses = 1,
+                students = 600,
+                ratings = 325,
                 coursesList = listOf(
-                    MentorCourseModel("Full-Stack Web Development with React & Node", "Advanced", "2000/-", "4.9", "30", "60 Hours")
+                    MentorCourseModel(
+                        id = 9, // Maps to "Full-Stack Web Development with React & Node"
+                        title = "Full-Stack Web Development with React & Node",
+                        level = "Advanced",
+                        price = "2000/-",
+                        rating = "4.9",
+                        videos = "30",
+                        hours = "60 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Lucas", "Excellent course on full-stack development.", "2 weeks ago"),
@@ -166,9 +279,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 10, name = "Rajesh", profession = "Cloud Architect", courses = 1, students = 2500, ratings = 525,
+                id = 10,
+                name = "Rajesh",
+                profession = "Cloud Architect",
+                courses = 1,
+                students = 2500,
+                ratings = 525,
                 coursesList = listOf(
-                    MentorCourseModel("Front-End Development with Vue.js", "Intermediate", "1800/-", "4.8", "25", "50 Hours")
+                    MentorCourseModel(
+                        id = 10, // Maps to "Front-End Development with Vue.js"
+                        title = "Front-End Development with Vue.js",
+                        level = "Intermediate",
+                        price = "1800/-",
+                        rating = "4.8",
+                        videos = "25",
+                        hours = "50 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Nathan", "Great course on Vue.js development.", "3 days ago"),
@@ -176,9 +302,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 11, name = "Neha", profession = "Cybersecurity Expert", courses = 2, students = 1700, ratings = 452,
+                id = 11,
+                name = "Neha",
+                profession = "Cybersecurity Expert",
+                courses = 2,
+                students = 1700,
+                ratings = 452,
                 coursesList = listOf(
-                    MentorCourseModel("Backend Development with Django", "Intermediate", "1700/-", "4.7", "24", "48 Hours")
+                    MentorCourseModel(
+                        id = 11, // Maps to "Backend Development with Django"
+                        title = "Backend Development with Django",
+                        level = "Intermediate",
+                        price = "1700/-",
+                        rating = "4.7",
+                        videos = "24",
+                        hours = "48 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Jack", "Very informative course on Django.", "2 weeks ago"),
@@ -186,9 +325,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 12, name = "Siddharth", profession = "Blockchain Developer", courses = 1, students = 1400, ratings = 552,
+                id = 12,
+                name = "Siddharth",
+                profession = "Blockchain Developer",
+                courses = 1,
+                students = 1400,
+                ratings = 552,
                 coursesList = listOf(
-                    MentorCourseModel("Responsive Web Design", "Beginner", "1500/-", "4.6", "20", "40 Hours")
+                    MentorCourseModel(
+                        id = 12, // Maps to "Responsive Web Design"
+                        title = "Responsive Web Design",
+                        level = "Beginner",
+                        price = "1500/-",
+                        rating = "4.6",
+                        videos = "20",
+                        hours = "40 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Ryan", "Great course on responsive design.", "1 week ago"),
@@ -196,9 +348,22 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 13, name = "Kriti", profession = "Product Manager", courses = 1, students = 1000, ratings = 4252,
+                id = 13,
+                name = "Kriti",
+                profession = "Product Manager",
+                courses = 1,
+                students = 1000,
+                ratings = 4252,
                 coursesList = listOf(
-                    MentorCourseModel("Digital Marketing Strategies", "Beginner", "1500/-", "4.5", "18", "36 Hours")
+                    MentorCourseModel(
+                        id = 13, // Maps to "Digital Marketing Strategies"
+                        title = "Digital Marketing Strategies",
+                        level = "Beginner",
+                        price = "1500/-",
+                        rating = "4.5",
+                        videos = "18",
+                        hours = "36 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Leo", "Great introduction to digital marketing.", "3 days ago"),
@@ -206,10 +371,31 @@ object MentorData {
                 )
             ),
             MentorModel(
-                id = 14, name = "Arjun", profession = "DevOps Engineer", courses = 2, students = 1600, ratings = 42,
+                id = 14,
+                name = "Arjun",
+                profession = "DevOps Engineer",
+                courses = 2,
+                students = 1600,
+                ratings = 42,
                 coursesList = listOf(
-                    MentorCourseModel("Social Media Marketing", "Intermediate", "1400/-", "4.6", "20", "40 Hours"),
-                    MentorCourseModel("Content Marketing Mastery", "Advanced", "1600/-", "4.7", "22", "44 Hours")
+                    MentorCourseModel(
+                        id = 14, // Maps to "Social Media Marketing"
+                        title = "Social Media Marketing",
+                        level = "Intermediate",
+                        price = "1400/-",
+                        rating = "4.6",
+                        videos = "20",
+                        hours = "40 Hours"
+                    ),
+                    MentorCourseModel(
+                        id = 15, // Maps to "Content Marketing Mastery"
+                        title = "Content Marketing Mastery",
+                        level = "Advanced",
+                        price = "1600/-",
+                        rating = "4.7",
+                        videos = "22",
+                        hours = "44 Hours"
+                    )
                 ),
                 reviews = listOf(
                     ReviewModel("Mason", "Excellent course on social media marketing.", "2 weeks ago"),
@@ -227,7 +413,6 @@ object MentorData {
         }
     }
 
-    // Get mentor by ID
     fun getMentorById(id: Int): MentorModel? {
         return getTopMentors().find { it.id == id }
     }

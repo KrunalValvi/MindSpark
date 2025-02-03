@@ -21,7 +21,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.auth.ui.login.LoginScreen
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.courses.model.CourseModel
@@ -261,28 +260,6 @@ private fun LessonItem(index: Int, title: String, duration: String) {
     }
 }
 
-//@Composable
-//private fun InstructorSection(mentor: MentorModel) {
-//    Column(modifier = Modifier.padding(16.dp)) {
-//        Text("Instructor", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
-//        Spacer(Modifier.height(8.dp))
-//        Row(verticalAlignment = Alignment.CenterVertically) {
-//            Image(
-//                painter = painterResource(id = R.drawable.ic_profile_placeholder),
-//                contentDescription = "Instructor",
-//                modifier = Modifier
-//                    .size(50.dp)
-//                    .clip(CircleShape)
-//            )
-//            Spacer(Modifier.width(8.dp))
-//            Column {
-//                Text(text = mentor.name, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 17.sp)
-//                Text(text = mentor.profession, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp, color = Color.Gray)
-//            }
-//        }
-//    }
-//}
-
 @Composable
 private fun InstructorSection(mentor: MentorModel, onMentorClick: (MentorModel) -> Unit) {
     Column(modifier = Modifier
@@ -357,7 +334,7 @@ private fun ReviewItem(review: Review) {
             modifier = Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-            )
+        )
         Spacer(Modifier.width(8.dp))
         Column {
             Text(
@@ -394,6 +371,8 @@ private fun ReviewItem(review: Review) {
 
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview2323() {
-    CourseHeader(course = CourseData.getCourseById(1)!!)
+fun CourseDetailComponentsPreview() {
+    val course = CourseData.getCourseById(1)!!
+    val mentor = MentorData.getMentorById(course.mentorId)!!
+    CourseDetailComponents(course, mentor, onMentorClick = {})
 }

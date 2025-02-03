@@ -28,17 +28,18 @@ data class FeatureModel(
 
 // Courses Screen
 data class CourseModel(
+    val id: Int, // Unique identifier for the course
     val category: String,
     val title: String,
     val price: String,
     val rating: String,
     val students: String,
-    val id: Int,
     val videos: String,
     val hours: String,
     val about: String,
     val difficultyLevel: String,
     val certification: String,
     val language: String,
-    val features: List<FeatureModel>
+    val features: List<FeatureModel>,
+    val mentorId: Int // ID of the mentor teaching the course
 )

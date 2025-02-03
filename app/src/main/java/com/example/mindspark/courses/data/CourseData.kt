@@ -12,6 +12,7 @@ object CourseData {
     // Get popular courses
     fun getPopularCourses(): List<CourseModel> = listOf(
         CourseModel(
+            id = 1,
             category = "Graphic Design",
             title = "Graphic Design Basics",
             price = "1000/-",
@@ -23,7 +24,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Understand the basics of graphic design, including color theory, typography, and layout.",
-            id = 1,
+            mentorId = 4, // Correct mentorId for "Manev"
             features = listOf(
                 FeatureModel("15 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -32,6 +33,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 2,
             category = "Graphic Design",
             title = "Advanced Graphic Design Techniques",
             price = "1500/-",
@@ -43,7 +45,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Explore advanced techniques in graphic design, including digital illustration and branding.",
-            mentorId = 2,
+            mentorId = 4, // Correct mentorId for "Manev"
             features = listOf(
                 FeatureModel("25 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -52,6 +54,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 3,
             category = "Graphic Design",
             title = "Photoshop for Beginners",
             price = "1200/-",
@@ -63,7 +66,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the basics of Photoshop, including photo editing and graphic creation.",
-            mentorId = 3,
+            mentorId = 3, // Correct mentorId for "Rahul"
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -72,6 +75,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 4,
             category = "Graphic Design",
             title = "Illustrator Mastery",
             price = "1800/-",
@@ -83,7 +87,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master Adobe Illustrator for creating stunning vector graphics.",
-            mentorId = 4,
+            mentorId = 4, // Correct mentorId for "Manev"
             features = listOf(
                 FeatureModel("30 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -93,6 +97,7 @@ object CourseData {
         ),
         // 3D Design
         CourseModel(
+            id = 5,
             category = "3D Design",
             title = "Master 3D Animation with Blender",
             price = "1500/-",
@@ -104,7 +109,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "A complete guide to 3D animation using Blender. Learn modeling, texturing, rigging, and animation techniques to create stunning 3D visuals.",
-            mentorId = 5,
+            mentorId = 1, // Correct mentorId for "Jiya"
             features = listOf(
                 FeatureModel("25 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -115,6 +120,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 6,
             category = "3D Design",
             title = "3D Modeling for Beginners",
             price = "1300/-",
@@ -126,7 +132,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the basics of 3D modeling using various software tools.",
-            mentorId = 6,
+            mentorId = 1, // Correct mentorId for "Jiya"
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -135,6 +141,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 7,
             category = "3D Design",
             title = "Advanced 3D Sculpting",
             price = "1700/-",
@@ -146,7 +153,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master the art of 3D sculpting with advanced techniques and tools.",
-            mentorId = 7,
+            mentorId = 1, // Correct mentorId for "Jiya"
             features = listOf(
                 FeatureModel("28 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -155,6 +162,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 8,
             category = "3D Design",
             title = "3D Printing Essentials",
             price = "1400/-",
@@ -166,7 +174,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the essentials of 3D printing, from modeling to printing.",
-            mentorId = 8,
+            mentorId = 1, // Correct mentorId for "Jiya"
             features = listOf(
                 FeatureModel("22 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -176,6 +184,7 @@ object CourseData {
         ),
         // Web Development
         CourseModel(
+            id = 9,
             category = "Web Development",
             title = "Full-Stack Web Development with React & Node",
             price = "2000/-",
@@ -187,7 +196,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master full-stack development with React and Node.js. This course covers front-end, back-end, databases, and deployment.",
-            mentorId = 9,
+            mentorId = 2, // Correct mentorId for "Aman"
             features = listOf(
                 FeatureModel("30 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -198,6 +207,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 10,
             category = "Web Development",
             title = "Front-End Development with Vue.js",
             price = "1800/-",
@@ -209,7 +219,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn front-end development using Vue.js, covering components, state management, and routing.",
-            mentorId = 10,
+            mentorId = 2, // Correct mentorId for "Aman"
             features = listOf(
                 FeatureModel("25 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -219,6 +229,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 11,
             category = "Web Development",
             title = "Backend Development with Django",
             price = "1700/-",
@@ -230,7 +241,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master backend development using Django, covering models, views, and deployment.",
-            mentorId = 11,
+            mentorId = 11, // Correct mentorId for "Neha"
             features = listOf(
                 FeatureModel("24 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -239,6 +250,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 12,
             category = "Web Development",
             title = "Responsive Web Design",
             price = "1500/-",
@@ -250,7 +262,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the principles of responsive web design, including media queries and flexible layouts.",
-            mentorId = 12,
+            mentorId = 12, // Correct mentorId for "Siddharth"
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -260,6 +272,7 @@ object CourseData {
         ),
         // Digital Marketing
         CourseModel(
+            id = 13,
             category = "Digital Marketing",
             title = "Digital Marketing Strategies",
             price = "1500/-",
@@ -271,7 +284,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn effective digital marketing strategies, including SEO, social media, and content marketing.",
-            mentorId = 13,
+            mentorId = 13, // Correct mentorId for "Kriti"
             features = listOf(
                 FeatureModel("18 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -281,6 +294,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 14,
             category = "Digital Marketing",
             title = "Social Media Marketing",
             price = "1400/-",
@@ -292,7 +306,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master social media marketing strategies to grow your brand and engage your audience.",
-            mentorId = 14,
+            mentorId = 14, // Correct mentorId for "Arjun"
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -302,6 +316,7 @@ object CourseData {
             )
         ),
         CourseModel(
+            id = 15,
             category = "Digital Marketing",
             title = "Content Marketing Mastery",
             price = "1600/-",
@@ -313,7 +328,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn advanced content marketing strategies to create and distribute valuable content.",
-            mentorId = 14,
+            mentorId = 14, // Correct mentorId for "Arjun"
             features = listOf(
                 FeatureModel("22 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -324,15 +339,11 @@ object CourseData {
         )
     )
 
-
-    // Add this function to CourseData.kt
     fun getCourseById(courseId: Int): CourseModel? {
         return getPopularCourses().find { it.id == courseId }
     }
 
-
-    // Get courses by mentor ID
     fun getCoursesByMentorId(mentorId: Int): List<CourseModel> {
-        return getPopularCourses().filter { it.id == mentorId }
+        return getPopularCourses().filter { it.mentorId == mentorId }
     }
 }
