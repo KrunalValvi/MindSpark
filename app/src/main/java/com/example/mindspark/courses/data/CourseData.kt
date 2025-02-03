@@ -23,7 +23,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Understand the basics of graphic design, including color theory, typography, and layout.",
-            mentorId = 1,
+            id = 1,
             features = listOf(
                 FeatureModel("15 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -43,7 +43,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Explore advanced techniques in graphic design, including digital illustration and branding.",
-            mentorId = 2,
+            id = 2,
             features = listOf(
                 FeatureModel("25 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -63,7 +63,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the basics of Photoshop, including photo editing and graphic creation.",
-            mentorId = 3,
+            id = 3,
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -83,7 +83,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master Adobe Illustrator for creating stunning vector graphics.",
-            mentorId = 4,
+            id = 4,
             features = listOf(
                 FeatureModel("30 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -104,7 +104,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "A complete guide to 3D animation using Blender. Learn modeling, texturing, rigging, and animation techniques to create stunning 3D visuals.",
-            mentorId = 5,
+            id = 5,
             features = listOf(
                 FeatureModel("25 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -126,7 +126,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the basics of 3D modeling using various software tools.",
-            mentorId = 6,
+            id = 6,
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -146,7 +146,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master the art of 3D sculpting with advanced techniques and tools.",
-            mentorId = 7,
+            id = 7,
             features = listOf(
                 FeatureModel("28 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -166,7 +166,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the essentials of 3D printing, from modeling to printing.",
-            mentorId = 8,
+            id = 8,
             features = listOf(
                 FeatureModel("22 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -187,7 +187,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master full-stack development with React and Node.js. This course covers front-end, back-end, databases, and deployment.",
-            mentorId = 9,
+            id = 9,
             features = listOf(
                 FeatureModel("30 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -209,7 +209,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn front-end development using Vue.js, covering components, state management, and routing.",
-            mentorId = 10,
+            id = 10,
             features = listOf(
                 FeatureModel("25 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -230,7 +230,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master backend development using Django, covering models, views, and deployment.",
-            mentorId = 11,
+            id = 11,
             features = listOf(
                 FeatureModel("24 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -250,7 +250,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn the principles of responsive web design, including media queries and flexible layouts.",
-            mentorId = 12,
+            id = 12,
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -271,7 +271,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn effective digital marketing strategies, including SEO, social media, and content marketing.",
-            mentorId = 13,
+            id = 13,
             features = listOf(
                 FeatureModel("18 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -292,7 +292,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Master social media marketing strategies to grow your brand and engage your audience.",
-            mentorId = 14,
+            id = 14,
             features = listOf(
                 FeatureModel("20 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -313,7 +313,7 @@ object CourseData {
             language = "English",
             certification = "Yes",
             about = "Learn advanced content marketing strategies to create and distribute valuable content.",
-            mentorId = 14,
+            id = 14,
             features = listOf(
                 FeatureModel("22 Lessons", R.drawable.ic_lessons),
                 FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
@@ -326,6 +326,6 @@ object CourseData {
 
     // Get courses by mentor ID
     fun getCoursesByMentorId(mentorId: Int): List<CourseModel> {
-        return getPopularCourses().filter { it.mentorId == mentorId }
+        return getPopularCourses().filter { it.id == mentorId }
     }
 }

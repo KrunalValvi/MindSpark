@@ -27,9 +27,9 @@ import com.example.mindspark.home.components.PopularCoursesListVertical
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
+
 @Composable
 fun PopularCoursesList(navController: NavController) {
-
     var selectedCategory by remember { mutableStateOf("All") }
 
     Scaffold(
@@ -50,7 +50,6 @@ fun PopularCoursesList(navController: NavController) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             // Categories List
             CategoriesList(
                 categories = CourseData.getAllCategories(),
@@ -65,11 +64,9 @@ fun PopularCoursesList(navController: NavController) {
                 courses = CourseData.getPopularCourses(),
                 onCourseClick = { course ->
                     // Pass course.id to the CourseDetailScreen
-                    navController.navigate("CourseDetailScreen/${course.mentorId}")
+                    navController.navigate("CourseDetailScreen/${course.id}")
                 }
             )
-
-
         }
     }
 }

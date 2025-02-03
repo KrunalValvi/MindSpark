@@ -21,8 +21,8 @@ private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
 fun CourseDetailScreen(navController: NavController, id: Int) {
-    val course = CourseData.getPopularCourses().find { it.mentorId == id }
-    val mentor = MentorData.getTopMentors().find { it.id == course?.mentorId }
+    val course = CourseData.getPopularCourses().find { it.id == id }
+    val mentor = MentorData.getTopMentors().find { it.id == course?.id }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),

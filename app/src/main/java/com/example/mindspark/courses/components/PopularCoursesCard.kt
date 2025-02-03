@@ -34,7 +34,6 @@ fun PopularCourseCardHorizontal(course: CourseModel, onCourseClick: (CourseModel
             .wrapContentHeight()
             .clickable{ onCourseClick(course)},
         shape = RoundedCornerShape(12.dp),
-//        elevation = 4.dp
     ) {
         Column(
             modifier = Modifier
