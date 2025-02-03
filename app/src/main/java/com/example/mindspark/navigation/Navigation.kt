@@ -1,8 +1,10 @@
 package com.example.mindspark.navigation
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -10,6 +12,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.example.mindspark.R
 import com.example.mindspark.auth.ui.login.LoginScreen
 import com.example.mindspark.auth.ui.login.SignInScreen
 import com.example.mindspark.auth.ui.register.FillProfileScreen
@@ -28,9 +31,9 @@ import com.example.mindspark.transactions.ui.TransactionsScreen
 @Composable
 fun AppNavigation() {
     val navController = rememberNavController()
-    val currentBackStackEntry = navController.currentBackStackEntryAsState()
+    val currentBackStackEntry by navController.currentBackStackEntryAsState()
+    var currentIndex by remember { mutableStateOf(0) }
 
-    // Define which screens should NOT show the bottom nav bar
     val noBottomBarRoutes = listOf(
         "SignInScreen", "LoginScreen", "RegisterScreen",
         "FillProfileScreen", "CreatePinScreen",
@@ -39,19 +42,24 @@ fun AppNavigation() {
         "splash", "IntroScreen1", "IntroScreen2", "IntroScreen3"
     )
 
-    Scaffold(
-        bottomBar = {
-            val currentRoute = currentBackStackEntry.value?.destination?.route
-            if (currentRoute !in noBottomBarRoutes) {
-                BottomNavigationBar(navController)
-            }
-        }
-    ) { paddingValues ->
-        NavHost(
-            navController = navController,
-            startDestination = BottomNavItem.Home.route,
-            modifier = Modifier.padding(paddingValues)
-        ) {
+    val icons = listOf(
+        IconModel(0, R.drawable.ic_home),
+        IconModel(1, R.drawable.ic_courses),
+        IconModel(2, R.drawable.ic_inbox),
+        IconModel(3, R.drawable.ic_transaction),
+        IconModel(4, R.drawable.ic_profile)
+    )
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            bottomBar = { }  // Empty bottom bar since we're using floating bar
+        ) { paddingValues ->
+            NavHost(
+                navController = navController,
+                startDestination = BottomNavItem.Home.route,
+                modifier = Modifier.padding(paddingValues)
+            ) {
             // Onboarding
             composable("splash") { LaunchScreen(navController) }
             composable("IntroScreen1") { IntroScreenStep1(navController) }
@@ -97,5 +105,26 @@ fun AppNavigation() {
                 SingleMentorDetails(navController, mentorId)
             }
         }
+
+        }
+    }
+
+    // Floating bottom navigation bar
+    val currentRoute = currentBackStackEntry?.destination?.route
+    if (currentRoute !in noBottomBarRoutes) {
+        FloatingBottomBar(
+            currentIcon = currentIndex,
+            icons = icons,
+            onTap = { index ->
+                currentIndex = index
+                when (index) {
+                    0 -> navController.navigate(BottomNavItem.Home.route)
+                    1 -> navController.navigate(BottomNavItem.MyCourses.route)
+                    2 -> navController.navigate(BottomNavItem.Inbox.route)
+                    3 -> navController.navigate(BottomNavItem.Transactions.route)
+                    4 -> navController.navigate(BottomNavItem.Profile.route)
+                }
+            }
+        )
     }
 }

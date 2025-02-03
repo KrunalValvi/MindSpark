@@ -1,74 +1,116 @@
 package com.example.mindspark.navigation
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.mindspark.ui.theme.customTypography
+import com.example.mindspark.auth.ui.login.LoginScreen
+
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    FloatingBottomBar(currentIcon = 0, icons = listOf(), onTap = {})
+}
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-    val items = listOf(
-        BottomNavItem.Home,
-        BottomNavItem.MyCourses,
-        BottomNavItem.Inbox,
-        BottomNavItem.Transactions,
-        BottomNavItem.Profile
-    )
+fun FloatingBottomBar(
+    currentIcon: Int,
+    icons: List<IconModel>,
+    onTap: (Int) -> Unit,
 
-    NavigationBar(
+) {
+    Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(70.dp),
-        containerColor = Color(0xFFF5F9FF),
-        tonalElevation = 0.dp
+            .fillMaxSize()
+            .zIndex(1f), // Ensures the navigation bar stays on top
     ) {
-        val currentBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = currentBackStackEntry?.destination?.route
-
-        items.forEach { item ->
-            val isSelected = currentRoute == item.route
-
-            NavigationBarItem(
-                icon = {
-                    Image(
-                        painter = painterResource(id = item.icon),
-                        contentDescription = item.label,
-                        colorFilter = if (isSelected) ColorFilter.tint(Color(0xFF008060)) else ColorFilter.tint(Color(0xFF1E1E1E))
-                    )
-                },
-                label = {
-                    Text(
-                        text = item.label,
-                        style = MaterialTheme.customTypography.mulish.bold,
-                        fontSize = 9.sp,
-                        color = if (isSelected) Color(0xFF008060) else Color(0xFF1E1E1E)
-                    )
-                },
-                selected = isSelected,
-                onClick = {
-                    if (!isSelected) {
-                        navController.navigate(item.route) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                },
-                alwaysShowLabel = true,
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.Transparent
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 24.dp) // Adjust this value to control how high above the bottom
+                .padding(horizontal = 24.dp)
+                .fillMaxWidth()
+                .height(64.dp)
+                .clip(RoundedCornerShape(32.dp))
+                .background(Color.White)
+                .shadow(
+                    elevation = 8.dp,
+                    shape = RoundedCornerShape(32.dp),
+                    spotColor = Color.Gray.copy(alpha = 0.3f)
                 )
-            )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 16.dp),
+                horizontalArrangement = Arrangement.SpaceAround,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                icons.forEach { icon ->
+                    NavBarIcon(
+                        icon = icon,
+                        isSelected = currentIcon == icon.id,
+                        onTap = { onTap(icon.id) }
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun NavBarIcon(
+    icon: IconModel,
+    isSelected: Boolean,
+    onTap: () -> Unit
+) {
+    val scale by animateFloatAsState(
+        targetValue = if (isSelected) 1.2f else 1f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        )
+    )
+
+    val color by animateColorAsState(
+        targetValue = if (isSelected) Color(0xFF008060) else Color(0xFF1E1E1E),
+        animationSpec = tween(durationMillis = 300)
+    )
+
+    Box(
+        modifier = Modifier
+            .size(48.dp)
+            .clickable(onClick = onTap),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            painter = painterResource(id = icon.icon),
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier
+                .size(24.dp)
+                .graphicsLayer {
+                    scaleX = scale
+                    scaleY = scale
+                }
+        )
     }
 }
