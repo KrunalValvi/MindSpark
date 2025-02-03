@@ -30,11 +30,10 @@ fun BottomNavigationBar(navController: NavController) {
             .fillMaxWidth()
             .height(70.dp),
         containerColor = Color(0xFFF5F9FF),
-//        containerColor = Color.Black,
         tonalElevation = 0.dp
-    ) { // Background color of navbar
-        val currentBackStackEntry = navController.currentBackStackEntryAsState()
-        val currentRoute = currentBackStackEntry.value?.destination?.route
+    ) {
+        val currentBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = currentBackStackEntry?.destination?.route
 
         items.forEach { item ->
             val isSelected = currentRoute == item.route
@@ -44,7 +43,7 @@ fun BottomNavigationBar(navController: NavController) {
                     Image(
                         painter = painterResource(id = item.icon),
                         contentDescription = item.label,
-                        colorFilter = if (isSelected) ColorFilter.tint(Color(0xFF008060)) else ColorFilter.tint(Color(0xFF1E1E1E)) // Change colors here
+                        colorFilter = if (isSelected) ColorFilter.tint(Color(0xFF008060)) else ColorFilter.tint(Color(0xFF1E1E1E))
                     )
                 },
                 label = {
@@ -52,7 +51,7 @@ fun BottomNavigationBar(navController: NavController) {
                         text = item.label,
                         style = MaterialTheme.customTypography.mulish.bold,
                         fontSize = 9.sp,
-                        color = if (isSelected) Color(0xFF008060) else Color(0xFF1E1E1E) // Change text color on selection
+                        color = if (isSelected) Color(0xFF008060) else Color(0xFF1E1E1E)
                     )
                 },
                 selected = isSelected,
@@ -73,4 +72,3 @@ fun BottomNavigationBar(navController: NavController) {
         }
     }
 }
-

@@ -25,7 +25,7 @@ private val LightBlueBackground = Color(0xFFF5F9FF)
 @Composable
 fun CourseDetailScreen(navController: NavController, id: Int) {
     val course = CourseData.getCourseById(id)
-    val mentor = course?.let { MentorData.getMentorById(it.mentorId) }
+    val mentors = course?.mentorIds?.mapNotNull { MentorData.getMentorById(it) }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -43,8 +43,8 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
                 .padding(padding)
                 .verticalScroll(rememberScrollState())
         ) {
-            if (course != null && mentor != null) {
-                CourseDetailComponents(course, mentor) {
+            if (course != null && !mentors.isNullOrEmpty()) {
+                CourseDetailComponents(course, mentors) {
                     navController.navigate("SingleMentorDetails/${it.id}")
                 }
             } else {

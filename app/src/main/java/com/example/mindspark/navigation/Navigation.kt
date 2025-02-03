@@ -1,8 +1,7 @@
 package com.example.mindspark.navigation
 
 import androidx.compose.foundation.layout.padding
-//noinspection UsingMaterialAndMaterial3Libraries
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
@@ -15,24 +14,13 @@ import com.example.mindspark.auth.ui.login.LoginScreen
 import com.example.mindspark.auth.ui.login.SignInScreen
 import com.example.mindspark.auth.ui.register.FillProfileScreen
 import com.example.mindspark.auth.ui.register.RegisterScreen
-import com.example.mindspark.auth.ui.security.CreateNewPassword
-import com.example.mindspark.auth.ui.security.CreatePinScreen
-import com.example.mindspark.auth.ui.security.ForgotPasswordScreen
-import com.example.mindspark.auth.ui.security.SetFingerprintScreen
-import com.example.mindspark.auth.ui.security.VerifyForgotPasswordScreen
+import com.example.mindspark.auth.ui.security.*
 import com.example.mindspark.communication.ui.InboxScreen
-import com.example.mindspark.courses.ui.CourseDetailScreen
-import com.example.mindspark.courses.ui.CoursesListScreen
-import com.example.mindspark.courses.ui.PopularCoursesList
-import com.example.mindspark.courses.ui.SingleMentorDetails
-import com.example.mindspark.courses.ui.TopMentorScreen
+import com.example.mindspark.courses.ui.*
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.notifications.ui.NotificationsScreen
-import com.example.mindspark.onboarding.ui.IntroScreenStep1
-import com.example.mindspark.onboarding.ui.IntroScreenStep2
-import com.example.mindspark.onboarding.ui.IntroScreenStep3
-import com.example.mindspark.onboarding.ui.LaunchScreen
+import com.example.mindspark.onboarding.ui.*
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.profile.ui.TermsScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
@@ -61,19 +49,16 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-//            startDestination = "splash",
-//            startDestination = "SignInwScreen",
-            startDestination = "HomeScreen",
+            startDestination = BottomNavItem.Home.route,
             modifier = Modifier.padding(paddingValues)
         ) {
-
-            //onboarding
+            // Onboarding
             composable("splash") { LaunchScreen(navController) }
             composable("IntroScreen1") { IntroScreenStep1(navController) }
             composable("IntroScreen2") { IntroScreenStep2(navController) }
             composable("IntroScreen3") { IntroScreenStep3(navController) }
 
-            //auth
+            // Authentication
             composable("SignInScreen") { SignInScreen(navController) }
             composable("LoginScreen") { LoginScreen(navController) }
             composable("FillProfileScreen") { FillProfileScreen(navController) }
@@ -84,49 +69,32 @@ fun AppNavigation() {
             composable("VerifyForgotPasswordScreen") { VerifyForgotPasswordScreen(navController) }
             composable("CreateNewPassword") { CreateNewPassword(navController) }
 
-            //user
-            composable("HomeScreen") { HomeScreen(navController) }
-            composable("CoursesListScreen") { CoursesListScreen(navController) }
-            composable("InboxScreen") { InboxScreen(navController) }
-            composable("TransactionsScreen") { TransactionsScreen(navController) }
-
+            // User Screens
+            composable(BottomNavItem.Home.route) { HomeScreen(navController) }
+            composable(BottomNavItem.MyCourses.route) { CoursesListScreen(navController) }
+            composable(BottomNavItem.Inbox.route) { InboxScreen(navController) }
+            composable(BottomNavItem.Transactions.route) { TransactionsScreen(navController) }
+            composable(BottomNavItem.Profile.route) { ProfileScreen(navController) }
             composable("SearchScreen") { SearchScreen(navController) }
             composable("PopularCoursesList") { PopularCoursesList(navController) }
-            composable("CoursesListScreen") { CoursesListScreen(navController) }
             composable("TopMentorScreen") { TopMentorScreen(navController) }
-            composable("ProfileScreen") { ProfileScreen(navController) }
-            composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("TermsScreen") { TermsScreen(navController) }
 
-            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.IntType })) { backStackEntry ->
+            composable(
+                route = "CourseDetailScreen/{courseId}",
+                arguments = listOf(navArgument("courseId") { type = NavType.IntType })
+            ) { backStackEntry ->
                 val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
                 CourseDetailScreen(navController, courseId)
             }
 
-            composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
-                val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
-                SingleMentorDetails(navController, mentorId)
-            }
-
-            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.StringType })) { backStackEntry ->
-                val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
-                CourseDetailScreen(navController, id)
-            }
-
-            composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
-                val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
-                SingleMentorDetails(navController, mentorId)
-            }
-
             composable(
-                route = "CourseDetailScreen/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.IntType })
+                route = "SingleMentorDetails/{mentorId}",
+                arguments = listOf(navArgument("mentorId") { type = NavType.IntType })
             ) { backStackEntry ->
-                CourseDetailScreen(
-                    navController = navController,
-                    id = backStackEntry.arguments?.getInt("id") ?: 0
-                )
+                val mentorId = backStackEntry.arguments?.getInt("mentorId") ?: 0
+                SingleMentorDetails(navController, mentorId)
             }
         }
     }

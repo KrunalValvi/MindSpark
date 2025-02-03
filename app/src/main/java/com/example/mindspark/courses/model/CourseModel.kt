@@ -41,5 +41,5 @@ data class CourseModel(
     val certification: String,
     val language: String,
     val features: List<FeatureModel>,
-    val mentorId: Int // ID of the mentor teaching the course
+    val mentorIds: List<Int> // IDs of the mentors teaching the course
 )

@@ -32,7 +32,7 @@ fun MentorCourseItem(course: MentorCourseModel, onClick: () -> Unit) {
     Card(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF4FD)),
-        elevation = CardDefaults.cardElevation(4.dp),
+        elevation = CardDefaults.cardElevation(3.dp),
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)

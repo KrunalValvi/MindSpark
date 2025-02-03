@@ -19,16 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.courses.data.CourseData
-import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.courses.model.CourseModel
+import com.example.mindspark.courses.model.FeatureModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun CourseDetailComponents(course: CourseModel, mentor: MentorModel, onMentorClick: (MentorModel) -> Unit) {
+fun CourseDetailComponents(course: CourseModel, mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
     var expanded by remember { mutableStateOf(false) }
     val words = course.about.split(" ")
@@ -60,8 +58,9 @@ fun CourseDetailComponents(course: CourseModel, mentor: MentorModel, onMentorCli
             modifier = Modifier
                 .padding(16.dp)
                 .fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color(0xFFEFF4FD)),
             shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(4.dp)
+            elevation = CardDefaults.cardElevation(3.dp)
         ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 CourseHeader(course)
@@ -110,7 +109,7 @@ fun CourseDetailComponents(course: CourseModel, mentor: MentorModel, onMentorCli
                 }
             }
         }
-        InstructorSection(mentor, onMentorClick = onMentorClick)
+        InstructorsSection(mentors, onMentorClick = onMentorClick)
         FeaturesSection(course)
         ReviewsSection()
     }
@@ -261,28 +260,36 @@ private fun LessonItem(index: Int, title: String, duration: String) {
 }
 
 @Composable
-private fun InstructorSection(mentor: MentorModel, onMentorClick: (MentorModel) -> Unit) {
-    Column(modifier = Modifier
-        .padding(16.dp)
-    ) {
-        Text("Instructor", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
+private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
+    Column(modifier = Modifier.padding(16.dp)) {
+        Text("Instructors", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
         Spacer(Modifier.height(8.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth().clickable { onMentorClick(mentor) },
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_profile_placeholder),
-                contentDescription = "Instructor",
+        mentors.forEach { mentor ->
+            Row(
                 modifier = Modifier
-                    .size(50.dp)
-                    .clip(CircleShape)
-            )
-            Spacer(Modifier.width(8.dp))
-            Column {
-                Text(text = mentor.name, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 17.sp)
-                Text(text = mentor.profession, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp, color = Color.Gray)
+                    .fillMaxWidth()
+                    .clickable { onMentorClick(mentor) },
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_profile_placeholder),
+                    contentDescription = "Instructor",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                )
+                Spacer(Modifier.width(8.dp))
+                Column {
+                    Text(text = mentor.name, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 17.sp)
+                    Text(
+                        text = mentor.profession,
+                        style = MaterialTheme.customTypography.mulish.bold,
+                        fontSize = 13.sp,
+                        color = Color.Gray
+                    )
+                }
             }
+            Spacer(Modifier.height(16.dp))
         }
     }
 }
@@ -372,7 +379,48 @@ private fun ReviewItem(review: Review) {
 @Preview(showBackground = true)
 @Composable
 fun CourseDetailComponentsPreview() {
-    val course = CourseData.getCourseById(1)!!
-    val mentor = MentorData.getMentorById(course.mentorId)!!
-    CourseDetailComponents(course, mentor, onMentorClick = {})
+    val course = CourseModel(
+        id = 1,
+        category = "Graphic Design",
+        title = "Graphic Design Basics",
+        price = "1000/-",
+        rating = "4.4",
+        students = "3000 Std",
+        videos = "15",
+        hours = "30",
+        difficultyLevel = "Beginner",
+        language = "English",
+        certification = "Yes",
+        about = "Understand the basics of graphic design, including color theory, typography, and layout.",
+        features = listOf(
+            FeatureModel("15 Lessons", R.drawable.ic_lessons),
+            FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
+            FeatureModel("Beginner Level", R.drawable.ic_beginner_level),
+            FeatureModel("Certificate of Completion", R.drawable.ic_certificate)
+        ),
+        mentorIds = listOf(1, 2)
+    )
+    val mentors = listOf(
+        MentorModel(
+            id = 1,
+            name = "John Doe",
+            profession = "Graphic Designer",
+            courses = 5,
+            students = 1500,
+            ratings = 300,
+            coursesList = emptyList(),
+            reviews = emptyList()
+        ),
+        MentorModel(
+            id = 2,
+            name = "Jane Smith",
+            profession = "Illustrator",
+            courses = 3,
+            students = 1200,
+            ratings = 250,
+            coursesList = emptyList(),
+            reviews = emptyList()
+        )
+    )
+    CourseDetailComponents(course, mentors, onMentorClick = {})
 }

@@ -23,6 +23,7 @@ import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.FollowButton
 import com.example.mindspark.courses.components.MentorCourseItem
 import com.example.mindspark.courses.components.ReviewItem
+import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.ui.theme.LightBlueBackground
