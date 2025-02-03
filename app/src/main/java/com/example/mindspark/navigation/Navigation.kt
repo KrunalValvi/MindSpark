@@ -99,15 +99,15 @@ fun AppNavigation() {
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("TermsScreen") { TermsScreen(navController) }
 
-//            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.IntType })) { backStackEntry ->
-//                val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
-//                CourseDetailScreen(navController, courseId)
-//            }
-//
-//            composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
-//                val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
-//                SingleMentorDetails(navController, mentorId)
-//            }
+            composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.IntType })) { backStackEntry ->
+                val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
+                CourseDetailScreen(navController, courseId)
+            }
+
+            composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
+                val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
+                SingleMentorDetails(navController, mentorId)
+            }
 
             composable("CourseDetailScreen/{courseId}", arguments = listOf(navArgument("courseId") { type = NavType.StringType })) { backStackEntry ->
                 val courseId = backStackEntry.arguments?.getString("courseId") ?: ""
@@ -117,6 +117,16 @@ fun AppNavigation() {
             composable("SingleMentorDetails/{mentorId}") { backStackEntry ->
                 val mentorId = backStackEntry.arguments?.getString("mentorId")?.toInt() ?: 0
                 SingleMentorDetails(navController, mentorId)
+            }
+
+            composable(
+                route = "CourseDetailScreen/{id}",
+                arguments = listOf(navArgument("id") { type = NavType.IntType })
+            ) { backStackEntry ->
+                CourseDetailScreen(
+                    navController = navController,
+                    id = backStackEntry.arguments?.getInt("id") ?: 0
+                )
             }
         }
     }

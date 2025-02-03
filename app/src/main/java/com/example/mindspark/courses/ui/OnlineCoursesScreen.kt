@@ -119,7 +119,6 @@ fun CoursesListScreen(navController: NavController) {
                     PopularCoursesListVertical(
                         courses = CourseData.getPopularCourses(),
                         onCourseClick = { course ->
-                            // Pass course.id to the CourseDetailScreen
                             navController.navigate("CourseDetailScreen/${course.id}")
                         }
                     )

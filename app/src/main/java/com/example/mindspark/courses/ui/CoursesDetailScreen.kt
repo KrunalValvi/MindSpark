@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -11,18 +12,26 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.CourseDetailComponents
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
+import com.example.mindspark.ui.theme.customTypography
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
 fun CourseDetailScreen(navController: NavController, id: Int) {
-    val course = CourseData.getPopularCourses().find { it.id == id }
-    val mentor = MentorData.getTopMentors().find { it.id == course?.id }
+    // Try to find course by both courseId and mentorId
+    val course = CourseData.getPopularCourses().find {
+        it.id == id || it.id == id // Assuming CourseModel has an id field
+    }
+
+    val mentor = if (course != null) {
+        MentorData.getMentorById(course.id)
+    } else null
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -45,7 +54,16 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
                     navController.navigate("SingleMentorDetails/${it.id}")
                 })
             } else {
-                Text("Course or Mentor not found")
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Text(
+                        text = "Course not found",
+                        style = MaterialTheme.customTypography.mulish.bold
+                    )
+                }
             }
         }
     }

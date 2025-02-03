@@ -22,6 +22,8 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.ui.login.LoginScreen
+import com.example.mindspark.courses.data.CourseData
+import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.ui.theme.customTypography
@@ -393,5 +395,5 @@ private fun ReviewItem(review: Review) {
 @Preview(showBackground = true)
 @Composable
 fun LoginScreenPreview2323() {
-    ReviewItem(Review("Will", "This course has been very useful. Mentor was well spoken totally loved it.", "578", "2 Weeks Ago"))
+    CourseHeader(course = CourseData.getCourseById(1)!!)
 }

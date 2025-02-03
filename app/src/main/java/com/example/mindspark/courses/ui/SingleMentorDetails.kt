@@ -182,7 +182,7 @@ private fun CoursesSection(navController: NavController, mentor: MentorModel) {
         Spacer(Modifier.height(8.dp))
         mentor.coursesList.forEach { course ->
             MentorCourseItem(course = course) {
-                navController.navigate("CourseDetailScreen/${course.title}") // Navigate to CourseDetailScreen with course title
+                navController.navigate("CourseDetailScreen/${course.id}") // Navigate to CourseDetailScreen with course title
             }
             Spacer(Modifier.height(8.dp))
         }
