@@ -33,13 +33,18 @@ fun HomeScreen(navController: NavController) {
     Box(
         modifier = Modifier
             .background(Color(0xFFF5F9FF))
-            .padding(top = 10.dp)
-            .padding(10.dp)
+            .fillMaxSize() // Add this
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
+                .padding(
+                    start = 10.dp,
+                    end = 10.dp,
+                    top = 10.dp,
+//                    bottom = 80.dp // Add fixed bottom padding for navbar
+                )
         ) {
             // Header Section
             HomeHeader(navController = navController)

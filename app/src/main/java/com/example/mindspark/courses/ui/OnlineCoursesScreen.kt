@@ -60,9 +60,12 @@ fun CoursesListScreen(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .background(LightBlueBackground)
-//                .padding(padding)
-                .padding(top = 40.dp)
-                .padding(16.dp),
+                .padding(
+                    start = 16.dp,
+                    end = 16.dp,
+                    top = 40.dp,
+//                    bottom = 30.dp // Add fixed bottom padding for navbar
+                ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
