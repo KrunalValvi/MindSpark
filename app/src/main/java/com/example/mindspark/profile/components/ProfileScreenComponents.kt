@@ -79,10 +79,10 @@ fun SettingsList(navController: NavController) {
             .background(Color.White, shape = RoundedCornerShape(16.dp))
             .padding(vertical = 16.dp)
     ) {
-        SettingItem(icon = R.drawable.ic_edit, title = "Edit Profile") { }
+        SettingItem(icon = R.drawable.ic_edit, title = "Edit Profile") { navController.navigate("")}
         SettingItem(icon = R.drawable.ic_payment, title = "Payment Option") { }
         SettingItem(icon = R.drawable.ic_notifications, title = "Notifications") { }
-        SettingItem(icon = R.drawable.ic_security, title = "Security") { }
+        SettingItem(icon = R.drawable.ic_security, title = "Security") { navController.navigate("SecurityScreen") }
         SettingItem(icon = R.drawable.ic_language, title = "Language") { }
         SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode") { }
         SettingItem(icon = R.drawable.ic_terms, title = "Terms & Conditions") { navController.navigate("TermsScreen") }

@@ -9,20 +9,20 @@ object FilterData {
         return listOf(
             FilterCategory("SubCategories:", listOf(
                 FilterItem("3D Design"),
-                FilterItem("Web Development", true),
-                FilterItem("3D Animation", true),
+                FilterItem("Web Development"),
+                FilterItem("3D Animation"),
                 FilterItem("Graphic Design"),
                 FilterItem("SEO & Marketing"),
                 FilterItem("Arts & Humanities")
             )),
             FilterCategory("Levels:", listOf(
                 FilterItem("All Levels"),
-                FilterItem("Beginners", true),
-                FilterItem("Intermediate", true),
+                FilterItem("Beginners"),
+                FilterItem("Intermediate"),
                 FilterItem("Expert")
             )),
             FilterCategory("Price:", listOf(
-                FilterItem("Paid", true),
+                FilterItem("Paid"),
                 FilterItem("Free")
             )),
             FilterCategory("Features:", listOf(

@@ -1,4 +1,4 @@
-package com.example.mindspark.profile.ui
+package com.example.mindspark.profile.ui.sections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -20,11 +20,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.profile.components.ProfileHeader
-import com.example.mindspark.profile.components.SettingsList
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.example.mindspark.ui.theme.customTypography
-import org.w3c.dom.Text
 
 @Composable
 fun TermsScreen(navController: NavController) {

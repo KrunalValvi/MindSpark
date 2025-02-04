@@ -1,4 +1,4 @@
-package com.example.mindspark.profile.ui
+package com.example.mindspark.profile.ui.sections
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -8,6 +8,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
@@ -21,7 +23,7 @@ fun SecurityScreen(navController: NavController) {
         containerColor = LightBlueBackground,
         topBar = {
             AuthTopBar(
-                title = "Top Mentors",
+                title = "Security",
                 onBackClick = { navController.navigateUp() }
             )
         }
@@ -40,4 +42,10 @@ fun SecurityScreen(navController: NavController) {
 
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LoginScreenPreview() {
+    SecurityScreen(navController = NavController(LocalContext.current))
 }

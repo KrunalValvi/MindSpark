@@ -23,7 +23,8 @@ import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.notifications.ui.NotificationsScreen
 import com.example.mindspark.onboarding.ui.*
 import com.example.mindspark.profile.ui.ProfileScreen
-import com.example.mindspark.profile.ui.TermsScreen
+import com.example.mindspark.profile.ui.sections.SecurityScreen
+import com.example.mindspark.profile.ui.sections.TermsScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
 
 @Composable
@@ -88,6 +89,8 @@ fun AppNavigation() {
             composable("TopMentorScreen") { TopMentorScreen(navController) }
             composable("NotificationsScreen") { NotificationsScreen(navController) }
             composable("TermsScreen") { TermsScreen(navController) }
+            composable("SecurityScreen") { SecurityScreen(navController) }
+            composable("CoursesFilterScreen") { CoursesFilterScreen(navController) }
 
             composable(
                 route = "CourseDetailScreen/{courseId}",

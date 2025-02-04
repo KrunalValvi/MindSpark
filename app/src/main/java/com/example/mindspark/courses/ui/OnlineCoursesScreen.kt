@@ -63,7 +63,7 @@ fun CoursesListScreen(navController: NavController) {
                 .padding(
                     start = 16.dp,
                     end = 16.dp,
-                    top = 40.dp,
+                    top = 50.dp,
 //                    bottom = 30.dp // Add fixed bottom padding for navbar
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
