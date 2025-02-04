@@ -1,4 +1,4 @@
-package com.example.mindspark.navigation
+package com.example.mindspark.navigation.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.example.mindspark.navigation.model.BottomNavItem
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable

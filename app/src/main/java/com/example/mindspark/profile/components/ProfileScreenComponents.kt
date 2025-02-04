@@ -22,12 +22,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.ui.login.LoginScreen
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun ProfileHeaderCard() {
+fun ProfileHeaderCard(navController: NavController) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -92,7 +93,7 @@ fun ProfileHeaderCard() {
             Spacer(modifier = Modifier.height(16.dp))
 
             OutlinedButton(
-                onClick = { /* Navigate to edit profile */ },
+                onClick = { navController.navigate("EditProfileScreen") },
                 modifier = Modifier.fillMaxWidth(),
                 border = BorderStroke(1.dp, Color(0xFF1565C0)),
                 shape = RoundedCornerShape(8.dp)

@@ -1,4 +1,4 @@
-package com.example.mindspark.navigation
+package com.example.mindspark.navigation.model
 
 import androidx.annotation.DrawableRes
 import com.example.mindspark.R

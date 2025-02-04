@@ -17,14 +17,17 @@ import com.example.mindspark.auth.ui.register.FillProfileScreen
 import com.example.mindspark.auth.ui.register.RegisterScreen
 import com.example.mindspark.auth.ui.security.*
 import com.example.mindspark.communication.ui.InboxScreen
+import com.example.mindspark.communication.ui.call.ActiveCallScreen
+import com.example.mindspark.communication.ui.chat.ChatDetailScreen
 import com.example.mindspark.courses.ui.*
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.home.ui.SearchScreen
+import com.example.mindspark.navigation.components.BottomNavigationBar
+import com.example.mindspark.navigation.model.BottomNavItem
 import com.example.mindspark.notifications.ui.NotificationsScreen
 import com.example.mindspark.onboarding.ui.*
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.profile.ui.sections.EditProfileScreen
-import com.example.mindspark.profile.ui.sections.HelpCenterItem
 import com.example.mindspark.profile.ui.sections.HelpCenterScreen
 import com.example.mindspark.profile.ui.sections.InviteFriendsScreen
 import com.example.mindspark.profile.ui.sections.LanguageScreen
@@ -52,7 +55,9 @@ fun AppNavigation() {
         "splash",
         "IntroScreen1",
         "IntroScreen2",
-        "IntroScreen3"
+        "IntroScreen3",
+        "ActiveCallScreen",
+        "ActiveCallScreen/{callId}"
     )
 
     Scaffold(
@@ -137,6 +142,22 @@ fun AppNavigation() {
                     navController = navController,
                     startWithMentors = section == "mentors"
                 )
+            }
+
+            composable(
+                "ChatDetailScreen/{chatId}",
+                arguments = listOf(navArgument("chatId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
+                ChatDetailScreen(navController = navController, chatId = chatId)
+            }
+
+            composable(
+                "ActiveCallScreen/{callId}",
+                arguments = listOf(navArgument("callId") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val callId = backStackEntry.arguments?.getString("callId") ?: ""
+                ActiveCallScreen(navController = navController, callId = callId)
             }
         }
     }

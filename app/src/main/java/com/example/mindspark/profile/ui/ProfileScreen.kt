@@ -13,11 +13,21 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.profile.components.*
 import com.example.mindspark.ui.theme.customTypography
+
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileScreenPreview() {
+    ProfileScreen(navController = NavController(LocalContext.current))
+}
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +72,7 @@ fun ProfileScreen(navController: NavController) {
                     .padding(padding)
             ) {
                 // Profile Header Card
-                ProfileHeaderCard()
+                ProfileHeaderCard(navController)
 
                 // Quick Stats Card
                 QuickStatsCard()
