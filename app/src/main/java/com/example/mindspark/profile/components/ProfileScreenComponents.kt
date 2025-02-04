@@ -80,8 +80,8 @@ fun SettingsList(navController: NavController) {
             .padding(vertical = 16.dp)
     ) {
         SettingItem(icon = R.drawable.ic_edit, title = "Edit Profile") { navController.navigate("EditProfileScreen")}
-        SettingItem(icon = R.drawable.ic_payment, title = "Payment Option") { }
-        SettingItem(icon = R.drawable.ic_notifications, title = "Notifications") { }
+        SettingItem(icon = R.drawable.ic_payment, title = "Payment Option") { navController.navigate("PaymentOptionScreen") }
+        SettingItem(icon = R.drawable.ic_notifications, title = "Notifications") { navController.navigate("ProfileNotificationsScreen") }
         SettingItem(icon = R.drawable.ic_security, title = "Security") { navController.navigate("SecurityScreen") }
         SettingItem(icon = R.drawable.ic_language, title = "Language") { }
         SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode") { }

@@ -24,7 +24,7 @@ fun PaymentOptionScreen(navController: NavController) {
         containerColor = LightBlueBackground,
         topBar = {
             AuthTopBar(
-                title = "Security",
+                title = "Payment Option",
                 onBackClick = { navController.navigateUp() }
             )
         }
