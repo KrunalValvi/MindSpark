@@ -27,6 +27,7 @@ import com.example.mindspark.profile.ui.sections.EditProfileScreen
 import com.example.mindspark.profile.ui.sections.HelpCenterItem
 import com.example.mindspark.profile.ui.sections.HelpCenterScreen
 import com.example.mindspark.profile.ui.sections.InviteFriendsScreen
+import com.example.mindspark.profile.ui.sections.LanguageScreen
 import com.example.mindspark.profile.ui.sections.PaymentOptionScreen
 import com.example.mindspark.profile.ui.sections.ProfileNotificationsScreen
 import com.example.mindspark.profile.ui.sections.SecurityScreen
@@ -103,6 +104,7 @@ fun AppNavigation() {
             composable("PaymentOptionScreen") { PaymentOptionScreen(navController) }
             composable("HelpCenterScreen") { HelpCenterScreen(navController) }
             composable("InviteFriendsScreen") { InviteFriendsScreen(navController) }
+            composable("LanguageScreen") { LanguageScreen(navController) }
 
             composable(
                 route = "CourseDetailScreen/{courseId}",

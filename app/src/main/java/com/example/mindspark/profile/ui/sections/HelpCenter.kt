@@ -16,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -70,13 +72,13 @@ fun HelpCenterItem(
             Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = title,
-                    style = MaterialTheme.customTypography.mulish.semiBold,
+                    style = MaterialTheme.customTypography.jost.semiBold,
                     fontSize = 16.sp,
                     color = Color(0xFF202244)
                 )
                 Text(
                     text = subtitle,
-                    style = MaterialTheme.customTypography.mulish.regular,
+                    style = MaterialTheme.customTypography.mulish.semiBold,
                     fontSize = 14.sp,
                     color = Color(0xFF6E7191)
                 )
@@ -264,4 +266,10 @@ fun HelpCenterScreen(navController: NavController) {
             }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun HelpCenterScreenPreview() {
+    HelpCenterScreen(navController = NavController(LocalContext.current))
 }

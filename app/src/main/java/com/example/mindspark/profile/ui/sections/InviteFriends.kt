@@ -141,7 +141,7 @@ fun InviteFriendsScreen(navController: NavController) {
                     ) {
                         Text(
                             text = "Your Referral Code",
-                            style = MaterialTheme.customTypography.mulish.regular,
+                            style = MaterialTheme.customTypography.jost.semiBold,
                             fontSize = 14.sp,
                             color = Color(0xFF6E7191)
                         )
