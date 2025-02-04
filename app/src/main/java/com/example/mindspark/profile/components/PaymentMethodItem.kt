@@ -44,7 +44,7 @@ fun PaymentMethodItem(
             .clickable(onClick = onClick)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
-                color = if (isSelected) Color(0xFF1565C0) else Color(0xFFE0E0E0),
+                color = if (isSelected) Color(0xFFBDBDBD) else Color(0xFFE0E0E0), // Changed to gray
                 shape = RoundedCornerShape(12.dp)
             ),
         shape = RoundedCornerShape(12.dp),

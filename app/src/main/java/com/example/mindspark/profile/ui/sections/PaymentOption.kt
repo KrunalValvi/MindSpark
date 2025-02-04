@@ -141,7 +141,7 @@ fun PaymentOptionScreen(navController: NavController) {
                         contentColor = Color(0xFF1565C0)
                     ),
                     shape = RoundedCornerShape(15.dp),
-                    border = BorderStroke(1.dp, Color(0xFF1565C0))
+                    border = BorderStroke(1.dp, Color(0xFFBDBDBD)) // Changed to gray
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,

@@ -86,8 +86,8 @@ fun SettingsList(navController: NavController) {
         SettingItem(icon = R.drawable.ic_language, title = "Language") { }
         SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode") { }
         SettingItem(icon = R.drawable.ic_terms, title = "Terms & Conditions") { navController.navigate("TermsScreen") }
-        SettingItem(icon = R.drawable.ic_help, title = "Help Center") { }
-        SettingItem(icon = R.drawable.ic_invite, title = "Invite Friends") { }
+        SettingItem(icon = R.drawable.ic_help, title = "Help Center") { navController.navigate("HelpCenterScreen")}
+        SettingItem(icon = R.drawable.ic_invite, title = "Invite Friends") { navController.navigate("InviteFriendsScreen")}
     }
 }
 
