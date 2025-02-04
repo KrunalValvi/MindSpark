@@ -39,7 +39,6 @@ fun SecurityScreen(navController: NavController) {
             )
         }
     ) { padding ->
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
