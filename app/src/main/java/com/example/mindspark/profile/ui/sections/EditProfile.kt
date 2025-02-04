@@ -1,5 +1,6 @@
-package com.example.mindspark.auth.ui.register
+package com.example.mindspark.profile.ui.sections
 
+import android.content.SharedPreferences.Editor
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -41,17 +42,18 @@ import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.GenderDropdown
-
-private val LightBlueBackground = Color(0xFFF5F9FF)
+import com.example.mindspark.auth.components.StaticAuthTextField
+import com.example.mindspark.ui.theme.LightBlueBackground
 
 @Composable
-fun FillProfileScreen(navController: NavController) {
+fun EditProfileScreen(navController: NavController) {
+
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
         containerColor = LightBlueBackground,
         topBar = {
             AuthTopBar(
-                title = "Fill Your Profile",
+                title = "Edit Profile",
                 onBackClick = { navController.navigateUp() }
             )
         }
@@ -71,7 +73,6 @@ fun FillProfileScreen(navController: NavController) {
             var email by remember { mutableStateOf("") }
             var phoneNumber by remember { mutableStateOf("") }
             var gender by remember { mutableStateOf("") }
-
 
             Box(contentAlignment = Alignment.BottomEnd) {
                 Image(
@@ -166,18 +167,23 @@ fun FillProfileScreen(navController: NavController) {
                 onGenderSelected = { gender = it }
             )
 
+            StaticAuthTextField(
+                placeholder = "Student",
+            )
+
             Spacer(modifier = Modifier.height(15.dp))
 
             AuthButton(
-                text = "Continue",
-                onClick = { navController.navigate("CreatePinScreen") }
+                text = "Update",
+                onClick = { }
             )
         }
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun FillProfileScreenPreview() {
-    FillProfileScreen(navController = NavController(LocalContext.current))
+fun LoginScreenPreview1() {
+    EditProfileScreen(navController = NavController(LocalContext.current))
 }

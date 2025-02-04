@@ -36,6 +36,47 @@ import com.example.mindspark.ui.theme.customTypography
 
 
 @Composable
+fun StaticAuthTextField(
+    placeholder: String,
+    leadingIcon: @Composable (() -> Unit)? = null
+) {
+    TextField(
+        value = "",
+        onValueChange = { }, // Empty lambda since we don't want any changes
+        enabled = false, // This makes it non-interactive
+        readOnly = true, // This ensures it's read-only
+        placeholder = {
+            Text(
+                text = placeholder,
+                style = MaterialTheme.customTypography.mulish.bold,
+                fontSize = 14.sp,
+                color = Color.Gray
+            )
+        },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+            .shadow(
+                elevation = 4.dp,
+                shape = RoundedCornerShape(15.dp),
+                spotColor = Color(0x1A000000),
+                ambientColor = Color(0x1A000000)
+            ),
+        shape = RoundedCornerShape(15.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.White,
+            unfocusedContainerColor = Color.White,
+            disabledContainerColor = Color.White,
+            focusedIndicatorColor = Color.Transparent,
+            unfocusedIndicatorColor = Color.Transparent,
+            disabledIndicatorColor = Color.Transparent,
+            cursorColor = Color(0xFF1565C0)
+        ),
+    )
+}
+
+@Composable
 fun AuthTextField(
     value: String,
     onValueChange: (String) -> Unit,

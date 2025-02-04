@@ -41,17 +41,19 @@ import com.example.mindspark.home.components.TopMentorsListVertical
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
-fun CoursesListScreen(navController: NavController) {
-
+fun CoursesListScreen(
+    navController: NavController,
+    startWithMentors: Boolean = false // New parameter
+) {
     var search by remember { mutableStateOf("") }
-    var selectedOption by remember { mutableStateOf("Courses") }
+    var selectedOption by remember { mutableStateOf(if (startWithMentors) "Mentors" else "Courses") }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
         containerColor = LightBlueBackground,
         topBar = {
             AuthTopBar(
-                title = "Online Courses",
+                title = if (selectedOption == "Mentors") "Mentors" else "Online Courses",
                 onBackClick = { navController.navigateUp() }
             )
         }
@@ -64,7 +66,6 @@ fun CoursesListScreen(navController: NavController) {
                     start = 16.dp,
                     end = 16.dp,
                     top = 50.dp,
-//                    bottom = 30.dp // Add fixed bottom padding for navbar
                 ),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -104,9 +105,9 @@ fun CoursesListScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(10.dp))
 
             ToggleSelectionRowCourses(
-                options = listOf("Courses", "Mentors"), // Pass the two options
+                options = listOf("Courses", "Mentors"),
                 selectedOption = selectedOption,
-                onOptionSelected = { selectedOption = it }, // Update selection on click
+                onOptionSelected = { selectedOption = it },
             )
 
             when (selectedOption) {
@@ -128,25 +129,20 @@ fun CoursesListScreen(navController: NavController) {
                 }
 
                 "Mentors" -> {
-
-                    // Popular Courses Section
+                    // Mentors section with updated title
                     SectionHeader(
-                        title = "Result for \"3D Design\"",
+                        title = "Available Mentors",  // Updated title
                         onSeeAllClick = { navController.navigate("TopMentorScreen") }
                     )
 
-                    // Mentors List
                     TopMentorsListVertical(
                         mentors = MentorData.getTopMentors(),
                         onMentorClick = { mentor ->
                             navController.navigate("SingleMentorDetails/${mentor.id}")
                         }
                     )
-
                 }
             }
-
-
         }
     }
 }

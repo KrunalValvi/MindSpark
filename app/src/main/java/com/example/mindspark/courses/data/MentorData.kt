@@ -10,7 +10,7 @@ object MentorData {
         val mentors = listOf(
             MentorModel(
                 id = 1,
-                name = "Jiya",
+                name = "Mavji",
                 profession = "3D Design",
                 courses = 4,
                 students = 1500,

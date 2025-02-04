@@ -111,7 +111,10 @@ fun CoursesFilterScreen(navController: NavController) {
                         val selectedFilters = filters.flatMap { category ->
                             category.options.filter { it.isSelected }
                         }
-                        navController.navigate("MentorListScreen")
+                        // Navigate back to OnlineCoursesScreen with parameters
+                        navController.navigate("OnlineCourses/mentors") {
+                            popUpTo("OnlineCourses") { inclusive = true }
+                        }
                     },
                     modifier = Modifier.fillMaxWidth()
                 )

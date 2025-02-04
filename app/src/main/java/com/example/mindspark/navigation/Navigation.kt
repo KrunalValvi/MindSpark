@@ -23,6 +23,7 @@ import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.notifications.ui.NotificationsScreen
 import com.example.mindspark.onboarding.ui.*
 import com.example.mindspark.profile.ui.ProfileScreen
+import com.example.mindspark.profile.ui.sections.EditProfileScreen
 import com.example.mindspark.profile.ui.sections.SecurityScreen
 import com.example.mindspark.profile.ui.sections.TermsScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
@@ -58,7 +59,8 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = BottomNavItem.Home.route,
+//            startDestination = BottomNavItem.Home.route,
+            startDestination = "SignInScreen",
             modifier = Modifier.padding(paddingValues)
         ) {
             // Onboarding
@@ -91,6 +93,7 @@ fun AppNavigation() {
             composable("TermsScreen") { TermsScreen(navController) }
             composable("SecurityScreen") { SecurityScreen(navController) }
             composable("CoursesFilterScreen") { CoursesFilterScreen(navController) }
+            composable("EditProfileScreen") { EditProfileScreen(navController) }
 
             composable(
                 route = "CourseDetailScreen/{courseId}",
@@ -106,6 +109,23 @@ fun AppNavigation() {
             ) { backStackEntry ->
                 val mentorId = backStackEntry.arguments?.getInt("mentorId") ?: 0
                 SingleMentorDetails(navController, mentorId)
+            }
+
+            // In your navigation setup
+            composable(
+                route = "OnlineCourses/{section}",
+                arguments = listOf(
+                    navArgument("section") {
+                        type = NavType.StringType
+                        defaultValue = "courses"
+                    }
+                )
+            ) { backStackEntry ->
+                val section = backStackEntry.arguments?.getString("section") ?: "courses"
+                CoursesListScreen(
+                    navController = navController,
+                    startWithMentors = section == "mentors"
+                )
             }
         }
     }

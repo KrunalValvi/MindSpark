@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "975343211988",
+    "project_id": "mindspark-7bc82",
+    "storage_bucket": "mindspark-7bc82.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:975343211988:android:a5e7ab083bef0f70edb241",
+        "android_client_info": {
+          "package_name": "com.example.mindspark"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "975343211988-5crbnteo9a855mmo2697o5ucgfbik78i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.mindspark",
+            "certificate_hash": "75c8b965bd915c5964ec3f44e698b76cf98f318c"
+          }
+        },
+        {
+          "client_id": "975343211988-a0nus3tgoqthf03ir7i25hlhg8ef15bq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbTXw3eY9ihDmnP9H3D8p65asr43HqtkY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "975343211988-a0nus3tgoqthf03ir7i25hlhg8ef15bq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
