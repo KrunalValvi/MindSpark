@@ -116,7 +116,7 @@ fun getTransactionCounts(): Map<String, Int> {
 
 // Helper function to format currency
 fun formatCurrency(amount: Double): String {
-    return "$${String.format("%.2f", amount)}"
+    return "₹${String.format("%.2f", amount)}"
 }
 
 // Helper function to format date

@@ -109,7 +109,7 @@ fun TransactionsList(transaction: TransactionsModel) {
 
             // Price (you might want to add this to your TransactionsModel)
             Text(
-                text = "$99.99",  // Replace with actual price from model
+                text = "₹99.99",  // Replace with actual price from model
                 style = MaterialTheme.customTypography.jost.bold,
                 fontSize = 16.sp,
                 color = Color(0xFF202244)

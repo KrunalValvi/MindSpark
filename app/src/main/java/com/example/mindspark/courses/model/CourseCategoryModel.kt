@@ -1,4 +1,4 @@
-package com.example.mindspark.courses.data
+package com.example.mindspark.courses.model
 
 import com.example.mindspark.R
 import com.example.mindspark.home.model.CategoryItem

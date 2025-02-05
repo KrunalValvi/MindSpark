@@ -35,7 +35,7 @@ import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.CustomTextField
 import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.courses.data.CategoryData
+import com.example.mindspark.courses.model.CategoryData
 import com.example.mindspark.home.model.CategoryItem
 
 private val LightBlueBackground = Color(0xFFF5F9FF)

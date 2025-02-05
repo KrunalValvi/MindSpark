@@ -101,7 +101,7 @@ fun TransactionSummaryCard() {
                 color = Color(0xFF6E7191)
             )
             Text(
-                text = "$1,234.56",
+                text = "₹1,234.56",
                 style = MaterialTheme.customTypography.jost.bold,
                 fontSize = 24.sp,
                 color = Color(0xFF202244)
