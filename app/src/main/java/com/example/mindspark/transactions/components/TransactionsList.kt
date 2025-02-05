@@ -1,119 +1,111 @@
 package com.example.mindspark.transactions.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.transactions.model.TransactionsModel
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun TransactionsList(transaction: TransactionsModel) {
-    val statusColor = when (transaction.status) {
-        "Paid" -> Color(0xFF167F71)
-        "Pending" -> Color(0xFFFFC107)
-        "Failed" -> Color(0xFFD32F2F)
+fun TransactionsList(transactions: TransactionsModel) {
+    val statusColor = when (transactions.status) {
+        "Paid" -> Color(0xFF167F71) // Green
+        "Pending" -> Color(0xFFFFC107) // Yellow
+        "Failed" -> Color(0xFFD32F2F) // Red
         else -> Color.Gray
     }
 
-    val statusIcon = when (transaction.status) {
-        "Paid" -> Icons.Default.CheckCircle
-        "Pending" -> Icons.Default.Pending
-        "Failed" -> Icons.Default.Cancel
-        else -> Icons.Default.Help
-    }
-
-    Card(
+    Row(
         modifier = Modifier
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+            .fillMaxWidth()
+            .padding(top = 8.dp)
+            .padding(18.dp)
+            .width(80.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically
+        Card(
+            modifier = Modifier.size(70.dp),
+            colors = CardDefaults.cardColors(containerColor = Color.Black)
         ) {
-            // Course Image/Icon
-            Card(
-                modifier = Modifier.size(60.dp),
-                shape = RoundedCornerShape(8.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = Color(0xFF1565C0).copy(alpha = 0.1f)
-                )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(120.dp)
+                    .background(Color.Black)
+                    .clickable { },
+                contentAlignment = Alignment.Center
             ) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.School,
-                        contentDescription = null,
-                        tint = Color(0xFF1565C0),
-                        modifier = Modifier.size(30.dp)
-                    )
-                }
+                // Empty for now
             }
+        }
 
-            Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(10.dp))
 
-            // Transaction Details
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = transaction.title,
-                    style = MaterialTheme.customTypography.jost.semiBold,
-                    fontSize = 16.sp,
-                    color = Color(0xFF202244)
-                )
-
-                Text(
-                    text = transaction.course,
-                    style = MaterialTheme.customTypography.mulish.regular,
-                    fontSize = 14.sp,
-                    color = Color(0xFF6E7191)
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Icon(
-                        imageVector = statusIcon,
-                        contentDescription = null,
-                        tint = statusColor,
-                        modifier = Modifier.size(16.dp)
-                    )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(
-                        text = transaction.status,
-                        style = MaterialTheme.customTypography.mulish.regular,
-                        fontSize = 12.sp,
-                        color = statusColor
-                    )
-                }
-            }
-
-            // Price (you might want to add this to your TransactionsModel)
-            Text(
-                text = "₹99.99",  // Replace with actual price from model
-                style = MaterialTheme.customTypography.jost.bold,
-                fontSize = 16.sp,
-                color = Color(0xFF202244)
+        Column {
+            androidx.compose.material3.Text(
+                text = transactions.title,
+                color = Color(0xFF202244),
+                style = MaterialTheme.customTypography.jost.semiBold,
+                fontSize = 18.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
             )
+
+            androidx.compose.material3.Text(
+                text = transactions.course,
+                color = Color(0xFF545454),
+                style = MaterialTheme.customTypography.mulish.bold,
+                fontSize = 13.sp,
+                modifier = Modifier
+                    .fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            Box(
+                modifier = Modifier
+                    .background(color = statusColor)
+                    .width(60.dp)
+                    .height(22.dp)
+            ) {
+                androidx.compose.material3.Text(
+                    text = transactions.status,
+                    color = Color.White,
+                    style = MaterialTheme.customTypography.mulish.bold,
+                    fontSize = 13.sp,
+                    modifier = Modifier.align(Alignment.Center)
+                )
+            }
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun TransactionsListPreview() {
+    TransactionsList(
+        transactions = TransactionsModel(
+            title = "Build Personal Branding",
+            course = "Web Designer",
+            status = "Pending"
+        )
+    )
 }
