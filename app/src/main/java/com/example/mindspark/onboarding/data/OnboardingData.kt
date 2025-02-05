@@ -6,7 +6,7 @@ object OnboardingData {
     val onboardingScreens = listOf(
         OnboardingScreenContent(
             title = "Online Learning",
-            description = "We Provide Classes Online Classes and Pre Recorded\nLeactures.!",
+            description = "We Provide Online Classes and Pre Recorded Leactures.!",
             currentStep = 1,
             nextRoute = "IntroScreen2"
         ),

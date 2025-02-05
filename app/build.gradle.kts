@@ -78,8 +78,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
 
     // Dagger Hilt
-    implementation(libs.hilt.android)
     kapt(libs.hilt.android.compiler)
+    implementation(libs.hilt.android)
     implementation(libs.androidx.hilt.navigation.compose)
 
     // Coil for Image Loading
@@ -87,6 +87,11 @@ dependencies {
 
     // Timber for Logging
     implementation(libs.timber)
+
+    implementation(libs.accompanist.pager)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.accompanist.pager.indicators)
+
 
 }
 

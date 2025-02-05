@@ -58,7 +58,9 @@ fun HomeHeader(navController: NavController) {
         Image(
             painter = painterResource(R.drawable.ic_notification),
             contentDescription = "Notifications",
-            modifier = Modifier.size(40.dp).clickable{ navController.navigate("NotificationsScreen")}
+            modifier = Modifier
+                .size(40.dp)
+                .clickable { navController.navigate("NotificationsScreen") }
         )
     }
 }
@@ -141,7 +143,6 @@ fun CategoriesList(
     LazyRow(
         modifier = Modifier
             .fillMaxWidth(),
-//            .padding(5.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -195,7 +196,6 @@ fun PopularCoursesListHorizontal(courses: List<CourseModel>, onCourseClick: (Cou
         }
     }
 }
-
 
 @Composable
 fun PopularCoursesListVertical(courses: List<CourseModel>, onCourseClick: (CourseModel) -> Unit) {

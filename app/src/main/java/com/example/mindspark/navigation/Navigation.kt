@@ -25,6 +25,7 @@ import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.navigation.components.BottomNavigationBar
 import com.example.mindspark.navigation.model.BottomNavItem
 import com.example.mindspark.notifications.ui.NotificationsScreen
+import com.example.mindspark.onboarding.components.OnboardingScreen
 import com.example.mindspark.onboarding.ui.*
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.profile.ui.sections.EditProfileScreen
@@ -72,6 +73,7 @@ fun AppNavigation() {
             navController = navController,
             startDestination = BottomNavItem.Home.route,
 //            startDestination = "SignInScreen",
+//            startDestination = "splash",
             modifier = Modifier.padding(paddingValues)
         ) {
             // Onboarding

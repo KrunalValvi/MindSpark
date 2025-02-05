@@ -32,7 +32,7 @@ fun PopularCourseCardHorizontal(course: CourseModel, onCourseClick: (CourseModel
             .padding(8.dp)
             .width(250.dp)
             .wrapContentHeight()
-            .clickable{ onCourseClick(course)},
+            .clickable { onCourseClick(course) },
         shape = RoundedCornerShape(12.dp),
     ) {
         Column(
@@ -57,8 +57,8 @@ fun PopularCourseCardHorizontal(course: CourseModel, onCourseClick: (CourseModel
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-
-                Row() {  // Category Text
+                Row {
+                    // Category Text
                     Text(
                         text = course.category,
                         color = Color(0xFFFF5722), // Orange color
@@ -149,11 +149,9 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
     Card(
         modifier = Modifier
             .fillMaxWidth()
-//            .padding(8.dp)
             .wrapContentHeight()
-            .clickable{ onCourseClick(course)},
+            .clickable { onCourseClick(course) },
         shape = RoundedCornerShape(12.dp),
-//        elevation = 4.dp
     ) {
         Row(
             modifier = Modifier
@@ -163,7 +161,6 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
             // Placeholder for image
             Box(
                 modifier = Modifier
-//                    .fillMaxWidth()
                     .height(120.dp)
                     .width(110.dp)
                     .background(Color.Black), // Replace with Image later
@@ -178,12 +175,11 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
                 modifier = Modifier
                     .padding(8.dp)
             ) {
-
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
-
-                ){  // Category Text
+                ) {
+                    // Category Text
                     Text(
                         text = course.category,
                         color = Color(0xFFFF5722), // Orange color
@@ -268,4 +264,3 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
         }
     }
 }
-

@@ -11,14 +11,14 @@ enum class CourseCategory(val value: String) {
     SEOMarketing("Digital Marketing"),
     Programming("App Development"),
     UIUXDesign("UI/UX Design"),
-    GameDevelopment("Game Development"),
-    DataScience("Data Science"),
-    AIML("AI & Machine Learning"),
-    CloudComputing("Cloud Computing"),
-    CyberSecurity("Cybersecurity"),
-    Blockchain("Blockchain"),
-    ProductManagement("Product Management"),
-    DevOps("DevOps")
+//    GameDevelopment("Game Development"),
+//    DataScience("Data Science"),
+//    AIML("AI & Machine Learning"),
+//    CloudComputing("Cloud Computing"),
+//    CyberSecurity("Cybersecurity"),
+//    Blockchain("Blockchain"),
+//    ProductManagement("Product Management"),
+//    DevOps("DevOps")
 }
 
 data class FeatureModel(

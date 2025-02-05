@@ -16,13 +16,6 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun LaunchScreen(navController: NavController) {
-    LaunchedEffect(Unit) {
-        delay(1000)
-        navController.navigate("IntroScreen1") {
-            popUpTo("splash") { inclusive = true }
-        }
-    }
-
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -33,7 +26,14 @@ fun LaunchScreen(navController: NavController) {
         Image(
             painter = painterResource(R.drawable.logo_launchscreen),
             contentDescription = null,
-            modifier = Modifier.size(300.dp)
+            modifier = Modifier.fillMaxWidth(0.7f)
         )
+    }
+
+    LaunchedEffect(Unit) {
+        delay(1000)
+        navController.navigate("IntroScreen1") {
+            popUpTo("splash") { inclusive = true }
+        }
     }
 }
