@@ -21,3 +21,4 @@ fun BookMarkList(bookmarks: List<BookMarkModel>, onCourseClick: (BookMarkModel) 
         }
     }
 }
+
