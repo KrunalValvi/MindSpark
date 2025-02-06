@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,6 +34,16 @@ private val LightBlueBackground = Color(0xFFF5F9FF)
 @Composable
 fun PopularCoursesList(navController: NavController) {
     var selectedCategory by remember { mutableStateOf("All") }
+    val allCourses = CourseData.getPopularCourses()
+    val filteredCourses by remember(selectedCategory) {
+        derivedStateOf {
+            if (selectedCategory == "All") {
+                allCourses
+            } else {
+                allCourses.filter { it.category == selectedCategory }
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -47,7 +60,7 @@ fun PopularCoursesList(navController: NavController) {
                 .fillMaxSize()
                 .background(LightBlueBackground)
                 .padding(padding)
-                .padding(16.dp),
+                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Categories List
@@ -59,14 +72,23 @@ fun PopularCoursesList(navController: NavController) {
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Popular Courses List
-            PopularCoursesListVertical(
-                courses = CourseData.getPopularCourses(),
-                onCourseClick = { course ->
-                    // Pass course.id to the CourseDetailScreen
-                    navController.navigate("CourseDetailScreen/${course.id}")
-                }
-            )
+            // Popular Courses List with filtered courses
+            if (filteredCourses.isEmpty()) {
+                Text(
+                    text = "Course not available",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(16.dp)
+                )
+            } else {
+                PopularCoursesListVertical(
+                    courses = filteredCourses,
+                    onCourseClick = { course ->
+                        // Pass course.id to the CourseDetailScreen
+                        navController.navigate("CourseDetailScreen/${course.id}")
+                    }
+                )
+            }
         }
     }
 }
@@ -75,5 +97,4 @@ fun PopularCoursesList(navController: NavController) {
 @Composable
 fun PopularCoursesListPreview() {
     PopularCoursesList(navController = NavController(LocalContext.current))
-
 }

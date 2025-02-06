@@ -1,59 +1,59 @@
-package com.example.mindspark.transactions.data
+package com.example.mindspark.bookmark.data
 
-import com.example.mindspark.transactions.model.TransactionsModel
+import com.example.mindspark.bookmark.model.BookMarkModel
 
-fun getAllTransactions(): List<TransactionsModel> = listOf(
-    TransactionsModel(
+fun getAllTransactions(): List<BookMarkModel> = listOf(
+    BookMarkModel(
         title = "Build Personal Branding",
         course = "Web Designer",
         status = "Paid"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Mastering UI/UX",
         course = "Graphic Design",
         status = "Pending"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Android Development Basics",
         course = "Mobile Development",
         status = "Paid"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Introduction to Kotlin",
         course = "Programming",
         status = "Failed"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Advanced Java Concepts",
         course = "Software Engineering",
         status = "Paid"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Machine Learning Essentials",
         course = "Artificial Intelligence",
         status = "Pending"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Cybersecurity Fundamentals",
         course = "Network Security",
         status = "Paid"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Digital Marketing 101",
         course = "Marketing",
         status = "Paid"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Full-Stack Web Development",
         course = "Web Development",
         status = "Failed"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Python for Data Science",
         course = "Data Analytics",
         status = "Pending"
     ),
-    TransactionsModel(
+    BookMarkModel(
         title = "Cloud Computing with AWS",
         course = "Cloud Technology",
         status = "Paid"

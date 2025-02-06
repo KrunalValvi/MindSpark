@@ -1,4 +1,4 @@
-package com.example.mindspark.transactions.ui
+package com.example.mindspark.bookmark.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.transactions.components.TransactionsList
-import com.example.mindspark.transactions.data.getAllTransactions
+import com.example.mindspark.bookmark.components.TransactionsList
+import com.example.mindspark.bookmark.data.getAllTransactions
 import com.example.mindspark.ui.theme.LightBlueBackground
 
 @Composable

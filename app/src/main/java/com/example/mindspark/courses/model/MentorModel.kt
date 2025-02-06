@@ -24,5 +24,6 @@ data class MentorModel(
     val students: Int,
     val ratings: Int,
     val coursesList: List<MentorCourseModel>,
-    val reviews: List<ReviewModel>
+    val reviews: List<ReviewModel>,
+    val imageRes: Int
 )

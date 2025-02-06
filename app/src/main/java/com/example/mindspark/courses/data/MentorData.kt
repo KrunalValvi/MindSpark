@@ -1,5 +1,6 @@
 package com.example.mindspark.courses.data
 
+import com.example.mindspark.R
 import com.example.mindspark.courses.model.MentorCourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.courses.model.ReviewModel
@@ -10,14 +11,15 @@ object MentorData {
         val mentors = listOf(
             MentorModel(
                 id = 1,
-                name = "Mavji",
+                name = "Jiya",
                 profession = "3D Design",
                 courses = 4,
                 students = 1500,
                 ratings = 423,
+                imageRes = R.drawable.mentor_jiya,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 5, // Maps to "Master 3D Animation with Blender"
+                        id = 5,
                         title = "Master 3D Animation with Blender",
                         level = "Advanced",
                         price = "1500/-",
@@ -26,7 +28,7 @@ object MentorData {
                         hours = "50 Hours"
                     ),
                     MentorCourseModel(
-                        id = 6, // Maps to "3D Modeling for Beginners"
+                        id = 6,
                         title = "3D Modeling for Beginners",
                         level = "Beginner",
                         price = "1300/-",
@@ -35,7 +37,7 @@ object MentorData {
                         hours = "40 Hours"
                     ),
                     MentorCourseModel(
-                        id = 7, // Maps to "Advanced 3D Sculpting"
+                        id = 7,
                         title = "Advanced 3D Sculpting",
                         level = "Advanced",
                         price = "1700/-",
@@ -44,7 +46,7 @@ object MentorData {
                         hours = "55 Hours"
                     ),
                     MentorCourseModel(
-                        id = 8, // Maps to "3D Printing Essentials"
+                        id = 8,
                         title = "3D Printing Essentials",
                         level = "Intermediate",
                         price = "1400/-",
@@ -60,14 +62,15 @@ object MentorData {
             ),
             MentorModel(
                 id = 2,
-                name = "Aman",
+                name = "Mavji",
                 profession = "Web Developer",
                 courses = 2,
                 students = 1200,
                 ratings = 52,
+                imageRes = R.drawable.mentor_mavji,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 9, // Maps to "Full-Stack Web Development with React & Node"
+                        id = 9,
                         title = "Full-Stack Web Development with React & Node",
                         level = "Advanced",
                         price = "2000/-",
@@ -76,7 +79,7 @@ object MentorData {
                         hours = "60 Hours"
                     ),
                     MentorCourseModel(
-                        id = 10, // Maps to "Front-End Development with Vue.js"
+                        id = 10,
                         title = "Front-End Development with Vue.js",
                         level = "Intermediate",
                         price = "1800/-",
@@ -97,9 +100,10 @@ object MentorData {
                 courses = 2,
                 students = 2000,
                 ratings = 55,
+                imageRes = R.drawable.mentor_rahul,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 3, // Maps to "Photoshop for Beginners"
+                        id = 3,
                         title = "Photoshop for Beginners",
                         level = "Beginner",
                         price = "1200/-",
@@ -108,7 +112,7 @@ object MentorData {
                         hours = "40 Hours"
                     ),
                     MentorCourseModel(
-                        id = 7, // Maps to "Advanced 3D Sculpting"
+                        id = 7,
                         title = "Advanced 3D Sculpting",
                         level = "Advanced",
                         price = "1700/-",
@@ -124,14 +128,15 @@ object MentorData {
             ),
             MentorModel(
                 id = 4,
-                name = "Manev",
+                name = "Riya",
                 profession = "UI/UX Designer",
                 courses = 2,
                 students = 950,
                 ratings = 465,
+                imageRes = R.drawable.mentor_riya,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 4, // Maps to "Illustrator Mastery"
+                        id = 4,
                         title = "Illustrator Mastery",
                         level = "Advanced",
                         price = "1800/-",
@@ -140,7 +145,7 @@ object MentorData {
                         hours = "60 Hours"
                     ),
                     MentorCourseModel(
-                        id = 1, // Maps to "Graphic Design Basics"
+                        id = 1,
                         title = "Graphic Design Basics",
                         level = "Beginner",
                         price = "1000/-",
@@ -161,9 +166,10 @@ object MentorData {
                 courses = 2,
                 students = 3000,
                 ratings = 57,
+                imageRes = R.drawable.mentor_raghav,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 5, // Maps to "Master 3D Animation with Blender"
+                        id = 5,
                         title = "Master 3D Animation with Blender",
                         level = "Advanced",
                         price = "1500/-",
@@ -172,7 +178,7 @@ object MentorData {
                         hours = "50 Hours"
                     ),
                     MentorCourseModel(
-                        id = 8, // Maps to "3D Printing Essentials"
+                        id = 8,
                         title = "3D Printing Essentials",
                         level = "Intermediate",
                         price = "1400/-",
@@ -193,9 +199,10 @@ object MentorData {
                 courses = 1,
                 students = 1800,
                 ratings = 42,
+                imageRes = R.drawable.mentor_mihir,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 6, // Maps to "3D Modeling for Beginners"
+                        id = 6,
                         title = "3D Modeling for Beginners",
                         level = "Beginner",
                         price = "1300/-",
@@ -216,9 +223,10 @@ object MentorData {
                 courses = 1,
                 students = 2200,
                 ratings = 54,
+                imageRes = R.drawable.mentor_mohit,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 7, // Maps to "Advanced 3D Sculpting"
+                        id = 7,
                         title = "Advanced 3D Sculpting",
                         level = "Advanced",
                         price = "1700/-",
@@ -239,9 +247,10 @@ object MentorData {
                 courses = 1,
                 students = 800,
                 ratings = 44,
+                imageRes = R.drawable.mentor_sneha,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 8, // Maps to "3D Printing Essentials"
+                        id = 8,
                         title = "3D Printing Essentials",
                         level = "Intermediate",
                         price = "1400/-",
@@ -262,9 +271,10 @@ object MentorData {
                 courses = 1,
                 students = 600,
                 ratings = 325,
+                imageRes = R.drawable.mentor_pooja,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 9, // Maps to "Full-Stack Web Development with React & Node"
+                        id = 9,
                         title = "Full-Stack Web Development with React & Node",
                         level = "Advanced",
                         price = "2000/-",
@@ -285,9 +295,10 @@ object MentorData {
                 courses = 1,
                 students = 2500,
                 ratings = 525,
+                imageRes = R.drawable.mentor_rajesh,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 10, // Maps to "Front-End Development with Vue.js"
+                        id = 10,
                         title = "Front-End Development with Vue.js",
                         level = "Intermediate",
                         price = "1800/-",
@@ -308,9 +319,10 @@ object MentorData {
                 courses = 2,
                 students = 1700,
                 ratings = 452,
+                imageRes = R.drawable.mentor_neha,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 11, // Maps to "Backend Development with Django"
+                        id = 11,
                         title = "Backend Development with Django",
                         level = "Intermediate",
                         price = "1700/-",
@@ -331,9 +343,10 @@ object MentorData {
                 courses = 1,
                 students = 1400,
                 ratings = 552,
+                imageRes = R.drawable.mentor_siddharth,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 12, // Maps to "Responsive Web Design"
+                        id = 12,
                         title = "Responsive Web Design",
                         level = "Beginner",
                         price = "1500/-",
@@ -354,9 +367,10 @@ object MentorData {
                 courses = 1,
                 students = 1000,
                 ratings = 4252,
+                imageRes = R.drawable.mentor_kriti,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 13, // Maps to "Digital Marketing Strategies"
+                        id = 13,
                         title = "Digital Marketing Strategies",
                         level = "Beginner",
                         price = "1500/-",
@@ -377,9 +391,10 @@ object MentorData {
                 courses = 2,
                 students = 1600,
                 ratings = 42,
+                imageRes = R.drawable.mentor_arjun,
                 coursesList = listOf(
                     MentorCourseModel(
-                        id = 14, // Maps to "Social Media Marketing"
+                        id = 14,
                         title = "Social Media Marketing",
                         level = "Intermediate",
                         price = "1400/-",
@@ -388,7 +403,7 @@ object MentorData {
                         hours = "40 Hours"
                     ),
                     MentorCourseModel(
-                        id = 15, // Maps to "Content Marketing Mastery"
+                        id = 15,
                         title = "Content Marketing Mastery",
                         level = "Advanced",
                         price = "1600/-",

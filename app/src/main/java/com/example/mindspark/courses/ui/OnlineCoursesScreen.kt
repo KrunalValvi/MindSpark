@@ -62,11 +62,8 @@ fun CoursesListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .background(LightBlueBackground)
-                .padding(
-                    start = 16.dp,
-                    end = 16.dp,
-                    top = 50.dp,
-                ),
+                .padding(start = 16.dp, end = 16.dp, top = 50.dp),
+
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 

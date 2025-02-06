@@ -1,6 +1,7 @@
 package com.example.mindspark.courses.ui
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,11 +14,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImagePainter.State.Empty.painter
+import coil.decode.ImageSource
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.FollowButton
@@ -79,8 +84,14 @@ private fun MentorInfoSection(mentor: MentorModel) {
             modifier = Modifier
                 .size(100.dp)
                 .clip(CircleShape)
-                .background(Color.Black)
-        )
+        ){
+            Image(
+                painter = painterResource(id = mentor.imageRes),
+                contentDescription = "Profile Picture of ${mentor.name}",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop
+            )
+        }
 
         Spacer(modifier = Modifier.height(12.dp))
 

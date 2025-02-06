@@ -34,6 +34,7 @@ data class CourseModel(
     val price: String,
     val rating: String,
     val students: String,
+    val imageRes: Int,
     val videos: String,
     val hours: String,
     val about: String,

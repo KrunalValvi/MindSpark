@@ -1,4 +1,4 @@
-package com.example.mindspark.transactions.components
+package com.example.mindspark.bookmark.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,11 +21,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.mindspark.transactions.model.TransactionsModel
+import com.example.mindspark.bookmark.model.BookMarkModel
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun TransactionsList(transactions: TransactionsModel) {
+fun TransactionsList(transactions: BookMarkModel) {
     val statusColor = when (transactions.status) {
         "Paid" -> Color(0xFF167F71) // Green
         "Pending" -> Color(0xFFFFC107) // Yellow
@@ -102,7 +102,7 @@ fun TransactionsList(transactions: TransactionsModel) {
 @Composable
 fun TransactionsListPreview() {
     TransactionsList(
-        transactions = TransactionsModel(
+        transactions = BookMarkModel(
             title = "Build Personal Branding",
             course = "Web Designer",
             status = "Pending"

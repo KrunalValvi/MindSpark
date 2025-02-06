@@ -272,7 +272,7 @@ private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (Mento
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_profile_placeholder),
+                    painter = painterResource(id = mentor.imageRes),
                     contentDescription = "Instructor",
                     modifier = Modifier
                         .size(50.dp)
@@ -398,7 +398,8 @@ fun CourseDetailComponentsPreview() {
             FeatureModel("Beginner Level", R.drawable.ic_beginner_level),
             FeatureModel("Certificate of Completion", R.drawable.ic_certificate)
         ),
-        mentorIds = listOf(1, 2)
+        mentorIds = listOf(1, 2),
+        imageRes = R.drawable.image_fingerprint
     )
     val mentors = listOf(
         MentorModel(
@@ -409,7 +410,8 @@ fun CourseDetailComponentsPreview() {
             students = 1500,
             ratings = 300,
             coursesList = emptyList(),
-            reviews = emptyList()
+            reviews = emptyList(),
+            imageRes = R.drawable.mentor_jiya
         ),
         MentorModel(
             id = 2,
@@ -419,7 +421,8 @@ fun CourseDetailComponentsPreview() {
             students = 1200,
             ratings = 250,
             coursesList = emptyList(),
-            reviews = emptyList()
+            reviews = emptyList(),
+            imageRes = R.drawable.mentor_arjun
         )
     )
     CourseDetailComponents(course, mentors, onMentorClick = {})
