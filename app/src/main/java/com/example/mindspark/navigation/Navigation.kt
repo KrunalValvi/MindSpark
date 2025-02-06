@@ -16,6 +16,7 @@ import com.example.mindspark.auth.ui.login.SignInScreen
 import com.example.mindspark.auth.ui.register.FillProfileScreen
 import com.example.mindspark.auth.ui.register.RegisterScreen
 import com.example.mindspark.auth.ui.security.*
+import com.example.mindspark.bookmark.ui.BookMarkScreen
 import com.example.mindspark.communication.ui.InboxScreen
 import com.example.mindspark.communication.ui.call.ActiveCallScreen
 import com.example.mindspark.communication.ui.chat.ChatDetailScreen
@@ -35,7 +36,6 @@ import com.example.mindspark.profile.ui.sections.PaymentOptionScreen
 import com.example.mindspark.profile.ui.sections.ProfileNotificationsScreen
 import com.example.mindspark.profile.ui.sections.SecurityScreen
 import com.example.mindspark.profile.ui.sections.TermsScreen
-import com.example.mindspark.bookmark.ui.TransactionsScreen
 
 @Composable
 fun AppNavigation() {
@@ -96,7 +96,7 @@ fun AppNavigation() {
             composable(BottomNavItem.Home.route) { HomeScreen(navController) }
             composable(BottomNavItem.MyCourses.route) { CoursesListScreen(navController) }
             composable(BottomNavItem.Inbox.route) { InboxScreen(navController) }
-            composable(BottomNavItem.Transactions.route) { TransactionsScreen(navController) }
+            composable(BottomNavItem.BookMark.route) { BookMarkScreen(navController) }
             composable(BottomNavItem.Profile.route) { ProfileScreen(navController) }
             composable("SearchScreen") { SearchScreen(navController) }
             composable("PopularCoursesList") { PopularCoursesList(navController) }

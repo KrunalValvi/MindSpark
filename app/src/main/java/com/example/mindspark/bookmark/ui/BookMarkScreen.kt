@@ -15,20 +15,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.bookmark.components.TransactionsList
-import com.example.mindspark.bookmark.data.getAllTransactions
+import com.example.mindspark.bookmark.components.BookMarkList
+import com.example.mindspark.bookmark.data.getAllBookMarks
 import com.example.mindspark.ui.theme.LightBlueBackground
 
 @Composable
-fun TransactionsScreen(navController: NavController) {
-    val transactions = getAllTransactions()
+fun BookMarkScreen(navController: NavController) {
+    val bookmarks = getAllBookMarks()
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
         containerColor = LightBlueBackground,
         topBar = {
             AuthTopBar(
-                title = "Transactions",
+                title = "BookMarks",
                 onBackClick = { navController.navigateUp() }
             )
         }
@@ -39,22 +39,15 @@ fun TransactionsScreen(navController: NavController) {
                 .background(LightBlueBackground)
                 .padding(padding)
         ) {
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(0.dp)
-            ) {
-                items(transactions.size) { index ->
-                    TransactionsList(transactions[index])
-                }
-            }
-
+            BookMarkList(bookmarks = bookmarks, onCourseClick = { bookmark ->
+                // Handle course click
+            })
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
-fun LoginScreenPreview() {
-    TransactionsScreen(navController = NavController(LocalContext.current))
+fun BookMarkScreenPreview() {
+    BookMarkScreen(navController = NavController(LocalContext.current))
 }

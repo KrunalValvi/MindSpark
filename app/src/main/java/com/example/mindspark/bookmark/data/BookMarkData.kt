@@ -2,60 +2,60 @@ package com.example.mindspark.bookmark.data
 
 import com.example.mindspark.bookmark.model.BookMarkModel
 
-fun getAllTransactions(): List<BookMarkModel> = listOf(
+fun getAllBookMarks(): List<BookMarkModel> = listOf(
     BookMarkModel(
-        title = "Build Personal Branding",
+        title = "Graphic Design Basics",
         course = "Web Designer",
-        status = "Paid"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Mastering UI/UX",
+        title = "Advanced Graphic Design",
         course = "Graphic Design",
-        status = "Pending"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Android Development Basics",
+        title = "Photoshop for Beginners",
         course = "Mobile Development",
-        status = "Paid"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Introduction to Kotlin",
+        title = "Illustrator Mastery",
         course = "Programming",
-        status = "Failed"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Advanced Java Concepts",
+        title = "3D Animation with Blender",
         course = "Software Engineering",
-        status = "Paid"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Machine Learning Essentials",
+        title = "3D Modeling for Beginners",
         course = "Artificial Intelligence",
-        status = "Pending"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Cybersecurity Fundamentals",
+        title = "Advanced 3D Sculpting",
         course = "Network Security",
-        status = "Paid"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Digital Marketing 101",
+        title = "3D Printing Essentials",
         course = "Marketing",
-        status = "Paid"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Full-Stack Web Development",
+        title = "Full-Stack Web Development with React & Node",
         course = "Web Development",
-        status = "Failed"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Python for Data Science",
+        title = "Front-End Development with Vue.js",
         course = "Data Analytics",
-        status = "Pending"
+        status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "Cloud Computing with AWS",
+        title = "Backend Development with Django",
         course = "Cloud Technology",
-        status = "Paid"
+        status = "Bookmarked"
     )
 )
