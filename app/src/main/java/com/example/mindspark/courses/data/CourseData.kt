@@ -4,13 +4,11 @@ import com.example.mindspark.R
 import com.example.mindspark.courses.model.CourseCategory
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.FeatureModel
+import androidx.compose.runtime.mutableStateListOf
 
 object CourseData {
 
-    fun getAllCategories(): List<CourseCategory> = CourseCategory.entries
-
-    // Get popular courses
-    fun getPopularCourses(): List<CourseModel> = listOf(
+    private val allCourses = listOf(
         CourseModel(
             id = 1,
             category = "Graphic Design",
@@ -351,11 +349,33 @@ object CourseData {
         )
     )
 
+    val popularCourses = mutableStateListOf<CourseModel>().apply {
+        addAll(allCourses)
+    }
+
+    val bookmarkedCourses = mutableStateListOf<CourseModel>()
+
+    fun getAllCategories(): List<CourseCategory> = CourseCategory.entries
+
+    fun getPopularCourses(): List<CourseModel> = popularCourses
+
+    fun addBookmark(course: CourseModel) {
+        course.isBookmarked = true
+        bookmarkedCourses.add(course)
+    }
+
+    fun removeBookmark(course: CourseModel) {
+        course.isBookmarked = false
+        bookmarkedCourses.remove(course)
+    }
+
+    fun getBookmarkedCourses(): List<CourseModel> = bookmarkedCourses
+
     fun getCourseById(courseId: Int): CourseModel? {
-        return getPopularCourses().find { it.id == courseId }
+        return allCourses.find { it.id == courseId }
     }
 
     fun getCoursesByMentorId(mentorId: Int): List<CourseModel> {
-        return getPopularCourses().filter { it.mentorIds.contains(mentorId) }
+        return allCourses.filter { it.mentorIds.contains(mentorId) }
     }
 }

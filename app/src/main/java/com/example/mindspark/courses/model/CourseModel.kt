@@ -42,5 +42,6 @@ data class CourseModel(
     val certification: String,
     val language: String,
     val features: List<FeatureModel>,
-    val mentorIds: List<Int> // IDs of the mentors teaching the course
+    val mentorIds: List<Int>, // IDs of the mentors teaching the course
+    var isBookmarked: Boolean = false // Add this property to indicate if the course is bookmarked
 )

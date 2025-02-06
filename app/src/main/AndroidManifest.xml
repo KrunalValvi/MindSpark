@@ -13,6 +13,11 @@
         android:theme="@style/Theme.MindSpark"
         tools:targetApi="31">
         <activity
+            android:name=".BottomNavActivity"
+            android:exported="false"
+            android:label="@string/title_activity_bottom_nav"
+            android:theme="@style/Theme.MindSpark" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"

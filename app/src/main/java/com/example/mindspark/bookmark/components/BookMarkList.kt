@@ -7,17 +7,20 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mindspark.bookmark.model.BookMarkModel
+import com.example.mindspark.courses.model.CourseModel
 
 @Composable
-fun BookMarkList(bookmarks: List<BookMarkModel>, onCourseClick: (BookMarkModel) -> Unit) {
+fun BookMarkList(bookmarks: List<BookMarkModel>, courses: List<CourseModel>, onCourseClick: (BookMarkModel) -> Unit) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
     ) {
         items(bookmarks.size) { index ->
-            BookMarkCard(bookmark = bookmarks[index], onCourseClick = onCourseClick )
+            val course = courses.find { it.id == bookmarks[index].courseId }
+            if (course != null) {
+                BookMarkCard(course = course, bookmark = bookmarks[index], onCourseClick = onCourseClick)
+            }
         }
     }
 }
-

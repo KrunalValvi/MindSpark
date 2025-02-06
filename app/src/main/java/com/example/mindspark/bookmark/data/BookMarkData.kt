@@ -5,57 +5,57 @@ import com.example.mindspark.bookmark.model.BookMarkModel
 fun getAllBookMarks(): List<BookMarkModel> = listOf(
     BookMarkModel(
         title = "Graphic Design Basics",
-        course = "Web Designer",
+        courseId = 1,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "Advanced Graphic Design",
-        course = "Graphic Design",
+        courseId = 2,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "Photoshop for Beginners",
-        course = "Mobile Development",
+        courseId = 3,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "Illustrator Mastery",
-        course = "Programming",
+        courseId = 4,
         status = "Bookmarked"
     ),
     BookMarkModel(
-        title = "3D Animation with Blender",
-        course = "Software Engineering",
+        title = "Master 3D Animation with Blender",
+        courseId = 5,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "3D Modeling for Beginners",
-        course = "Artificial Intelligence",
+        courseId = 6,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "Advanced 3D Sculpting",
-        course = "Network Security",
+        courseId = 7,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "3D Printing Essentials",
-        course = "Marketing",
+        courseId = 8,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "Full-Stack Web Development with React & Node",
-        course = "Web Development",
+        courseId = 9,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "Front-End Development with Vue.js",
-        course = "Data Analytics",
+        courseId = 10,
         status = "Bookmarked"
     ),
     BookMarkModel(
         title = "Backend Development with Django",
-        course = "Cloud Technology",
+        courseId = 11,
         status = "Bookmarked"
     )
 )
