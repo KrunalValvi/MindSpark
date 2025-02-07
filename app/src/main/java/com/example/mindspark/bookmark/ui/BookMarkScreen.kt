@@ -26,7 +26,7 @@ fun BookMarkScreen(navController: NavController) {
         containerColor = LightBlueBackground,
         topBar = {
             AuthTopBar(
-                title = "BookMarks",
+                title = "My BookMarks",
                 onBackClick = { navController.navigateUp() }
             )
         }

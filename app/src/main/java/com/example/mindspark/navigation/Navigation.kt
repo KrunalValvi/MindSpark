@@ -27,6 +27,7 @@ import com.example.mindspark.navigation.components.BottomNavigationBar
 import com.example.mindspark.navigation.model.BottomNavItem
 import com.example.mindspark.notifications.ui.NotificationsScreen
 import com.example.mindspark.onboarding.ui.*
+import com.example.mindspark.payment.ui.PaymentScreen
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.profile.ui.sections.EditProfileScreen
 import com.example.mindspark.profile.ui.sections.HelpCenterScreen
@@ -70,9 +71,9 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = BottomNavItem.Home.route,
+//            startDestination = BottomNavItem.Home.route,
 //            startDestination = "SignInScreen",
-//            startDestination = "splash",
+            startDestination = "splash",
             modifier = Modifier.padding(paddingValues)
         ) {
             // Onboarding
@@ -111,6 +112,7 @@ fun AppNavigation() {
             composable("HelpCenterScreen") { HelpCenterScreen(navController) }
             composable("InviteFriendsScreen") { InviteFriendsScreen(navController) }
             composable("LanguageScreen") { LanguageScreen(navController) }
+            composable("PaymentScreen") { PaymentScreen(navController) }
 
             composable(
                 route = "CourseDetailScreen/{courseId}",
