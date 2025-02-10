@@ -71,11 +71,12 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-//            startDestination = BottomNavItem.Home.route,
+            startDestination = BottomNavItem.Home.route,
 //            startDestination = "SignInScreen",
-            startDestination = "splash",
+//            startDestination = "splash",
             modifier = Modifier.padding(paddingValues)
         ) {
+
             // Onboarding
             composable("splash") { LaunchScreen(navController) }
             composable("IntroScreen1") { IntroScreenStep1(navController) }
