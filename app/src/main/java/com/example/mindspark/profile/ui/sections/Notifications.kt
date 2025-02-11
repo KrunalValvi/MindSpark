@@ -1,141 +1,118 @@
 package com.example.mindspark.profile.ui.sections
 
-import androidx.compose.animation.*
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.profile.components.NotificationMasterSwitch
-import com.example.mindspark.profile.components.NotificationSection
-import com.example.mindspark.profile.components.NotificationSetting
+import com.example.mindspark.auth.components.AuthButton
+import com.example.mindspark.auth.components.AuthTopBar
+import com.example.mindspark.notifications.ui.NotificationsScreen
+import com.example.mindspark.profile.components.NotificationItem
+import com.example.mindspark.ui.theme.LightBlueBackground
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProfileNotificationsScreen(navController: NavController) {
-    var masterNotificationSwitch by remember { mutableStateOf(true) }
+    // State for each toggle button
+    var specialOffers by remember { mutableStateOf(true) }
+    var sound by remember { mutableStateOf(true) }
+    var vibrate by remember { mutableStateOf(false) }
+    var generalNotification by remember { mutableStateOf(true) }
+    var promoDiscount by remember { mutableStateOf(false) }
+    var paymentOptions by remember { mutableStateOf(false) }
+    var appUpdate by remember { mutableStateOf(true) }
+    var newService by remember { mutableStateOf(false) }
+    var newTips by remember { mutableStateOf(true) }
 
     Scaffold(
+        modifier = Modifier.background(LightBlueBackground),
+        containerColor = LightBlueBackground,
         topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Notifications",
-                        style = MaterialTheme.customTypography.jost.semiBold,
-                        fontSize = 20.sp
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = Color.White,
-                    titleContentColor = Color(0xFF202244)
-                )
+            AuthTopBar(
+                title = "Notification",
+                onBackClick = { navController.navigateUp() }
             )
         }
     ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Color(0xFFF5F5F5))
+                .background(LightBlueBackground)
                 .padding(padding)
-                .verticalScroll(rememberScrollState())
+                .padding(horizontal = 18.dp, vertical = 8.dp)
         ) {
-            NotificationMasterSwitch(
-                enabled = masterNotificationSwitch,
-                onEnabledChange = { masterNotificationSwitch = it }
+
+            // Notification items
+            NotificationItem(
+                title = "Special Offers",
+                checked = specialOffers,
+                onCheckedChange = { specialOffers = it }
             )
 
-            AnimatedVisibility(
-                visible = masterNotificationSwitch,
-                enter = fadeIn() + expandVertically(),
-                exit = fadeOut() + shrinkVertically()
-            ) {
-                Column {
-                    // General Notifications Section
-                    NotificationSection(
-                        title = "General",
-                        icon = Icons.Default.Notifications,
-                        items = listOf(
-                            NotificationSetting(
-                                "Push Notifications",
-                                "Receive push notifications",
-                                Icons.Default.NotificationsActive
-                            ),
-                            NotificationSetting(
-                                "Sound",
-                                "Play sound for notifications",
-                                Icons.Default.VolumeUp
-                            ),
-                            NotificationSetting(
-                                "Vibrate",
-                                "Vibrate for notifications",
-                                Icons.Default.Vibration
-                            )
-                        )
-                    )
+            NotificationItem(
+                title = "Sound",
+                checked = sound,
+                onCheckedChange = { sound = it }
+            )
 
-                    // Course Updates Section
-                    NotificationSection(
-                        title = "Course Updates",
-                        icon = Icons.Default.School,
-                        items = listOf(
-                            NotificationSetting(
-                                "New Lessons",
-                                "When new lessons are available",
-                                Icons.Default.Book
-                            ),
-                            NotificationSetting(
-                                "Assignment Deadlines",
-                                "Upcoming assignment due dates",
-                                Icons.Default.Assignment
-                            ),
-                            NotificationSetting(
-                                "Course Progress",
-                                "Weekly progress updates",
-                                Icons.Default.Timeline
-                            )
-                        )
-                    )
+            NotificationItem(
+                title = "Vibrate",
+                checked = vibrate,
+                onCheckedChange = { vibrate = it }
+            )
 
-                    // Promotional Section
-                    NotificationSection(
-                        title = "Promotional",
-                        icon = Icons.Default.Campaign,
-                        items = listOf(
-                            NotificationSetting(
-                                "Special Offers",
-                                "Exclusive deals and discounts",
-                                Icons.Default.LocalOffer
-                            ),
-                            NotificationSetting(
-                                "New Features",
-                                "Updates about new app features",
-                                Icons.Default.NewReleases
-                            ),
-                            NotificationSetting(
-                                "Events",
-                                "Upcoming events and webinars",
-                                Icons.Default.Event
-                            )
-                        )
-                    )
-                }
-            }
+            NotificationItem(
+                title = "General Notification",
+                checked = generalNotification,
+                onCheckedChange = { generalNotification = it }
+            )
+
+            NotificationItem(
+                title = "Promo & Discount",
+                checked = promoDiscount,
+                onCheckedChange = { promoDiscount = it }
+            )
+
+            NotificationItem(
+                title = "Payment Options",
+                checked = paymentOptions,
+                onCheckedChange = { paymentOptions = it }
+            )
+
+            NotificationItem(
+                title = "App Update",
+                checked = appUpdate,
+                onCheckedChange = { appUpdate = it }
+            )
+
+            NotificationItem(
+                title = "New Service Available",
+                checked = newService,
+                onCheckedChange = { newService = it }
+            )
+
+            NotificationItem(
+                title = "New Tips Available",
+                checked = newTips,
+                onCheckedChange = { newTips = it }
+            )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun NotificationsScreenPreview() {
+    ProfileNotificationsScreen(navController = NavController(LocalContext.current))
 }
