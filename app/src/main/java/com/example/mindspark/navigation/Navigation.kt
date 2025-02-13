@@ -16,7 +16,6 @@ import com.example.mindspark.auth.ui.login.SignInScreen
 import com.example.mindspark.auth.ui.register.FillProfileScreen
 import com.example.mindspark.auth.ui.register.RegisterScreen
 import com.example.mindspark.auth.ui.security.*
-import com.example.mindspark.bookmark.ui.BookMarkScreen
 import com.example.mindspark.communication.ui.InboxScreen
 import com.example.mindspark.communication.ui.call.ActiveCallScreen
 import com.example.mindspark.communication.ui.chat.ChatDetailScreen
@@ -29,6 +28,7 @@ import com.example.mindspark.notifications.ui.NotificationsScreen
 import com.example.mindspark.onboarding.ui.*
 import com.example.mindspark.payment.ui.PaymentScreen
 import com.example.mindspark.profile.ui.ProfileScreen
+import com.example.mindspark.profile.ui.sections.AddNewCardScreen
 import com.example.mindspark.profile.ui.sections.EditProfileScreen
 import com.example.mindspark.profile.ui.sections.HelpCenterScreen
 import com.example.mindspark.profile.ui.sections.InviteFriendsScreen
@@ -37,6 +37,8 @@ import com.example.mindspark.profile.ui.sections.PaymentOptionScreen
 import com.example.mindspark.profile.ui.sections.ProfileNotificationsScreen
 import com.example.mindspark.profile.ui.sections.SecurityScreen
 import com.example.mindspark.profile.ui.sections.TermsScreen
+import com.example.mindspark.transactions.ui.EReceiptScreen
+import com.example.mindspark.transactions.ui.TransactionsScreen
 
 @Composable
 fun AppNavigation() {
@@ -97,7 +99,7 @@ fun AppNavigation() {
             composable(BottomNavItem.Home.route) { HomeScreen(navController) }
             composable(BottomNavItem.MyCourses.route) { CoursesListScreen(navController) }
             composable(BottomNavItem.Inbox.route) { InboxScreen(navController) }
-            composable(BottomNavItem.BookMark.route) { BookMarkScreen(navController) }
+            composable(BottomNavItem.Transactions.route) { TransactionsScreen(navController) }
             composable(BottomNavItem.Profile.route) { ProfileScreen(navController) }
             composable("SearchScreen") { SearchScreen(navController) }
             composable("PopularCoursesList") { PopularCoursesList(navController) }
@@ -113,6 +115,8 @@ fun AppNavigation() {
             composable("InviteFriendsScreen") { InviteFriendsScreen(navController) }
             composable("LanguageScreen") { LanguageScreen(navController) }
             composable("PaymentScreen") { PaymentScreen(navController) }
+            composable("AddNewCardScreen") { AddNewCardScreen(navController) }
+            composable("EReceiptScreen") { EReceiptScreen(navController) }
 
             composable(
                 route = "CourseDetailScreen/{courseId}",
@@ -162,6 +166,8 @@ fun AppNavigation() {
                 val callId = backStackEntry.arguments?.getString("callId") ?: ""
                 ActiveCallScreen(navController = navController, callId = callId)
             }
+
+
         }
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
+import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
@@ -95,49 +96,10 @@ fun SignInScreen(navController: NavController) {
                     modifier = Modifier.padding(vertical = 16.dp)
                 )
 
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .height(56.dp)
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .background(Color(0xFF1565C0))
-                        .clickable { navController.navigate("RegisterScreen") },
-                    contentAlignment = Alignment.Center
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 5.dp)
-                    ) {
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 22.dp),
-                            text = "Sign In with Your Account",
-                            color = Color.White,
-                            style = MaterialTheme.customTypography.jost.semiBold,
-                            fontSize = 15.sp,
-                        )
-
-                        Spacer(modifier = Modifier.weight(1f))
-
-                        Box(
-                            modifier = Modifier
-                                .size(46.dp)
-                                .clip(CircleShape)
-                                .background(Color.White),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                                contentDescription = "Arrow Icon",
-                                tint = Color(0xFF1565C0),
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
-                }
+                AuthButton(
+                    text = "Sign In with Your Account",
+                    onClick = { navController.navigate("RegisterScreen") }
+                )
 
                 Spacer(modifier = Modifier.height(20.dp))
 

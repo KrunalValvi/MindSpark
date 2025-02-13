@@ -22,7 +22,7 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem.Home,
         BottomNavItem.MyCourses,
         BottomNavItem.Inbox,
-        BottomNavItem.BookMark,
+        BottomNavItem.Transactions,
         BottomNavItem.Profile
     )
 
@@ -43,7 +43,7 @@ fun BottomNavigationBar(navController: NavController) {
                         route == "TopMentorScreen"
             }
             BottomNavItem.Inbox -> route == "InboxScreen"
-            BottomNavItem.BookMark -> route == "BookMarkScreen"
+            BottomNavItem.Transactions -> route == "TransactionsScreen"
             BottomNavItem.Profile -> {
                 route == "ProfileScreen" ||
                         route == "TermsScreen"

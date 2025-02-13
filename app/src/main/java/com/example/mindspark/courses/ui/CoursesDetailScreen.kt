@@ -18,6 +18,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -100,11 +101,15 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
                         popUpTo("PaymentScreen") { inclusive = true }
                     }
                 },
-                modifier = Modifier.width(200.dp)
+                modifier = Modifier
+                    .width(200.dp)
+                    .wrapContentHeight()
             )
         }
+
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable
