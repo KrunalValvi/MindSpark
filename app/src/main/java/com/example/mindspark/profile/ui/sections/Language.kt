@@ -23,14 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
+import com.example.mindspark.profile.model.LanguageOption
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.example.mindspark.ui.theme.customTypography
-
-data class LanguageOption(
-    val code: String,
-    val name: String,
-    val nativeName: String
-)
 
 @Composable
 fun LanguageItem(
@@ -142,7 +137,7 @@ fun LanguageScreen(navController: NavController) {
                         Icon(
                             imageVector = Icons.Outlined.Language,
                             contentDescription = "Language",
-                            tint = Color(0xFF1565C0),
+                            tint = Color(0xFF167F71),
                             modifier = Modifier.size(32.dp)
                         )
                     }

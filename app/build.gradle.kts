@@ -96,10 +96,15 @@ dependencies {
     // Timber for Logging
     implementation(libs.timber)
 
+    // Accompanist for Pager
     implementation(libs.accompanist.pager)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.accompanist.pager.indicators)
 
+    // Async Http Client
+    implementation(libs.asynchttpclient)
+
+    implementation(libs.android.async.http)
 
 }
 

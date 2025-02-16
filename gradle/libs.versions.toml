@@ -2,6 +2,8 @@
 accompanistPager = "0.20.3"
 accompanistPagerIndicators = "0.20.3"
 agp = "8.8.0"
+androidAsyncHttp = "1.4.11"
+asynchttpclient = "2.1.1"
 coilCompose = "2.5.0"
 hiltAndroidCompiler = "2.51.1"
 hiltNavigationCompose = "1.2.0"
@@ -36,6 +38,7 @@ navigationUiKtx = "2.8.6"
 [libraries]
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
+android-async-http = { module = "com.loopj.android:android-async-http", version.ref = "androidAsyncHttp" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtxVersion" }
@@ -46,6 +49,7 @@ androidx-material-icons-extended = { module = "androidx.compose.material:materia
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-navigation-compose-v240 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
+asynchttpclient = { module = "com.codepath.libraries:asynchttpclient", version.ref = "asynchttpclient" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidCompiler" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }

@@ -45,3 +45,17 @@ data class CourseModel(
     val mentorIds: List<Int>, // IDs of the mentors teaching the course
     var isBookmarked: Boolean = false // Add this property to indicate if the course is bookmarked
 )
+
+data class Review(
+    val name: String,
+    val review: String,
+    val likes: String,
+    val timeAgo: String
+)
+
+data class VideoItem(
+    val videoId: String,
+    val title: String,
+    val description: String,
+    val thumbnailUrl: String
+)

@@ -8,7 +8,7 @@ import java.util.UUID
 val chatList = listOf(
     ChatModel(
         id = UUID.randomUUID().toString(),
-        name = "Natasha",
+        name = "Mavji",
         description = "Hi, Good Evening Bro.!",
         time = "14:59",
         messageCount = "03",
@@ -16,7 +16,7 @@ val chatList = listOf(
     ),
     ChatModel(
         id = UUID.randomUUID().toString(),
-        name = "Alex",
+        name = "Dhanji",
         description = "I just Finished It.!",
         time = "06:35",
         messageCount = "02"

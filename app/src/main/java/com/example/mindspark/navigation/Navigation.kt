@@ -113,10 +113,11 @@ fun AppNavigation() {
             composable("PaymentOptionScreen") { PaymentOptionScreen(navController) }
             composable("HelpCenterScreen") { HelpCenterScreen(navController) }
             composable("InviteFriendsScreen") { InviteFriendsScreen(navController) }
-            composable("LanguageScreen") { LanguageScreen(navController) }
             composable("PaymentScreen") { PaymentScreen(navController) }
             composable("AddNewCardScreen") { AddNewCardScreen(navController) }
             composable("EReceiptScreen") { EReceiptScreen(navController) }
+            composable("LanguageScreen") { LanguageScreen(navController) }
+            composable("InviteFriendsScreen") { InviteFriendsScreen(navController) }
 
             composable(
                 route = "CourseDetailScreen/{courseId}",
