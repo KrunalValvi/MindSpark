@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">MindSpark</string>
-    <string name="web_client_id">975343211988-n26q4lu3dks8ocd3srqv862iroi8vbrq.apps.googleusercontent.com</string>
+    <string name="web_client_id">975343211988-a0nus3tgoqthf03ir7i25hlhg8ef15bq.apps.googleusercontent.com</string>
     <string name="title_activity_navigation">navigation</string>
     <string name="title_activity_bottom_nav">BottomNavActivity</string>
     <string name="title_home">Home</string>

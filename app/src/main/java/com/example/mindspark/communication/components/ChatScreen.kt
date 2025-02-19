@@ -6,7 +6,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AttachFile
 import androidx.compose.material.icons.filled.Call
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -129,6 +131,43 @@ fun ChatSection(
                     modifier = Modifier.padding(horizontal = 16.dp),
                     color = Color.LightGray.copy(alpha = 0.5f)
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun ChatInputBar(
+    message: String,
+    onMessageChange: (String) -> Unit,
+    onSendClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier.fillMaxWidth(),
+        tonalElevation = 4.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = { /* Open attachment */ }) {
+                Icon(Icons.Default.AttachFile, "Attach")
+            }
+            TextField(
+                value = message,
+                onValueChange = onMessageChange,
+                modifier = Modifier.weight(1f),
+                placeholder = { Text("Type a message") },
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
+                )
+            )
+            if (message.isNotEmpty()) {
+                IconButton(onClick = onSendClick) {
+                    Icon(Icons.Default.Send, "Send")
+                }
             }
         }
     }

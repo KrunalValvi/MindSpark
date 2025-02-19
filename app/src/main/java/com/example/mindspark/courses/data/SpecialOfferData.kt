@@ -4,6 +4,7 @@ import com.example.mindspark.R
 import com.example.mindspark.courses.model.SpecialOfferModel
 
 object CardData {
+
     fun getCardDetails(): List<SpecialOfferModel> = listOf(
         SpecialOfferModel(
             title = "25% *Off",

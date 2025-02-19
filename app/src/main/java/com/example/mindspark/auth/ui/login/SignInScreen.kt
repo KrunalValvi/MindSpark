@@ -21,6 +21,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,10 +41,20 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
+import com.example.mindspark.auth.network.AuthResponse
+import com.example.mindspark.auth.network.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun SignInScreen(navController: NavController) {
+
+    val context = LocalContext.current
+    val authenticationManager = remember {
+        AuthenticationManager(context)
+    }
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
         Box(
@@ -68,7 +80,15 @@ fun SignInScreen(navController: NavController) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
-                        .clickable { }
+                        .clickable {
+                            authenticationManager.signInWithGoogle(context)
+                                .onEach { responce ->
+                                    if (responce is AuthResponse.Success) {
+
+                                    }
+                                }
+                                .launchIn(coroutineScope)
+                        }
                         .padding(16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
@@ -79,6 +99,8 @@ fun SignInScreen(navController: NavController) {
                         modifier = Modifier
                             .size(36.dp)
                             .shadow(4.dp, shape = CircleShape)
+                            .clickable{ },
+
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -98,7 +120,7 @@ fun SignInScreen(navController: NavController) {
 
                 AuthButton(
                     text = "Sign In with Your Account",
-                    onClick = { navController.navigate("RegisterScreen") }
+                    onClick = { navController.navigate("LoginScreen") }
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))

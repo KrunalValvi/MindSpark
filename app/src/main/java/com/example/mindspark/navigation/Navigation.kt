@@ -73,8 +73,8 @@ fun AppNavigation() {
     ) { paddingValues ->
         NavHost(
             navController = navController,
-            startDestination = BottomNavItem.Home.route,
-//            startDestination = "SignInScreen",
+//            startDestination = BottomNavItem.Home.route,
+            startDestination = "SignInScreen",
 //            startDestination = "splash",
             modifier = Modifier.padding(paddingValues)
         ) {

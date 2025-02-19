@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -223,6 +224,30 @@ fun CallStatItem(
             style = MaterialTheme.customTypography.mulish.regular,
             fontSize = 12.sp,
             color = Color.Gray
+        )
+    }
+}
+
+@Composable
+fun CallControlButton(
+    icon: ImageVector,
+    backgroundColor: Color = Color.White.copy(alpha = 0.2f),
+    onClick: () -> Unit,
+    size: Dp = 64.dp // Default size parameter
+) {
+    Box(
+        modifier = Modifier
+            .size(size)
+            .clip(CircleShape)
+            .background(backgroundColor)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = Color.White,
+            modifier = Modifier.size(size * 0.5f) // Icon size proportional to button size
         )
     }
 }

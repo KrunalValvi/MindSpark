@@ -50,9 +50,9 @@ fun HomeScreen(navController: NavController) {
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
                 .padding(
-                    start = 10.dp,
-                    end = 10.dp,
-                    top = 10.dp,
+                    start = 3.dp,
+                    end = 3.dp,
+                    top = 3.dp,
                 )
         ) {
             // Header Section

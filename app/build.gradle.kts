@@ -3,8 +3,6 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.gms.google.services)
-    id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -44,71 +42,110 @@ android {
     }
 }
 
+//dependencies {
+//
+//    // AndroidX
+//    implementation(libs.androidx.credentials)
+//
+//    // Android 13 and below.
+//    implementation(libs.androidx.credentials.play.services.auth)
+//    implementation(libs.androidx.core.ktx.v190)
+//
+//    // Firebase
+//    implementation(libs.google.firebase.auth.ktx)
+//    implementation(libs.firebase.auth.ktx)
+//    implementation(platform(libs.google.firebase.bom))
+//
+//    // Google Play Services
+//    implementation(libs.play.services.auth.v2041)
+//
+//    // AndroidX
+//    implementation(libs.androidx.core.ktx)
+//    implementation(libs.androidx.lifecycle.runtime.ktx)
+//    implementation(libs.androidx.activity.compose)
+//    implementation(libs.androidx.appcompat)
+//    implementation(libs.androidx.constraintlayout)
+//    implementation(libs.androidx.lifecycle.livedata.ktx)
+//    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+//    implementation(libs.androidx.navigation.fragment.ktx)
+//    implementation(libs.androidx.navigation.ui.ktx)
+//
+//    // Jetpack Compose
+//    implementation(platform(libs.androidx.compose.bom))
+//    implementation(libs.androidx.ui)
+//    implementation(libs.androidx.ui.graphics)
+//    implementation(libs.androidx.ui.tooling.preview)
+//    implementation(libs.androidx.material3)
+//
+//    // Material
+//    implementation(libs.material)
+//    implementation(libs.googleid)
+//    implementation(libs.androidx.espresso.core)
+//    implementation(libs.androidx.transition)
+//    implementation(libs.navigation.compose)
+//    implementation(libs.androidx.transition)
+//
+//    // Testing
+//    testImplementation(libs.junit)
+//    androidTestImplementation(libs.androidx.junit)
+//    androidTestImplementation(libs.androidx.espresso.core)
+//
+//    // Debug
+//    debugImplementation(libs.androidx.ui.tooling)
+//    debugImplementation(libs.androidx.ui.test.manifest)
+//
+////    implementation(libs.material3)
+////    implementation(libs.androidx.material.icons.core)
+////    implementation(libs.androidx.material.icons.extended)
+//
+//}
+
 dependencies {
 
-    implementation(libs.androidx.navigation.compose.v240)
-    implementation(libs.androidx.navigation.compose)
-    implementation(libs.androidx.material)
-    implementation(libs.androidx.material.icons.extended)
-    implementation(libs.play.services.auth)
-
+    // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle.livedata.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.navigation.fragment.ktx)
+    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Jetpack Compose
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(libs.firebase.auth)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.constraintlayout)
+
+    // Material Components
     implementation(libs.material)
-    implementation(libs.androidx.lifecycle.livedata.ktx)
-    implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.navigation.fragment.ktx)
-    implementation(libs.androidx.navigation.ui.ktx)
+
+    // Material Icons for Compose
+    implementation("androidx.compose.material3:material3:1.0.1")
+    implementation("androidx.compose.material:material-icons-core:1.5.0")
+    implementation("androidx.compose.material:material-icons-extended:1.5.0")
+
+    // Android Credentials
+    implementation(libs.androidx.credentials)
+
+    // Firebase
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.auth.ktx)
+
+    // Google Play Services
+    implementation(libs.play.services.auth.v2041)
+    implementation(libs.navigation.compose)
+    implementation(libs.googleid)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+
+    // Debugging
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
-    // Lifecycle
-    implementation(libs.androidx.lifecycle.runtime.ktx.v262)
-    implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.lifecycle.runtime.compose)
-
-    // Coroutines
-    implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.kotlinx.coroutines.core)
-
-    // Dagger Hilt
-    kapt(libs.hilt.android.compiler)
-    implementation(libs.hilt.android)
-    implementation(libs.androidx.hilt.navigation.compose)
-
-    // Coil for Image Loading
-    implementation(libs.coil.compose)
-
-    // Timber for Logging
-    implementation(libs.timber)
-
-    // Accompanist for Pager
-    implementation(libs.accompanist.pager)
-    implementation(libs.androidx.paging.runtime)
-    implementation(libs.accompanist.pager.indicators)
-
-    // Async Http Client
-    implementation(libs.asynchttpclient)
-
-    implementation(libs.android.async.http)
-
-}
-
-// Allow references to generated code
-kapt {
-    correctErrorTypes = true
 }

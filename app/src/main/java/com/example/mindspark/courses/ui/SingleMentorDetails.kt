@@ -21,9 +21,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImagePainter.State.Empty.painter
-import coil.decode.ImageSource
-import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.FollowButton
 import com.example.mindspark.courses.components.MentorCourseItem

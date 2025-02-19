@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,13 +44,23 @@ import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
+import com.example.mindspark.auth.network.AuthResponse
+import com.example.mindspark.auth.network.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isTermsAccepted by remember { mutableStateOf(false) }
+
+    val context = LocalContext.current
+    val authenticationManager = remember {
+        AuthenticationManager(context)
+    }
+    val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
         Box(
@@ -157,7 +168,15 @@ fun LoginScreen(navController: NavController) {
 
                 AuthButton(
                     text = "Sign In",
-                    onClick = { navController.navigate("FillProfileScreen") }
+                    onClick = {
+                        authenticationManager.loginWithEmail(email, password)
+                            .onEach { responce ->
+                                if (responce is AuthResponse.Success) {
+
+                                }
+                            }
+                            .launchIn(coroutineScope)
+                    }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
@@ -174,7 +193,15 @@ fun LoginScreen(navController: NavController) {
                     Image(
                         modifier = Modifier
                             .padding(top = 10.dp)
-                            .clickable { },
+                            .clickable {
+                                authenticationManager.signInWithGoogle(context)
+                                    .onEach { responce ->
+                                        if (responce is AuthResponse.Success) {
+
+                                        }
+                                    }
+                                    .launchIn(coroutineScope)
+                            },
                         painter = painterResource(R.drawable.ic_google),
                         contentDescription = "Google"
                     )
