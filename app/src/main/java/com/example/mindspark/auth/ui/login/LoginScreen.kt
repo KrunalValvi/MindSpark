@@ -1,31 +1,19 @@
 package com.example.mindspark.auth.ui.login
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -39,7 +27,6 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -51,17 +38,33 @@ import com.example.mindspark.auth.network.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import androidx.compose.material3.Surface
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color.Companion.Black
+import androidx.compose.ui.graphics.Color.Companion.White
+import androidx.compose.ui.tooling.preview.Preview
+import com.example.mindspark.auth.backend.checkUserProfileExists
+import kotlinx.coroutines.launch
+
+// Helper function to check network connectivity.
+fun isNetworkAvailable(context: Context): Boolean {
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    return connectivityManager.activeNetworkInfo?.isConnectedOrConnecting == true
+}
 
 @Composable
 fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isTermsAccepted by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
+        // Main content
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -164,27 +167,45 @@ fun LoginScreen(navController: NavController) {
 
                 AuthButton(
                     text = "Sign In",
-                    onClick = {
+                    onClick = myLabel@{
+                        if (!isNetworkAvailable(context)) {
+                            Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
+                            return@myLabel
+                        }
+                        isLoading = true
                         authenticationManager.loginWithEmail(email, password)
                             .onEach { response ->
+                                isLoading = false
                                 when (response) {
                                     is AuthResponse.Success -> {
-                                        // Navigate to FillProfileScreen after successful sign in.
                                         navController.navigate("FillProfileScreen")
                                     }
                                     is AuthResponse.Error -> {
-                                        // Display error if wrong password.
-                                        Toast.makeText(
-                                            context,
-                                            "This password is wrong. You have to add right password",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        val errorMessage = response.message
+                                        if (errorMessage.contains("password", ignoreCase = true)) {
+                                            Toast.makeText(
+                                                context,
+                                                "This password is wrong. You have to add right password",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else if (errorMessage.contains("user", ignoreCase = true) ||
+                                            errorMessage.contains("not found", ignoreCase = true)
+                                        ) {
+                                            Toast.makeText(
+                                                context,
+                                                "This email is not valid for login",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        } else {
+                                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                        }
                                     }
                                 }
                             }
                             .launchIn(coroutineScope)
                     }
                 )
+
 
                 Spacer(modifier = Modifier.height(10.dp))
 
@@ -200,10 +221,28 @@ fun LoginScreen(navController: NavController) {
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .clickable {
+                                isLoading = true
                                 authenticationManager.signInWithGoogle(context)
                                     .onEach { response ->
                                         if (response is AuthResponse.Success) {
-                                            navController.navigate("FillProfileScreen")
+                                            // After a successful Google sign in, check if the user's profile exists.
+                                            checkUserProfileExists(
+                                                onResult = { exists ->
+                                                    isLoading = false
+                                                    if (exists) {
+                                                        navController.navigate("HomeScreen")
+                                                    } else {
+                                                        navController.navigate("FillProfileScreen")
+                                                    }
+                                                },
+                                                onError = { error ->
+                                                    isLoading = false
+                                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                }
+                                            )
+                                        } else if (response is AuthResponse.Error) {
+                                            isLoading = false
+                                            Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                     .launchIn(coroutineScope)
@@ -231,6 +270,17 @@ fun LoginScreen(navController: NavController) {
                         modifier = Modifier.clickable { navController.navigate("RegisterScreen") }
                     )
                 }
+            }
+        }
+        // Loading overlay
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = White)
             }
         }
     }

@@ -1,5 +1,7 @@
 package com.example.mindspark.auth.ui.register
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -43,6 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
+import com.example.mindspark.auth.backend.checkUserProfileExists
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.network.AuthResponse
@@ -51,11 +55,19 @@ import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
+// Helper function to check network connectivity.
+fun isNetworkAvailable(context: Context): Boolean {
+    val connectivityManager =
+        context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    return connectivityManager.activeNetworkInfo?.isConnectedOrConnecting == true
+}
+
 @Composable
 fun RegisterScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isTermsAccepted by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
@@ -155,19 +167,21 @@ fun RegisterScreen(navController: NavController) {
 
                 AuthButton(
                     text = "Sign Up",
-                    onClick = {
+                    onClick = registerOnClick@{
+                        if (!isNetworkAvailable(context)) {
+                            Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
+                            return@registerOnClick
+                        }
+                        isLoading = true
                         authenticationManager.createAccountWithEmail(email, password)
                             .onEach { response ->
+                                isLoading = false
                                 when (response) {
                                     is AuthResponse.Success -> {
                                         navController.navigate("FillProfileScreen")
                                     }
                                     is AuthResponse.Error -> {
-                                        Toast.makeText(
-                                            context,
-                                            response.message,
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                                     }
                                 }
                             }
@@ -189,10 +203,28 @@ fun RegisterScreen(navController: NavController) {
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .clickable {
+                                isLoading = true
                                 authenticationManager.signInWithGoogle(context)
                                     .onEach { response ->
                                         if (response is AuthResponse.Success) {
-                                            navController.navigate("FillProfileScreen")
+                                            // After a successful Google sign in, check if the user's profile exists.
+                                            checkUserProfileExists(
+                                                onResult = { exists ->
+                                                    isLoading = false
+                                                    if (exists) {
+                                                        navController.navigate("HomeScreen")
+                                                    } else {
+                                                        navController.navigate("FillProfileScreen")
+                                                    }
+                                                },
+                                                onError = { error ->
+                                                    isLoading = false
+                                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                }
+                                            )
+                                        } else if (response is AuthResponse.Error) {
+                                            isLoading = false
+                                            Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                     .launchIn(coroutineScope)
@@ -220,6 +252,16 @@ fun RegisterScreen(navController: NavController) {
                         modifier = Modifier.clickable { navController.navigate("LoginScreen") }
                     )
                 }
+            }
+        }
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.White)
             }
         }
     }

@@ -74,8 +74,8 @@ fun AppNavigation() {
         NavHost(
             navController = navController,
 //            startDestination = BottomNavItem.Home.route,
-            startDestination = "SignInScreen",
-//            startDestination = "splash",
+//            startDestination = "SignInScreen",
+            startDestination = "splash",
             modifier = Modifier.padding(paddingValues)
         ) {
             // Onboarding

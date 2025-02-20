@@ -1,25 +1,15 @@
 package com.example.mindspark.auth.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,20 +26,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
+import com.example.mindspark.auth.backend.checkUserProfileExists
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.network.AuthResponse
 import com.example.mindspark.auth.network.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(navController: NavController) {
     val context = LocalContext.current
     val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
+    var isLoading by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
+        // Main content
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -74,11 +71,28 @@ fun SignInScreen(navController: NavController) {
                         .fillMaxWidth()
                         .clip(MaterialTheme.shapes.medium)
                         .clickable {
+                            isLoading = true
                             authenticationManager.signInWithGoogle(context)
                                 .onEach { response ->
                                     if (response is AuthResponse.Success) {
-                                        // Navigate to the FillProfileScreen after sign in
-                                        navController.navigate("FillProfileScreen")
+                                        // After a successful Google sign in, check if the user's profile exists.
+                                        checkUserProfileExists(
+                                            onResult = { exists ->
+                                                isLoading = false
+                                                if (exists) {
+                                                    navController.navigate("HomeScreen")
+                                                } else {
+                                                    navController.navigate("FillProfileScreen")
+                                                }
+                                            },
+                                            onError = { error ->
+                                                isLoading = false
+                                                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                            }
+                                        )
+                                    } else if (response is AuthResponse.Error) {
+                                        isLoading = false
+                                        Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
                                     }
                                 }
                                 .launchIn(coroutineScope)
@@ -137,6 +151,17 @@ fun SignInScreen(navController: NavController) {
                         modifier = Modifier.clickable { navController.navigate("RegisterScreen") }
                     )
                 }
+            }
+        }
+        // Loading overlay
+        if (isLoading) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.3f)),
+                contentAlignment = Alignment.Center
+            ) {
+                CircularProgressIndicator(color = Color.White)
             }
         }
     }

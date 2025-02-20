@@ -8,9 +8,9 @@ import com.example.mindspark.R
 import com.google.android.libraries.identity.googleid.GetGoogleIdOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.android.libraries.identity.googleid.GoogleIdTokenParsingException
-import com.google.firebase.Firebase
 import com.google.firebase.auth.GoogleAuthProvider
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -27,31 +27,30 @@ class AuthenticationManager(val context: Context) {
                 if (task.isSuccessful) {
                     trySend(AuthResponse.Success)
                 } else {
-                    trySend(AuthResponse.Error(task.exception?.message ?: ""))
+                    trySend(AuthResponse.Error(task.exception?.message ?: "Unknown error"))
                 }
             }
-        awaitClose()
+        awaitClose { }
     }
 
+    // Corrected login function using signInWithEmailAndPassword.
     fun loginWithEmail(email: String, password: String): Flow<AuthResponse> = callbackFlow {
-        auth.createUserWithEmailAndPassword(email, password)
+        auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     trySend(AuthResponse.Success)
                 } else {
-                    trySend(AuthResponse.Error(task.exception?.message ?: ""))
+                    trySend(AuthResponse.Error(task.exception?.message ?: "Unknown error"))
                 }
             }
-        awaitClose()
+        awaitClose { }
     }
 
     private fun createNonce(): String {
-
         val rawNonce = UUID.randomUUID().toString()
         val bytes = rawNonce.toByteArray()
         val md = MessageDigest.getInstance("SHA-256")
         val digest = md.digest(bytes)
-
         return digest.fold("") { str, it -> str + "%02x".format(it) }
     }
 
@@ -70,48 +69,34 @@ class AuthenticationManager(val context: Context) {
 
         try {
             val credentialManager = CredentialManager.create(context)
-            val result = credentialManager.getCredential(
-                context = context,
-                request = request
-            )
-
+            val result = credentialManager.getCredential(context = context, request = request)
             val credential = result.credential
-            if (credential is CustomCredential){
-                if(credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL){
+            if (credential is CustomCredential) {
+                if (credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL) {
                     try {
-                        val googleIdTokenCredential = GoogleIdTokenCredential
-                            .createFrom(credential.data)
-
-                        val firebaseCredential = GoogleAuthProvider
-                            .getCredential(
-                                googleIdTokenCredential.idToken,
-                                null
-                            )
-
+                        val googleIdTokenCredential = GoogleIdTokenCredential.createFrom(credential.data)
+                        val firebaseCredential = GoogleAuthProvider.getCredential(googleIdTokenCredential.idToken, null)
                         auth.signInWithCredential(firebaseCredential)
                             .addOnCompleteListener {
-                                if(it.isSuccessful){
+                                if (it.isSuccessful) {
                                     trySend(AuthResponse.Success)
-                                }else{
-                                    trySend(AuthResponse.Error(it.exception?.message ?: ""))
+                                } else {
+                                    trySend(AuthResponse.Error(it.exception?.message ?: "Unknown error"))
                                 }
                             }
-
-                    }catch (e: GoogleIdTokenParsingException){
-                        trySend(AuthResponse.Error(e.message ?: ""))
+                    } catch (e: GoogleIdTokenParsingException) {
+                        trySend(AuthResponse.Error(e.message ?: "Unknown error"))
                     }
                 }
             }
-        }catch (e: Exception){
-            trySend(AuthResponse.Error(message = e.message ?: ""))
+        } catch (e: Exception) {
+            trySend(AuthResponse.Error(e.message ?: "Unknown error"))
         }
-
-        awaitClose()
+        awaitClose { }
     }
 }
 
 interface AuthResponse {
-
     data object Success : AuthResponse
     data class Error(val message: String) : AuthResponse
 }
