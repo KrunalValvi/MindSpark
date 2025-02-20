@@ -30,9 +30,15 @@ import com.example.mindspark.courses.components.TopMentorCardHorizontal
 import com.example.mindspark.courses.components.TopMentorCardVertical
 import com.example.mindspark.ui.theme.customTypography
 import com.example.mindspark.courses.model.SpecialOfferModel
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
 
 @Composable
 fun HomeHeader(navController: NavController) {
+
+    val user = Firebase.auth.currentUser
+    val userName = user?.displayName ?: "User"
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,7 +48,7 @@ fun HomeHeader(navController: NavController) {
     ) {
         Column {
             Text(
-                text = "Hi, Alex",
+                text = "Hi, $userName",
                 style = MaterialTheme.customTypography.jost.semiBold,
                 fontSize = 24.sp
             )

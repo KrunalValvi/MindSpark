@@ -44,6 +44,8 @@ navigationUiKtx = "2.8.6"
 googleid = "1.1.1"
 transition = "1.2.0"
 androidxNavigationCompose = "2.8.7"
+firebaseFirestoreKtx = "25.1.2"
+firebaseFirestore = "25.1.2"
 
 [libraries]
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" }
@@ -100,6 +102,8 @@ androidx-navigation-ui-ktx = { group = "androidx.navigation", name = "navigation
 googleid = { group = "com.google.android.libraries.identity.googleid", name = "googleid", version.ref = "googleid" }
 androidx-transition = { group = "androidx.transition", name = "transition", version.ref = "transition" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxNavigationCompose" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

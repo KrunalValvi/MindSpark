@@ -1,5 +1,6 @@
 package com.example.mindspark.auth.ui.register
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -19,10 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,11 +56,8 @@ fun RegisterScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isTermsAccepted by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
-    val authenticationManager = remember {
-        AuthenticationManager(context)
-    }
+    val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
@@ -72,12 +70,11 @@ fun RegisterScreen(navController: NavController) {
             Column(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 Image(
                     painter = painterResource(R.drawable.logo_authentication),
-                    contentDescription = "Auth Logo",
+                    contentDescription = "Auth Logo"
                 )
 
                 Text(
@@ -100,7 +97,7 @@ fun RegisterScreen(navController: NavController) {
                     fontSize = 14.sp
                 )
 
-                Spacer(modifier = Modifier.padding(top = 30.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
                 AuthTextField(
                     value = email,
@@ -145,12 +142,12 @@ fun RegisterScreen(navController: NavController) {
                 ) {
                     RadioButton(
                         selected = isTermsAccepted,
-                        onClick = { isTermsAccepted = !isTermsAccepted },
+                        onClick = { isTermsAccepted = !isTermsAccepted }
                     )
                     Text(
                         text = "Agree to Terms & Conditions",
                         style = MaterialTheme.customTypography.mulish.extraBold,
-                        fontSize = 14.sp,
+                        fontSize = 14.sp
                     )
                 }
 
@@ -160,21 +157,28 @@ fun RegisterScreen(navController: NavController) {
                     text = "Sign Up",
                     onClick = {
                         authenticationManager.createAccountWithEmail(email, password)
-                            .onEach { responce ->
-                                if (responce is AuthResponse.Success) {
-
+                            .onEach { response ->
+                                when (response) {
+                                    is AuthResponse.Success -> {
+                                        navController.navigate("FillProfileScreen")
+                                    }
+                                    is AuthResponse.Error -> {
+                                        Toast.makeText(
+                                            context,
+                                            response.message,
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
                             .launchIn(coroutineScope)
                     }
-//                    onClick = { navController.navigate("FillProfileScreen") }
                 )
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    modifier = Modifier
-                        .padding(top = 14.dp),
+                    modifier = Modifier.padding(top = 14.dp),
                     text = "Or Continue With",
                     style = MaterialTheme.customTypography.mulish.extraBold,
                     fontSize = 14.sp
@@ -184,11 +188,11 @@ fun RegisterScreen(navController: NavController) {
                     Image(
                         modifier = Modifier
                             .padding(top = 10.dp)
-                            .clickable{
+                            .clickable {
                                 authenticationManager.signInWithGoogle(context)
-                                    .onEach { responce ->
-                                        if (responce is AuthResponse.Success) {
-
+                                    .onEach { response ->
+                                        if (response is AuthResponse.Success) {
+                                            navController.navigate("FillProfileScreen")
                                         }
                                     }
                                     .launchIn(coroutineScope)
@@ -198,10 +202,7 @@ fun RegisterScreen(navController: NavController) {
                     )
                 }
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                ) {
+                Row(modifier = Modifier.padding(top = 10.dp)) {
                     Text(
                         text = "Already have an Account? ",
                         style = MaterialTheme.customTypography.mulish.regular,
@@ -216,9 +217,7 @@ fun RegisterScreen(navController: NavController) {
                         color = Color.Blue,
                         style = MaterialTheme.customTypography.mulish.semiBold,
                         fontSize = 14.sp,
-                        modifier = Modifier.clickable {
-                            navController.navigate("LoginScreen")
-                        }
+                        modifier = Modifier.clickable { navController.navigate("LoginScreen") }
                     )
                 }
             }

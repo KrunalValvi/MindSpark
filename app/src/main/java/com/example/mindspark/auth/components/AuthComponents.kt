@@ -265,7 +265,7 @@ fun GenderDropdown(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "Gender Icon",
-//                        tint = Color(0xFF1565C0),
+                        tint = Color.Gray,
                         modifier = Modifier.padding(end = 8.dp)
                     )
 

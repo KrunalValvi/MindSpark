@@ -1,5 +1,6 @@
 package com.example.mindspark.auth.ui.security
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,15 +46,19 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.mindspark.R
+import com.example.mindspark.auth.backend.updateUserFingerprint
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
 fun SetFingerprintScreen(navController: NavController) {
+    val context = LocalContext.current
     var showDialog by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -106,15 +112,14 @@ fun SetFingerprintScreen(navController: NavController) {
                     .padding(horizontal = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                // Skip Button
+                // Skip Button: simply show dialog and then navigate to HomeScreen
                 Box(
                     modifier = Modifier
                         .weight(0.6f)
                         .height(56.dp)
                         .clip(MaterialTheme.shapes.extraLarge)
                         .background(Color(0xFFE8F1FF))
-//                        .clickable { showDialog = true },
-                        .clickable { navController.navigate("ForgotPasswordScreen") },
+                        .clickable { showDialog = true },
                     contentAlignment = Alignment.Center,
                 ) {
                     Row(
@@ -130,17 +135,27 @@ fun SetFingerprintScreen(navController: NavController) {
                             fontSize = 18.sp,
                         )
                     }
-
                 }
 
-                // Continue Button
+                // Continue Button: simulate fingerprint scan, store fingerprint, then show dialog
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(56.dp)
                         .clip(MaterialTheme.shapes.extraLarge)
                         .background(Color(0xFF1565C0))
-                        .clickable { showDialog = true },
+                        .clickable {
+                            updateUserFingerprint(
+                                fingerprintData = "sample_fingerprint_data",
+                                onSuccess = {
+                                    Toast.makeText(context, "Fingerprint saved", Toast.LENGTH_SHORT).show()
+                                    showDialog = true
+                                },
+                                onFailure = { errorMessage ->
+                                    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        },
                     contentAlignment = Alignment.Center
                 ) {
                     Row(
@@ -175,7 +190,6 @@ fun SetFingerprintScreen(navController: NavController) {
                     }
                 }
             }
-
         }
         if (showDialog) {
             AutoDismissDialog(
@@ -192,7 +206,7 @@ fun AutoDismissDialog(
     onTimeout: () -> Unit
 ) {
     LaunchedEffect(Unit) {
-        delay(1000) // Wait for 3 seconds
+        delay(1000) // Wait for 1 second
         onDismiss()
         onTimeout()
     }
@@ -204,7 +218,6 @@ fun AutoDismissDialog(
             dismissOnClickOutside = false
         )
     ) {
-
         Surface(
             modifier = Modifier
                 .width(300.dp)
@@ -212,7 +225,6 @@ fun AutoDismissDialog(
             shape = RoundedCornerShape(16.dp),
             color = Color.White,
         ) {
-
             Column(
                 modifier = Modifier.padding(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -223,33 +235,25 @@ fun AutoDismissDialog(
                     contentDescription = null,
                     Modifier.size(100.dp)
                 )
-
                 Spacer(modifier = Modifier.height(20.dp))
-
                 Text(
                     text = "Congratulations",
                     style = MaterialTheme.customTypography.jost.semiBold,
                     fontSize = 24.sp
                 )
-
                 Spacer(modifier = Modifier.height(16.dp))
-
                 Text(
-                    text = "Your Account is Ready to use. You will be\n" +
-                            "redirected to the Home page in a Few\n" +
-                            "Seconds.",
+                    text = "Your Account is Ready to use. You will be\nredirected to the Home page in a Few\nSeconds.",
                     style = MaterialTheme.customTypography.mulish.bold,
                     fontSize = 14.sp,
                     color = Color.Black,
                     textAlign = TextAlign.Center
                 )
-
                 Spacer(modifier = Modifier.height(20.dp))
-
                 Image(
                     painter = painterResource(R.drawable.ic_loading),
                     contentDescription = null,
-                    modifier =  Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp)
                 )
             }
         }
@@ -258,12 +262,7 @@ fun AutoDismissDialog(
 
 @Preview(showBackground = true)
 @Composable
-fun AutoDismissDialogPreview() {
-    AutoDismissDialog(onDismiss = {}, onTimeout = {})
-}
-
-@Preview(showBackground = true)
-@Composable
 fun SetFingerprintScreenPreview() {
+    // Replace with an actual NavController when testing navigation.
     SetFingerprintScreen(navController = NavController(LocalContext.current))
 }

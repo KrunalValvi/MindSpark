@@ -1,5 +1,6 @@
 package com.example.mindspark.auth.ui.login
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,16 +14,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -55,11 +57,8 @@ fun LoginScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var isTermsAccepted by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
-    val authenticationManager = remember {
-        AuthenticationManager(context)
-    }
+    val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
@@ -72,12 +71,11 @@ fun LoginScreen(navController: NavController) {
             Column(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier
-                    .fillMaxSize()
+                modifier = Modifier.fillMaxSize()
             ) {
                 Image(
                     painter = painterResource(R.drawable.logo_authentication),
-                    contentDescription = "Auth Logo",
+                    contentDescription = "Auth Logo"
                 )
 
                 Text(
@@ -101,7 +99,7 @@ fun LoginScreen(navController: NavController) {
                     fontSize = 14.sp
                 )
 
-                Spacer(modifier = Modifier.padding(top = 30.dp))
+                Spacer(modifier = Modifier.height(30.dp))
 
                 AuthTextField(
                     value = email,
@@ -129,8 +127,7 @@ fun LoginScreen(navController: NavController) {
                             painter = painterResource(id = R.drawable.ic_lock),
                             contentDescription = "Password Icon",
                             tint = Color(0xFF545454),
-                            modifier = Modifier
-                                .size(24.dp)
+                            modifier = Modifier.size(24.dp)
                         )
                     },
                     isPasswordField = true,
@@ -152,15 +149,14 @@ fun LoginScreen(navController: NavController) {
                     Text(
                         text = "Remember Me",
                         style = MaterialTheme.customTypography.mulish.extraBold,
-                        fontSize = 13.sp,
+                        fontSize = 13.sp
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        modifier = Modifier.clickable{ },
+                        modifier = Modifier.clickable { },
                         text = "Forgot Password?",
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 13.sp
-
                     )
                 }
 
@@ -170,9 +166,20 @@ fun LoginScreen(navController: NavController) {
                     text = "Sign In",
                     onClick = {
                         authenticationManager.loginWithEmail(email, password)
-                            .onEach { responce ->
-                                if (responce is AuthResponse.Success) {
-
+                            .onEach { response ->
+                                when (response) {
+                                    is AuthResponse.Success -> {
+                                        // Navigate to FillProfileScreen after successful sign in.
+                                        navController.navigate("FillProfileScreen")
+                                    }
+                                    is AuthResponse.Error -> {
+                                        // Display error if wrong password.
+                                        Toast.makeText(
+                                            context,
+                                            "This password is wrong. You have to add right password",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
                             }
                             .launchIn(coroutineScope)
@@ -182,8 +189,7 @@ fun LoginScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    modifier = Modifier
-                        .padding(top = 14.dp),
+                    modifier = Modifier.padding(top = 14.dp),
                     text = "Or Continue With",
                     style = MaterialTheme.customTypography.mulish.extraBold,
                     fontSize = 14.sp
@@ -195,9 +201,9 @@ fun LoginScreen(navController: NavController) {
                             .padding(top = 10.dp)
                             .clickable {
                                 authenticationManager.signInWithGoogle(context)
-                                    .onEach { responce ->
-                                        if (responce is AuthResponse.Success) {
-
+                                    .onEach { response ->
+                                        if (response is AuthResponse.Success) {
+                                            navController.navigate("FillProfileScreen")
                                         }
                                     }
                                     .launchIn(coroutineScope)
@@ -207,10 +213,7 @@ fun LoginScreen(navController: NavController) {
                     )
                 }
 
-                Row(
-                    modifier = Modifier
-                        .padding(top = 10.dp)
-                ) {
+                Row(modifier = Modifier.padding(top = 10.dp)) {
                     Text(
                         text = "Don't have an Account? ",
                         style = MaterialTheme.customTypography.mulish.regular,
@@ -225,9 +228,7 @@ fun LoginScreen(navController: NavController) {
                         color = Color.Blue,
                         style = MaterialTheme.customTypography.mulish.semiBold,
                         fontSize = 14.sp,
-                        modifier = Modifier.clickable {
-                            navController.navigate("RegisterScreen")
-                        }
+                        modifier = Modifier.clickable { navController.navigate("RegisterScreen") }
                     )
                 }
             }

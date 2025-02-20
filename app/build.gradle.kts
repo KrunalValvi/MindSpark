@@ -139,6 +139,8 @@ dependencies {
     implementation(libs.play.services.auth.v2041)
     implementation(libs.navigation.compose)
     implementation(libs.googleid)
+    implementation(libs.firebase.firestore.ktx)
+    implementation(libs.firebase.firestore)
 
     // Testing
     testImplementation(libs.junit)

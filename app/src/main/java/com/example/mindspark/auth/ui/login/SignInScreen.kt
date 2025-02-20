@@ -15,9 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,11 +45,8 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun SignInScreen(navController: NavController) {
-
     val context = LocalContext.current
-    val authenticationManager = remember {
-        AuthenticationManager(context)
-    }
+    val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
 
     Box(modifier = Modifier.background(Color(0xFFF5F9FF))) {
@@ -82,9 +75,10 @@ fun SignInScreen(navController: NavController) {
                         .clip(MaterialTheme.shapes.medium)
                         .clickable {
                             authenticationManager.signInWithGoogle(context)
-                                .onEach { responce ->
-                                    if (responce is AuthResponse.Success) {
-
+                                .onEach { response ->
+                                    if (response is AuthResponse.Success) {
+                                        // Navigate to the FillProfileScreen after sign in
+                                        navController.navigate("FillProfileScreen")
                                     }
                                 }
                                 .launchIn(coroutineScope)
@@ -95,12 +89,10 @@ fun SignInScreen(navController: NavController) {
                 ) {
                     Image(
                         painter = painterResource(R.drawable.ic_google),
-                        contentDescription = "LaunchScreen Icon",
+                        contentDescription = "Google Icon",
                         modifier = Modifier
                             .size(36.dp)
                             .shadow(4.dp, shape = CircleShape)
-                            .clickable{ },
-
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -113,11 +105,13 @@ fun SignInScreen(navController: NavController) {
                 Text(
                     text = "(Or)",
                     fontSize = 15.sp,
-                    fontWeight = FontWeight.Light,
-                    color = Color.Black,
-                    modifier = Modifier.padding(vertical = 16.dp)
+                    style = MaterialTheme.customTypography.mulish.extraBold,
+                    color = Color.Gray,
+                    modifier = Modifier.padding(vertical = 8.dp)
                 )
+                Spacer(modifier = Modifier.height(10.dp))
 
+                // Option to sign in with email/password if needed
                 AuthButton(
                     text = "Sign In with Your Account",
                     onClick = { navController.navigate("LoginScreen") }
@@ -128,7 +122,7 @@ fun SignInScreen(navController: NavController) {
                 Row {
                     Text(
                         text = "Don't have an Account? ",
-                        style = MaterialTheme.customTypography.mulish.regular,
+                        style = MaterialTheme.customTypography.mulish.semiBold,
                         fontSize = 14.sp
                     )
                     Text(

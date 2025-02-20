@@ -13,6 +13,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.R
 import kotlinx.coroutines.delay
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun LaunchScreen(navController: NavController) {
@@ -32,8 +34,17 @@ fun LaunchScreen(navController: NavController) {
 
     LaunchedEffect(Unit) {
         delay(1000)
-        navController.navigate("IntroScreen1") {
-            popUpTo("splash") { inclusive = true }
+        val user = Firebase.auth.currentUser
+        if (user != null) {
+            // User is logged in, navigate to HomeScreen
+            navController.navigate("HomeScreen") {
+                popUpTo("LaunchScreen") { inclusive = true }
+            }
+        } else {
+            // No user is logged in, navigate to IntroScreen1 (or LoginScreen as needed)
+            navController.navigate("IntroScreen1") {
+                popUpTo("LaunchScreen") { inclusive = true }
+            }
         }
     }
 }

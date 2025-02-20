@@ -15,11 +15,13 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.ui.theme.customTypography
@@ -76,6 +79,17 @@ fun StaticAuthTextField(
     )
 }
 
+@Preview(showBackground = true)
+@Composable
+fun AuthTextFieldPreview() {
+    AuthTextField(
+        value = "",
+        onValueChange = {},
+        placeholder = "Placeholder",
+        leadingIcon = {}
+    )
+}
+
 @Composable
 fun AuthTextField(
     value: String,
@@ -119,7 +133,11 @@ fun AuthTextField(
             disabledIndicatorColor = Color.Transparent,
             cursorColor = Color(0xFF1565C0)
         ),
-        leadingIcon = leadingIcon,
+        leadingIcon = {
+            CompositionLocalProvider(LocalContentColor provides Color.Gray) {
+                leadingIcon()
+            }
+        },
         trailingIcon = {
             if (isPasswordField && value.isNotEmpty()) {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
