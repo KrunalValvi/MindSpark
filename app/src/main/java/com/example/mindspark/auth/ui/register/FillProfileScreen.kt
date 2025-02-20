@@ -1,6 +1,5 @@
 package com.example.mindspark.auth.ui.register
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,11 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.auth.backend.getFirebaseProfileData
-import com.example.mindspark.auth.backend.showDatePicker
-import com.example.mindspark.auth.backend.validateProfile
-import com.example.mindspark.auth.backend.ProfileData
-import com.example.mindspark.auth.backend.storeProfileData
+import com.example.mindspark.Firebase.getFirebaseProfileData
+import com.example.mindspark.Firebase.showDatePicker
+import com.example.mindspark.Firebase.validateProfile
+import com.example.mindspark.Firebase.storeProfileData
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.components.AuthTopBar

@@ -1,8 +1,9 @@
 package com.example.mindspark.profile.ui.sections
 
-import android.content.SharedPreferences.Editor
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -19,13 +21,17 @@ import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,9 +40,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mindspark.Firebase.ProfileData
+import com.example.mindspark.Firebase.fetchUserProfileDataFromFirestore
+import com.example.mindspark.Firebase.showDatePicker
+import com.example.mindspark.Firebase.updateUserProfileData
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
@@ -44,9 +54,52 @@ import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.GenderDropdown
 import com.example.mindspark.auth.components.StaticAuthTextField
 import com.example.mindspark.ui.theme.LightBlueBackground
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditProfileScreen(navController: NavController) {
+    val context = LocalContext.current
+
+    // Profile state variables
+    var fullName by remember { mutableStateOf("") }
+    var nickname by remember { mutableStateOf("") }
+    var dateOfBirth by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var phoneNumber by remember { mutableStateOf("") }
+    var gender by remember { mutableStateOf("") }
+    var isLoading by remember { mutableStateOf(false) }
+    var showDatePickerState by remember { mutableStateOf(false) }
+    val coroutineScope = rememberCoroutineScope()
+
+    // Fetch profile from Firestore when the screen loads.
+    LaunchedEffect(Unit) {
+        isLoading = true
+        fetchUserProfileDataFromFirestore(
+            onSuccess = { profile ->
+                fullName = profile.fullName
+                nickname = profile.nickname
+                dateOfBirth = profile.dateOfBirth
+                email = profile.email
+                phoneNumber = profile.phoneNumber
+                gender = profile.gender
+                isLoading = false
+            },
+            onFailure = { error ->
+                isLoading = false
+                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+            }
+        )
+    }
+
+    // Launch DatePickerDialog when requested.
+    LaunchedEffect(showDatePickerState) {
+        if (showDatePickerState) {
+            showDatePicker(context) { selectedDate ->
+                dateOfBirth = selectedDate
+                showDatePickerState = false
+            }
+        }
+    }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -67,16 +120,9 @@ fun EditProfileScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            var fullName by remember { mutableStateOf("") }
-            var nickname by remember { mutableStateOf("") }
-            var dateOfBirth by remember { mutableStateOf("") }
-            var email by remember { mutableStateOf("") }
-            var phoneNumber by remember { mutableStateOf("") }
-            var gender by remember { mutableStateOf("") }
-
             Box(contentAlignment = Alignment.BottomEnd) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_profile_placeholder), // Replace with actual profile image
+                    painter = painterResource(id = R.drawable.ic_profile_placeholder),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .height(110.dp)
@@ -93,14 +139,14 @@ fun EditProfileScreen(navController: NavController) {
                         .background(Color.White)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_edit_photo), // Replace with actual edit icon
+                        painter = painterResource(id = R.drawable.ic_edit_photo),
                         contentDescription = "Edit Profile",
                         tint = Color.Black
                     )
                 }
             }
 
-            Spacer(Modifier.height(5.dp))
+            Spacer(modifier = Modifier.height(5.dp))
 
             AuthTextField(
                 value = fullName,
@@ -126,21 +172,29 @@ fun EditProfileScreen(navController: NavController) {
                 }
             )
 
-            AuthTextField(
-                value = dateOfBirth,
-                onValueChange = { dateOfBirth = it },
-                placeholder = "Date of Birth",
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Default.DateRange,
-                        contentDescription = "Date of Birth Icon"
-                    )
-                }
-            )
+            // Date of Birth Field: wrapped in a clickable Box that triggers the DatePicker.
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { showDatePickerState = true }
+            ) {
+                AuthTextField(
+                    value = dateOfBirth,
+                    onValueChange = { /* no-op, use date picker */ },
+                    placeholder = "Date of Birth",
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Default.DateRange,
+                            contentDescription = "Date of Birth Icon"
+                        )
+                    }
+                )
+            }
 
+            // Email field (read-only)
             AuthTextField(
                 value = email,
-                onValueChange = { email = it },
+                onValueChange = { /* no-op: email is not editable */ },
                 placeholder = "Email",
                 leadingIcon = {
                     Icon(
@@ -168,22 +222,46 @@ fun EditProfileScreen(navController: NavController) {
             )
 
             StaticAuthTextField(
-                placeholder = "Student",
+                placeholder = "Student"
             )
 
             Spacer(modifier = Modifier.height(15.dp))
 
             AuthButton(
                 text = "Update",
-                onClick = { }
+                onClick = {
+                    isLoading = true
+                    updateUserProfileData(
+                        profileData = ProfileData(
+                            fullName = fullName,
+                            email = email,
+                            phoneNumber = phoneNumber,
+                            nickname = nickname,
+                            dateOfBirth = dateOfBirth,
+                            gender = gender
+                        ),
+                        onSuccess = {
+                            isLoading = false
+                            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                        },
+                        onFailure = { error ->
+                            isLoading = false
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                        }
+                    )
+                }
             )
         }
-
     }
-}
 
-@Preview(showBackground = true)
-@Composable
-fun LoginScreenPreview1() {
-    EditProfileScreen(navController = NavController(LocalContext.current))
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f)),
+            contentAlignment = Alignment.Center
+        ) {
+            CircularProgressIndicator(color = Color.White)
+        }
+    }
 }

@@ -26,17 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.auth.backend.checkUserProfileExists
+import com.example.mindspark.Firebase.checkUserProfileExists
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.network.AuthResponse
 import com.example.mindspark.auth.network.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 
 @Composable
 fun SignInScreen(navController: NavController) {

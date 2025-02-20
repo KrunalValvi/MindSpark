@@ -66,6 +66,16 @@ import androidx.navigation.NavController
 import com.example.mindspark.auth.ui.register.FillProfileScreen
 import com.example.mindspark.ui.theme.customTypography
 
+@Preview(showBackground = true)
+@Composable
+fun OTPInputFieldsPreview() {
+    OTPInputFields(
+        otpLength = 4,
+        onUpdateOtpValuesByIndex = { _, _ -> },
+        onOtpInputComplete = {}
+    )
+}
+
 @Composable
 fun OTPInputFields(
     otpLength: Int,
@@ -164,7 +174,7 @@ fun OTPInputFields(
                 ),
                 shape = MaterialTheme.shapes.small,
                 isError = isError,
-                textStyle = TextStyle(
+                textStyle = MaterialTheme.customTypography.mulish.bold.copy(
                     textAlign = TextAlign.Center,
                     color = Color(0xFF505050),
                     fontSize = 22.sp
@@ -271,8 +281,8 @@ fun GenderDropdown(
 
                     Text(
                         text = if (selectedGender.isEmpty()) "Gender" else selectedGender,
-                        style = MaterialTheme.customTypography.mulish.regular,
-                        fontSize = 16.sp,
+                        style = MaterialTheme.customTypography.mulish.bold,
+                        fontSize = 14.sp,
                         color = if (selectedGender.isEmpty()) Color.Gray else Color(0xFF1A1A1A)
                     )
                 }
@@ -305,7 +315,7 @@ fun GenderDropdown(
                     text = {
                         Text(
                             text = gender,
-                            style = MaterialTheme.customTypography.mulish.regular,
+                            style = MaterialTheme.customTypography.mulish.bold,
                             fontSize = 14.sp,
                             color = if (gender == selectedGender) Color(0xFF1565C0) else Color.Black
                         )

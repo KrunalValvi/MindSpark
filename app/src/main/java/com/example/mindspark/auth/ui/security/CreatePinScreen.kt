@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mindspark.auth.backend.updateUserPin
+import com.example.mindspark.Firebase.updateUserPin
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.OTPInputFields

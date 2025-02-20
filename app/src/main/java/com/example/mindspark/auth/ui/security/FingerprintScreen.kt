@@ -46,11 +46,10 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.auth.backend.updateUserFingerprint
+import com.example.mindspark.Firebase.updateUserFingerprint
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 

@@ -1,4 +1,4 @@
-package com.example.mindspark.auth.backend
+package com.example.mindspark.Firebase
 
 import android.app.DatePickerDialog
 import android.content.Context
@@ -138,5 +138,62 @@ fun checkUserProfileExists(onResult: (Boolean) -> Unit, onError: (String) -> Uni
         }
         .addOnFailureListener { e ->
             onError(e.message ?: "Error checking profile")
+        }
+}
+
+fun fetchUserProfileDataFromFirestore(
+    onSuccess: (ProfileData) -> Unit,
+    onFailure: (String) -> Unit
+) {
+    val currentUser = Firebase.auth.currentUser
+    if (currentUser == null) {
+        onFailure("User not logged in")
+        return
+    }
+    val db = FirebaseFirestore.getInstance()
+    db.collection("users").document(currentUser.uid)
+        .get()
+        .addOnSuccessListener { doc ->
+            if (doc.exists()) {
+                val fullName = doc.getString("fullName") ?: ""
+                val nickname = doc.getString("nickname") ?: ""
+                val dateOfBirth = doc.getString("dateOfBirth") ?: ""
+                val email = doc.getString("email") ?: ""
+                val phoneNumber = doc.getString("phoneNumber") ?: ""
+                val gender = doc.getString("gender") ?: ""
+                onSuccess(ProfileData(fullName, email, phoneNumber, nickname, dateOfBirth, gender, "", "", "", "", ""))
+            } else {
+                onFailure("Profile not found")
+            }
+        }
+        .addOnFailureListener { e ->
+            onFailure(e.message ?: "Error fetching profile")
+        }
+}
+
+fun updateUserProfileData(
+    profileData: ProfileData,
+    onSuccess: () -> Unit,
+    onFailure: (String) -> Unit
+) {
+    val currentUser = Firebase.auth.currentUser
+    if (currentUser == null) {
+        onFailure("User not logged in")
+        return
+    }
+    val db = FirebaseFirestore.getInstance()
+    // Create a MutableMap<String, Any> so Firestore update() works correctly.
+    val updateMap: MutableMap<String, Any> = hashMapOf(
+        "fullName" to profileData.fullName,
+        "nickname" to profileData.nickname,
+        "dateOfBirth" to profileData.dateOfBirth,
+        "phoneNumber" to profileData.phoneNumber,
+        "gender" to profileData.gender
+    )
+    db.collection("users").document(currentUser.uid)
+        .update(updateMap)
+        .addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { exception ->
+            onFailure(exception.message ?: "An error occurred")
         }
 }

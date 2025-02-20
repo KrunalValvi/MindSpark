@@ -3,7 +3,10 @@ package com.example.mindspark.onboarding.ui
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -14,16 +17,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import kotlinx.coroutines.delay
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.delay
 
 @Composable
 fun LaunchScreen(navController: NavController) {
     val context = LocalContext.current
-    // Get SharedPreferences; you could use "onboarding_pref" as the file name.
+    // For onboarding, we use SharedPreferences.
     val sharedPref = context.getSharedPreferences("onboarding_pref", Context.MODE_PRIVATE)
-    // Check if the user has seen the onboarding screens.
     val hasSeenOnboarding = sharedPref.getBoolean("hasSeenOnboarding", false)
 
     Column(
@@ -40,25 +43,43 @@ fun LaunchScreen(navController: NavController) {
         )
     }
 
+    // Delay to show splash, then decide the next screen.
+    // If a user is logged in, check if their profile document exists.
     LaunchedEffect(Unit) {
         delay(1000)
         val user = Firebase.auth.currentUser
         if (user != null) {
-            // If the user is logged in, navigate to HomeScreen.
-            navController.navigate("HomeScreen") {
-                popUpTo("LaunchScreen") { inclusive = true }
-            }
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(user.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    if (document.exists()) {
+                        // Profile exists; user has completed registration.
+                        navController.navigate("HomeScreen") {
+                            popUpTo("LaunchScreen") { inclusive = true }
+                        }
+                    } else {
+                        // Profile does not exist; user needs to complete registration.
+                        navController.navigate("FillProfileScreen") {
+                            popUpTo("LaunchScreen") { inclusive = true }
+                        }
+                    }
+                }
+                .addOnFailureListener {
+                    // On failure, assume profile is incomplete.
+                    navController.navigate("FillProfileScreen") {
+                        popUpTo("LaunchScreen") { inclusive = true }
+                    }
+                }
         } else {
+            // No logged-in user: if first time, show onboarding; else, show login.
             if (!hasSeenOnboarding) {
-                // First time user: navigate to the onboarding screens.
-                // Set the flag so next time onboarding is skipped.
                 sharedPref.edit().putBoolean("hasSeenOnboarding", true).apply()
                 navController.navigate("IntroScreen1") {
                     popUpTo("LaunchScreen") { inclusive = true }
                 }
             } else {
-                // On subsequent launches, go straight to the LoginScreen.
-                navController.navigate("LoginScreen") {
+                navController.navigate("SignInScreen") {
                     popUpTo("LaunchScreen") { inclusive = true }
                 }
             }

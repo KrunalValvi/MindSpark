@@ -38,13 +38,9 @@ import com.example.mindspark.auth.network.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import androidx.compose.material3.Surface
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color.Companion.Black
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.mindspark.auth.backend.checkUserProfileExists
-import kotlinx.coroutines.launch
+import com.example.mindspark.Firebase.checkUserProfileExists
 
 // Helper function to check network connectivity.
 fun isNetworkAvailable(context: Context): Boolean {
@@ -141,7 +137,7 @@ fun LoginScreen(navController: NavController) {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 24.dp),
+                        .padding(top = 20.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Start
                 ) {
@@ -156,14 +152,18 @@ fun LoginScreen(navController: NavController) {
                     )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
-                        modifier = Modifier.clickable { },
+                        modifier = Modifier
+                            .clickable {
+                                navController.navigate("ForgotPasswordScreen")
+                            },
                         text = "Forgot Password?",
+                        color = Color(0xFF0961F5),
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 13.sp
                     )
                 }
 
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
                 AuthButton(
                     text = "Sign In",
@@ -178,7 +178,7 @@ fun LoginScreen(navController: NavController) {
                                 isLoading = false
                                 when (response) {
                                     is AuthResponse.Success -> {
-                                        navController.navigate("FillProfileScreen")
+                                        navController.navigate("HomeScreen")
                                     }
                                     is AuthResponse.Error -> {
                                         val errorMessage = response.message

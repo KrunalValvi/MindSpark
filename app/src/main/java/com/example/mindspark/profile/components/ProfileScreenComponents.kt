@@ -20,6 +20,11 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,11 +34,37 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.mindspark.Firebase.getFirebaseProfileData
 import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun ProfileHeader() {
+
+    val user = Firebase.auth.currentUser
+    var fullName by remember { mutableStateOf("Loading...") }
+    val currentUser = Firebase.auth.currentUser
+
+    LaunchedEffect(currentUser) {
+        if (currentUser != null) {
+            val db = FirebaseFirestore.getInstance()
+            db.collection("users").document(currentUser.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    fullName = document.getString("fullName")
+                        ?: currentUser.displayName ?: "User"
+                }
+                .addOnFailureListener {
+                    fullName = currentUser.displayName ?: "User"
+                }
+        } else {
+            fullName = "User"
+        }
+    }
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.padding(16.dp)
@@ -63,9 +94,19 @@ fun ProfileHeader() {
                 )
             }
         }
-        Spacer(modifier = Modifier.height(8.dp))
-        Text("Alex", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 24.sp)
-        Text("hernandex.redial@gmail.ac.in", style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp, color = Color.Gray)
+
+        Spacer(modifier = Modifier.height(10.dp))
+
+        Text(
+            text = fullName,
+            style = MaterialTheme.customTypography.jost.semiBold,
+            fontSize = 24.sp
+        )
+        Text(
+            text = user?.email ?: "Email",
+            style = MaterialTheme.customTypography.mulish.bold,
+            fontSize = 15.sp, color = Color.Gray
+        )
     }
 }
 
