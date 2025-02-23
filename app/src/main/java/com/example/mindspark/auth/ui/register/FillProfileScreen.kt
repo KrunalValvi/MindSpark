@@ -44,10 +44,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.Firebase.getFirebaseProfileData
-import com.example.mindspark.Firebase.showDatePicker
-import com.example.mindspark.Firebase.validateProfile
-import com.example.mindspark.Firebase.storeProfileData
+import com.example.mindspark.firebase.getFirebaseProfileData
+import com.example.mindspark.firebase.showDatePicker
+import com.example.mindspark.firebase.validateProfile
+import com.example.mindspark.firebase.storeProfileData
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.components.AuthTopBar

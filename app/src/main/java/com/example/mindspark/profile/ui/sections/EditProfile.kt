@@ -25,7 +25,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,12 +40,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mindspark.Firebase.ProfileData
-import com.example.mindspark.Firebase.fetchUserProfileDataFromFirestore
-import com.example.mindspark.Firebase.showDatePicker
-import com.example.mindspark.Firebase.updateUserProfileData
+import com.example.mindspark.firebase.ProfileData
+import com.example.mindspark.firebase.fetchUserProfileDataFromFirestore
+import com.example.mindspark.firebase.showDatePicker
+import com.example.mindspark.firebase.updateUserProfileData
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
@@ -54,7 +52,6 @@ import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.GenderDropdown
 import com.example.mindspark.auth.components.StaticAuthTextField
 import com.example.mindspark.ui.theme.LightBlueBackground
-import kotlinx.coroutines.launch
 
 @Composable
 fun EditProfileScreen(navController: NavController) {

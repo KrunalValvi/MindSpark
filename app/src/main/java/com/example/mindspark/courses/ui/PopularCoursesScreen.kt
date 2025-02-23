@@ -60,7 +60,7 @@ fun PopularCoursesList(navController: NavController) {
                 .fillMaxSize()
                 .background(LightBlueBackground)
                 .padding(padding)
-                .padding(start = 16.dp, end = 16.dp, top = 16.dp),
+                .padding(start = 4.dp, end = 4.dp, top = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Categories List
@@ -81,7 +81,7 @@ fun PopularCoursesList(navController: NavController) {
                     modifier = Modifier.padding(16.dp)
                 )
             } else {
-                PopularCoursesListVertical(
+                PopularCoursesListHorizontal(
                     courses = filteredCourses,
                     onCourseClick = { course ->
                         // Pass course.id to the CourseDetailScreen

@@ -39,8 +39,10 @@ fun BottomNavigationBar(navController: NavController) {
                         route == "PopularCoursesList"
             }
             BottomNavItem.MyCourses -> {
-                route == "CoursesListScreen" ||
-                        route == "TopMentorScreen"
+                route == "MyCourseCompleted" ||
+                        route?.startsWith("MyLessons") == true ||
+                        route == "CertificateScreen"
+                        route == "MyOngoingLessons"
             }
             BottomNavItem.Inbox -> route == "InboxScreen"
             BottomNavItem.Transactions -> route == "TransactionsScreen"

@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.Firebase.checkUserProfileExists
+import com.example.mindspark.firebase.checkUserProfileExists
 import com.example.mindspark.auth.components.AuthButton
-import com.example.mindspark.auth.network.AuthResponse
-import com.example.mindspark.auth.network.AuthenticationManager
+import com.example.mindspark.firebase.AuthResponse
+import com.example.mindspark.firebase.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach

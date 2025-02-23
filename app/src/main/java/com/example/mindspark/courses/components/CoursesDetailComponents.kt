@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -23,10 +25,16 @@ import com.example.mindspark.R
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.FeatureModel
 import com.example.mindspark.courses.model.MentorModel
+import com.example.mindspark.myCourses.components.SectionCard
+import com.example.mindspark.myCourses.data.getSampleSections
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
-fun CourseDetailComponents(course: CourseModel, mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
+fun CourseDetailComponents(
+    course: CourseModel,
+    mentors: List<MentorModel>,
+    onMentorClick: (MentorModel) -> Unit,
+) {
     var selectedTab by remember { mutableStateOf(0) }
     var expanded by remember { mutableStateOf(false) }
     val words = course.about.split(" ")
@@ -105,6 +113,7 @@ fun CourseDetailComponents(course: CourseModel, mentors: List<MentorModel>, onMe
                             }
                         }
                     }
+
                     1 -> CurriculumContent()
                 }
             }
@@ -161,12 +170,20 @@ private fun CourseHeader(course: CourseModel) {
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(Icons.Default.Videocam, null, Modifier.size(17.dp))
-                Text(" ${course.videos} Classes ", style = MaterialTheme.customTypography.mulish.bold, fontSize = 11.sp)
+                Text(
+                    " ${course.videos} Classes ",
+                    style = MaterialTheme.customTypography.mulish.bold,
+                    fontSize = 11.sp
+                )
                 Spacer(Modifier.width(8.dp))
                 Text("|")
                 Spacer(Modifier.width(8.dp))
                 Icon(Icons.Default.AccessTime, null, Modifier.size(17.dp))
-                Text(" ${course.hours} Hours ", style = MaterialTheme.customTypography.mulish.bold, fontSize = 11.sp)
+                Text(
+                    " ${course.hours} Hours ",
+                    style = MaterialTheme.customTypography.mulish.bold,
+                    fontSize = 11.sp
+                )
             }
             Text(
                 text = course.price,
@@ -180,84 +197,82 @@ private fun CourseHeader(course: CourseModel) {
 
 @Composable
 private fun CurriculumContent() {
-    Column {
-        CurriculumSection(
-            title = "Section 01 - Introduction",
-            duration = "25 Mins",
-            lessons = listOf(
-                "Why Using Graphic Design" to "15 Mins",
-                "Setup Your Graphic Design" to "10 Mins"
-            )
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        CurriculumSection(
-            title = "Section 02 - Getting Started",
-            duration = "45 Mins",
-            lessons = listOf(
-                "Basic Design Principles" to "20 Mins",
-                "Color Theory Fundamentals" to "25 Mins"
-            )
-        )
-    }
-}
-
-@Composable
-private fun CurriculumSection(title: String, duration: String, lessons: List<Pair<String, String>>) {
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.customTypography.jost.semiBold,
-                fontSize = 15.sp
-            )
-            Text(
-                text = duration,
-                style = MaterialTheme.customTypography.mulish.extraBold,
-                color = Color.Gray,
-                fontSize = 12.sp
-            )
-        }
-        Spacer(modifier = Modifier.height(8.dp))
-        lessons.forEachIndexed { index, (title, duration) ->
-            LessonItem(index = index + 1, title = title, duration = duration)
-        }
-    }
-}
-
-@Composable
-private fun LessonItem(index: Int, title: String, duration: String) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp)
-            .background(Color(0xFFF5F9FF), RoundedCornerShape(10.dp))
-            .padding(16.dp),
-        verticalAlignment = Alignment.CenterVertically
+    val sectionsList = remember { getSampleSections() }
+    Box(modifier = Modifier
+        .fillMaxWidth()
+        .height(300.dp) // or any fixed height that suits your design
     ) {
-        Text(
-            text = index.toString().padStart(2, '0'),
-            style = MaterialTheme.customTypography.jost.semiBold,
-            color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        Column(modifier = Modifier.weight(1f)) {
-            Text(text = title, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 16.sp)
-            Text(text = duration, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp)
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            itemsIndexed(sectionsList) { index, section ->
+                SectionCard(
+                    section = section,
+                    sectionIndex = index + 1
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
-        Icon(
-            imageVector = Icons.Default.PlayCircle,
-            contentDescription = "Play",
-            tint = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.size(24.dp)
-        )
     }
 }
+
+//@Composable
+//private fun CurriculumSection(title: String, duration: String, lessons: List<Pair<String, String>>) {
+//    Column {
+//        Row(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(horizontal = 16.dp),
+//            horizontalArrangement = Arrangement.SpaceBetween,
+//            verticalAlignment = Alignment.CenterVertically
+//        ) {
+//            Text(
+//                text = title,
+//                style = MaterialTheme.customTypography.jost.semiBold,
+//                fontSize = 15.sp
+//            )
+//            Text(
+//                text = duration,
+//                style = MaterialTheme.customTypography.mulish.extraBold,
+//                color = Color.Gray,
+//                fontSize = 12.sp
+//            )
+//        }
+//        Spacer(modifier = Modifier.height(8.dp))
+//        lessons.forEachIndexed { index, (title, duration) ->
+//            LessonItem(index = index + 1, title = title, duration = duration)
+//        }
+//    }
+//}
+
+//@Composable
+//private fun LessonItem(index: Int, title: String, duration: String) {
+//    Row(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .padding(vertical = 8.dp)
+//            .background(Color(0xFFF5F9FF), RoundedCornerShape(10.dp))
+//            .padding(16.dp),
+//        verticalAlignment = Alignment.CenterVertically
+//    ) {
+//        Text(
+//            text = index.toString().padStart(2, '0'),
+//            style = MaterialTheme.customTypography.jost.semiBold,
+//            color = MaterialTheme.colorScheme.primary,
+//            modifier = Modifier.padding(end = 8.dp)
+//        )
+//        Column(modifier = Modifier.weight(1f)) {
+//            Text(text = title, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 16.sp)
+//            Text(text = duration, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp)
+//        }
+//        Icon(
+//            imageVector = Icons.Default.PlayCircle,
+//            contentDescription = "Play",
+//            tint = MaterialTheme.colorScheme.primary,
+//            modifier = Modifier.size(24.dp)
+//        )
+//    }
+//}
 
 @Composable
 private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
@@ -280,7 +295,11 @@ private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (Mento
                 )
                 Spacer(Modifier.width(8.dp))
                 Column {
-                    Text(text = mentor.name, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 17.sp)
+                    Text(
+                        text = mentor.name,
+                        style = MaterialTheme.customTypography.jost.semiBold,
+                        fontSize = 17.sp
+                    )
                     Text(
                         text = mentor.profession,
                         style = MaterialTheme.customTypography.mulish.bold,
@@ -297,17 +316,28 @@ private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (Mento
 @Composable
 private fun FeaturesSection(course: CourseModel) {
     Column(modifier = Modifier.padding(16.dp)) {
-        Text(text = "What You'll Get", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
+        Text(
+            text = "What You'll Get",
+            style = MaterialTheme.customTypography.jost.semiBold,
+            fontSize = 18.sp
+        )
         Spacer(Modifier.height(8.dp))
         course.features.forEach { feature ->
-            Row(modifier = Modifier.padding(vertical = 8.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Image(
                     painter = painterResource(id = feature.iconRes),
                     contentDescription = null,
                     modifier = Modifier.size(20.dp)
                 )
                 Spacer(Modifier.width(8.dp))
-                Text(text = feature.description, style = MaterialTheme.customTypography.mulish.bold, fontSize = 14.sp)
+                Text(
+                    text = feature.description,
+                    style = MaterialTheme.customTypography.mulish.bold,
+                    fontSize = 14.sp
+                )
             }
         }
     }
@@ -319,8 +349,18 @@ fun ReviewsSection() {
         Text("Reviews", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
         Spacer(Modifier.height(8.dp))
         listOf(
-            Review("Will", "This course has been very useful. Mentor was well spoken totally loved it.", "578", "2 Weeks Ago"),
-            Review("Martha E. Thompson", "This course has been very useful. Mentor was well spoken totally loved it. It had fun sessions as well.", "492", "3 Weeks Ago")
+            Review(
+                "Will",
+                "This course has been very useful. Mentor was well spoken totally loved it.",
+                "578",
+                "2 Weeks Ago"
+            ),
+            Review(
+                "Martha E. Thompson",
+                "This course has been very useful. Mentor was well spoken totally loved it. It had fun sessions as well.",
+                "492",
+                "3 Weeks Ago"
+            )
         ).forEach { review ->
             ReviewItem(review)
         }
@@ -353,7 +393,10 @@ private fun ReviewItem(review: Review) {
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = review.review, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp)
+                text = review.review,
+                style = MaterialTheme.customTypography.mulish.bold,
+                fontSize = 13.sp
+            )
             Spacer(modifier = Modifier.height(12.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
@@ -368,9 +411,18 @@ private fun ReviewItem(review: Review) {
                         }
                 )
                 Spacer(Modifier.width(5.dp))
-                Text(likeCount.toString(), style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp)
+                Text(
+                    likeCount.toString(),
+                    style = MaterialTheme.customTypography.mulish.extraBold,
+                    fontSize = 12.sp
+                )
                 Spacer(Modifier.width(25.dp))
-                Text(review.timeAgo, style = MaterialTheme.customTypography.mulish.extraBold, fontSize = 12.sp, color = Color.Gray)
+                Text(
+                    review.timeAgo,
+                    style = MaterialTheme.customTypography.mulish.extraBold,
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
             }
         }
     }

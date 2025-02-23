@@ -69,20 +69,20 @@ val MaterialTheme.customTypography: CustomTypography
 //    }
 //}
 
-@Composable
-fun MindSparkTheme(
-    darkTheme: Boolean = false,
-    content: @Composable () -> Unit
-) {
-    val colors = if (darkTheme) {
-        DarkColorScheme
-    } else {
-        LightColorScheme
-    }
-
-    MaterialTheme(
-        colorScheme = colors,
-        typography = AppTypography,
-        content = content
-    )
-}
+//@Composable
+//fun MindSparkTheme(
+//    darkTheme: Boolean = false,
+//    content: @Composable () -> Unit
+//) {
+//    val colors = if (darkTheme) {
+//        DarkColorScheme
+//    } else {
+//        LightColorScheme
+//    }
+//
+//    MaterialTheme(
+//        colorScheme = colors,
+//        typography = AppTypography,
+//        content = content
+//    )
+//}

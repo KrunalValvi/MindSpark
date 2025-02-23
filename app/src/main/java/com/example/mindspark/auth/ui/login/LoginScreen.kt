@@ -33,14 +33,14 @@ import androidx.navigation.NavController
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
-import com.example.mindspark.auth.network.AuthResponse
-import com.example.mindspark.auth.network.AuthenticationManager
+import com.example.mindspark.firebase.AuthResponse
+import com.example.mindspark.firebase.AuthenticationManager
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.mindspark.Firebase.checkUserProfileExists
+import com.example.mindspark.firebase.checkUserProfileExists
 
 // Helper function to check network connectivity.
 fun isNetworkAvailable(context: Context): Boolean {

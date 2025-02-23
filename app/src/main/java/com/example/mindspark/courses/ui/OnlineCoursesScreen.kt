@@ -34,6 +34,7 @@ import com.example.mindspark.courses.components.CustomTextField_Image
 import com.example.mindspark.courses.components.ToggleSelectionRowCourses
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
+import com.example.mindspark.home.components.PopularCoursesListHorizontal
 import com.example.mindspark.home.components.PopularCoursesListVertical
 import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.TopMentorsListVertical
@@ -117,7 +118,7 @@ fun CoursesListScreen(
                     )
 
                     // Popular Courses List
-                    PopularCoursesListVertical(
+                    PopularCoursesListHorizontal(
                         courses = CourseData.getPopularCourses(),
                         onCourseClick = { course ->
                             navController.navigate("CourseDetailScreen/${course.id}")

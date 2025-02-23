@@ -34,7 +34,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import com.example.mindspark.Firebase.getFirebaseProfileData
 import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.Firebase

@@ -49,14 +49,20 @@ fun ProfileScreen(navController: NavController) {
             Spacer(modifier = Modifier.height(10.dp))
             SettingsList(navController)
             Spacer(modifier = Modifier.height(10.dp))
+
+            // Logout button.
             AuthButton(
                 text = "Logout",
                 onClick = {
-                    // Sign out the user
+                    // 1. Sign out the user from Firebase.
                     Firebase.auth.signOut()
-                    // Navigate to the LoginScreen and clear the back stack.
+
+                    // 2. Clear the entire navigation back stack.
+                    //    Here, we pop up to the navigation graph's root ID (which clears everything).
+                    //    Then, navigate to the LoginScreen.
                     navController.navigate("LoginScreen") {
-                        popUpTo("ProfileScreen") { inclusive = true }
+                        popUpTo(navController.graph.id) { inclusive = true }
+                        launchSingleTop = true
                     }
                 }
             )
