@@ -25,7 +25,6 @@ import androidx.navigation.NavController
 import com.example.mindspark.inbox.model.CallModel
 import com.example.mindspark.inbox.model.CallType
 import com.example.mindspark.ui.theme.customTypography
-import com.google.android.play.integrity.internal.h
 
 @Composable
 fun CallItem(

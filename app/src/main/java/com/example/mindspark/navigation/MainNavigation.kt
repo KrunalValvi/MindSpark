@@ -1,6 +1,5 @@
 package com.example.mindspark.navigation
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.navigation.compose.composable
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
