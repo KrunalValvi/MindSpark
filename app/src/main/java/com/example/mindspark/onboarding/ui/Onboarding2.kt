@@ -10,6 +10,6 @@ fun IntroScreenStep2(navController: NavController) {
     OnboardingScreen(
         content = OnboardingData.onboardingScreens[1],
         onSkip = { navController.navigate("SignInScreen") },
-        onNext = { navController.navigate("IntroScreen3") }
+        onNext = { navController.navigate("IntroScreenStep3") }
     )
 }

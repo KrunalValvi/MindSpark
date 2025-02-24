@@ -46,7 +46,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.firebase.updateUserFingerprint
+import com.example.mindspark.backend.updateUserFingerprint
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.delay

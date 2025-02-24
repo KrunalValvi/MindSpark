@@ -1,6 +1,5 @@
 package com.example.mindspark.myCourses.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material3.*
@@ -26,7 +24,6 @@ import androidx.navigation.NavController
 import androidx.navigation.createGraph
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.firebase.updateUserFingerprint
 import com.example.mindspark.myCourses.components.SectionCard
 import com.example.mindspark.myCourses.data.getSampleSections
 import com.example.mindspark.ui.theme.customTypography

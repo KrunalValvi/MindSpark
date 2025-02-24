@@ -79,19 +79,19 @@ fun ProfileHeader() {
                     .background(Color.Gray),
                 contentScale = ContentScale.Crop
             )
-            IconButton(
-                onClick = { /* Open image picker */ },
-                modifier = Modifier
-                    .size(28.dp)
-                    .clip(CircleShape)
-                    .background(Color.White)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_edit_photo), // Replace with actual edit icon
-                    contentDescription = "Edit Profile",
-                    tint = Color.Black
-                )
-            }
+//            IconButton(
+//                onClick = { /* Open image picker */ },
+//                modifier = Modifier
+//                    .size(28.dp)
+//                    .clip(CircleShape)
+//                    .background(Color.White)
+//            ) {
+//                Icon(
+//                    painter = painterResource(id = R.drawable.ic_edit_photo), // Replace with actual edit icon
+//                    contentDescription = "Edit Profile",
+//                    tint = Color.Black
+//                )
+//            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -151,3 +151,4 @@ fun SettingItem(icon: Int, title: String, onClick: () -> Unit) {
         )
     }
 }
+

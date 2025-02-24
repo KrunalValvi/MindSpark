@@ -35,9 +35,9 @@ fun AppNavigation() {
         "SetFingerprintScreen",
         "ForgotPasswordScreen",
         "LaunchScreen", // our splash screen
-        "IntroScreen1",
-        "IntroScreen2",
-        "IntroScreen3",
+        "IntroScreenStep1",
+        "IntroScreenStep2",
+        "IntroScreenStep3",
         "ActiveCallScreen"
     )
 

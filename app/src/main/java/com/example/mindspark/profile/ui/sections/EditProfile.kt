@@ -41,10 +41,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mindspark.firebase.ProfileData
-import com.example.mindspark.firebase.fetchUserProfileDataFromFirestore
-import com.example.mindspark.firebase.showDatePicker
-import com.example.mindspark.firebase.updateUserProfileData
+import com.example.mindspark.backend.ProfileData
+import com.example.mindspark.backend.fetchUserProfileDataFromFirestore
+import com.example.mindspark.backend.showDatePicker
+import com.example.mindspark.backend.updateUserProfileData
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField

@@ -1,4 +1,4 @@
-package com.example.mindspark.firebase
+package com.example.mindspark.backend
 
 import android.content.Context
 import androidx.credentials.CredentialManager

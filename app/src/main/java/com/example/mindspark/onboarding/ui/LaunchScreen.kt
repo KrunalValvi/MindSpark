@@ -85,7 +85,7 @@ fun LaunchScreen(navController: NavController) {
             if (!hasSeenOnboarding) {
                 // Mark onboarding as seen and navigate to IntroScreen1.
                 sharedPref.edit().putBoolean("hasSeenOnboarding", true).apply()
-                navController.navigate("IntroScreen1") {
+                navController.navigate("IntroScreenStep1") {
                     popUpTo("LaunchScreen") { inclusive = true }
                 }
             } else {

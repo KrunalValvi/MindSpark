@@ -33,6 +33,7 @@ import com.example.mindspark.R
 import com.example.mindspark.myCourses.model.LessonItem
 import com.example.mindspark.myCourses.model.Section
 import com.example.mindspark.myCourses.ui.MyLessons
+import com.example.mindspark.myCourses.ui.MyOngoingLessons
 import com.example.mindspark.ui.theme.customTypography
 
 /**
@@ -49,8 +50,8 @@ import com.example.mindspark.ui.theme.customTypography
 
 @Preview(showBackground = true)
 @Composable
-fun MyLessonsPreview() {
-    MyLessons(
+fun OngoingSectionCardPreview() {
+    MyOngoingLessons(
         navController = NavController(LocalContext.current).apply {
             createGraph(startDestination = "MyLessons") {}
         }
@@ -58,7 +59,7 @@ fun MyLessonsPreview() {
 }
 
 @Composable
-fun SectionCard(
+fun OngoingSectionCard(
     section: Section,
     sectionIndex: Int
 ) {
@@ -66,9 +67,10 @@ fun SectionCard(
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        modifier = Modifier.fillMaxWidth().clickable{ }
-
-        ) {
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { }
+    ) {
         Column(modifier = Modifier.padding(14.dp)) {
 
             // Header: "Section 01 - Introduction" and "25 Mins"
@@ -96,7 +98,12 @@ fun SectionCard(
 
             // For each lesson, show a row. Divider between rows.
             section.lessons.forEachIndexed { index, lesson ->
-                LessonRow(lesson, navController = NavController(LocalContext.current))
+                // For section 2, set isLocked to true
+                LessonRow(
+                    lesson = lesson,
+                    navController = NavController(LocalContext.current),
+                    isLocked = sectionIndex == 2
+                )
                 if (index < section.lessons.lastIndex) {
                     Divider(
                         modifier = Modifier
@@ -111,11 +118,11 @@ fun SectionCard(
     }
 }
 
-
 @Composable
 fun LessonRow(
     lesson: LessonItem,
-    navController: NavController
+    navController: NavController,
+    isLocked: Boolean = false
 ) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -152,20 +159,22 @@ fun LessonRow(
 
         Spacer(modifier = Modifier.width(8.dp))
 
-        // Play icon on the right
-
+        // Icon on the right: play icon or lock icon based on isLocked
         IconButton(
-            onClick = { }
+            onClick = {
+                if (!isLocked) {
+                    // Only navigate if the lesson is not locked
+                    // navController.navigate("LessonDetail/${lesson.id}")
+                }
+            }
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_play_circle), // Replace with your play icon
-                contentDescription = "Play Lesson",
-                tint = Color(0xFF007BFF)
+                painter = painterResource(
+                    id = if (isLocked) R.drawable.ic_course_lock else R.drawable.ic_play_circle
+                ),
+                contentDescription = if (isLocked) "Lesson Locked" else "Play Lesson",
+                tint = if (isLocked) Color.Gray else Color(0xFF007BFF)
             )
         }
     }
 }
-
-
-
-
