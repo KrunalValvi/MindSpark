@@ -38,7 +38,8 @@ fun AppNavigation() {
         "LaunchScreen", // our splash screen
         "IntroScreen1",
         "IntroScreen2",
-        "IntroScreen3"
+        "IntroScreen3",
+        "ActiveCallScreen"
     )
 
     // Reset the status bar color to a default for all screens except the LaunchScreen.

@@ -93,7 +93,7 @@ class AuthenticationManager(val context: Context) {
                     }
                 }
             }
-        } catch (e: Exception) {
+        }    catch (e: Exception) {
             trySend(AuthResponse.Error(e.message ?: "Unknown error"))
         }
         awaitClose { }

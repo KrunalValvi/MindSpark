@@ -1,4 +1,4 @@
-package com.example.mindspark.inbox.ui.chat
+package com.example.mindspark.inbox.ui
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -15,7 +15,6 @@ import com.example.mindspark.inbox.components.ChatInputBar
 @Composable
 fun ChatDetailScreen(
     navController: NavController,
-    chatId: String
 ) {
     var messageText by remember { mutableStateOf("") }
 

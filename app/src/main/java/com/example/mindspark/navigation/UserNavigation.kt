@@ -11,9 +11,10 @@ import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
 import com.example.mindspark.inbox.ui.InboxScreen
-import com.example.mindspark.inbox.ui.call.ActiveCallScreen
-import com.example.mindspark.inbox.ui.chat.ChatDetailScreen
+import com.example.mindspark.inbox.ui.ActiveCallScreen
+import com.example.mindspark.inbox.ui.ChatDetailScreen
 import com.example.mindspark.courses.ui.CourseDetailScreen
+import com.example.mindspark.courses.ui.CoursesFilterScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
 import com.example.mindspark.courses.ui.PopularCoursesList
 import com.example.mindspark.courses.ui.SingleMentorDetails
@@ -170,6 +171,12 @@ fun NavGraphBuilder.UserNavigation(navController: NavController) {
         ) { MyOngoingLessons(navController) }
 
     composable(
+        "CoursesFilterScreen",
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
+    ) { CoursesFilterScreen(navController) }
+
+    composable(
          "CertificateScreen",
          enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
          exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
@@ -218,21 +225,15 @@ fun NavGraphBuilder.UserNavigation(navController: NavController) {
 
     composable(
         "ChatDetailScreen/{chatId}",
-        arguments = listOf(navArgument("chatId") { type = NavType.StringType }),
+//        arguments = listOf(navArgument("chatId") { type = NavType.StringType }),
         enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
-    ) { backStackEntry ->
-        val chatId = backStackEntry.arguments?.getString("chatId") ?: ""
-        ChatDetailScreen(navController = navController, chatId = chatId)
-    }
+    ) { ChatDetailScreen(navController = navController) }
 
     composable(
         "ActiveCallScreen/{callId}",
-        arguments = listOf(navArgument("callId") { type = NavType.StringType }),
+//        arguments = listOf(navArgument("callId") { type = NavType.StringType }),
         enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
-    ) { backStackEntry ->
-        val callId = backStackEntry.arguments?.getString("callId") ?: ""
-        ActiveCallScreen(navController = navController, callId = callId)
-    }
+    ) { ActiveCallScreen(navController = navController) }
 }

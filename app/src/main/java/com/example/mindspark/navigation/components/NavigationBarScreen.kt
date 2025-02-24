@@ -41,11 +41,19 @@ fun BottomNavigationBar(navController: NavController) {
             BottomNavItem.MyCourses -> {
                 route == "MyCourseCompleted" ||
                         route?.startsWith("MyLessons") == true ||
-                        route == "CertificateScreen"
+                        route == "CertificateScreen" ||
                         route == "MyOngoingLessons"
             }
-            BottomNavItem.Inbox -> route == "InboxScreen"
-            BottomNavItem.Transactions -> route == "TransactionsScreen"
+            BottomNavItem.Inbox -> {
+                route == "InboxScreen" ||
+                        route?.startsWith("ChatDetailScreen") == true ||
+                        route?.startsWith("ActiveCallScreen") == true ||
+                        route == "ActiveCallScreen"
+            }
+            BottomNavItem.Transactions -> {
+                route == "TransactionsScreen" ||
+                        route == "EReceiptScreen"
+            }
             BottomNavItem.Profile -> {
                 route == "ProfileScreen" ||
                         route == "TermsScreen"

@@ -70,5 +70,4 @@ fun NavGraphBuilder.AuthenticationNavigation(navController: NavController) {
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
     ) { CreateNewPassword(navController) }
 
-
 }
