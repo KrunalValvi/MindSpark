@@ -120,6 +120,9 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
     implementation("com.google.android.gms:play-services-auth:20.4.1")
     implementation("io.coil-kt:coil-compose:2.2.2")
 
