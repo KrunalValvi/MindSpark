@@ -358,16 +358,16 @@ object CourseData {
     fun getAllCategories(): List<CourseCategory> = CourseCategory.entries
 
     fun getPopularCourses(): List<CourseModel> = popularCourses
-
-    fun addBookmark(course: CourseModel) {
-        course.isBookmarked = true
-        bookmarkedCourses.add(course)
-    }
-
-    fun removeBookmark(course: CourseModel) {
-        course.isBookmarked = false
-        bookmarkedCourses.remove(course)
-    }
+//
+//    fun addBookmark(course: CourseModel) {
+//        course.isBookmarked = true
+//        bookmarkedCourses.add(course)
+//    }
+//
+//    fun removeBookmark(course: CourseModel) {
+//        course.isBookmarked = false
+//        bookmarkedCourses.remove(course)
+//    }
 
     fun getBookmarkedCourses(): List<CourseModel> = bookmarkedCourses
 

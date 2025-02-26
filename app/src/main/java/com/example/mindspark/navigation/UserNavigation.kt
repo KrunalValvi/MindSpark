@@ -7,6 +7,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.example.mindspark.admin.ui.AdminScreen
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
@@ -39,10 +40,16 @@ import com.example.mindspark.transactions.ui.EReceiptScreen
 
 fun NavGraphBuilder.UserNavigation(navController: NavController) {
     composable(
-        "HomeScreen",
+        "AdminScreen",
         enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
-    ) { HomeScreen(navController) }
+    ) { AdminScreen(navController) }
+
+    composable(
+            "HomeScreen",
+            enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
+            exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
+        ) { HomeScreen(navController) }
 
     composable(
         "ProfileScreen",
