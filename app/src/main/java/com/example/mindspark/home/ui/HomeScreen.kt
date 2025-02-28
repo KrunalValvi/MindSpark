@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -109,6 +110,8 @@ fun HomeScreen(navController: NavController) {
                 }
             )
 
+            Spacer(modifier = Modifier.height(5.dp))
+
             // Categories List
             CategoriesListShow(
                 categories = CourseData.getAllCategories(),
@@ -150,7 +153,7 @@ fun HomeScreen(navController: NavController) {
                     navController.navigate("SingleMentorDetails/${mentor.id}")
                 }
             )
-            Spacer(modifier = Modifier.padding(bottom = 30.dp))
+            Spacer(modifier = Modifier.padding(bottom = 20.dp))
         }
     }
 }

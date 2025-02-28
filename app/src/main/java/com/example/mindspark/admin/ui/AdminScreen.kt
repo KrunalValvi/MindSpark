@@ -11,12 +11,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.mindspark.admin.ui.course.AdminCoursesListScreen
 import com.example.mindspark.admin.ui.course.CourseDetailScreen
-import com.example.mindspark.admin.ui.course.CoursesListScreen
 import com.example.mindspark.admin.ui.mentor.MentorDetailScreen
 import com.example.mindspark.admin.ui.mentor.MentorsListScreen
 import com.example.mindspark.admin.ui.users.UserDetailScreen
 import com.example.mindspark.admin.ui.users.UserListScreen
+import com.example.mindspark.courses.ui.CoursesListScreen
 
 sealed class Screen {
 
@@ -68,7 +69,7 @@ fun AdminScreen(navController: NavController) {
         }
 
         is Screen.CoursesList -> {
-            CoursesListScreen(
+            AdminCoursesListScreen(
                 onBack = { currentScreen = Screen.Main },
                 onCourseClick = { courseId ->
                     currentScreen = Screen.CourseDetail(courseId)

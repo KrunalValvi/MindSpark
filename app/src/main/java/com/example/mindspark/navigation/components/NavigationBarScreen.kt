@@ -50,9 +50,13 @@ fun BottomNavigationBar(navController: NavController) {
                         route?.startsWith("ActiveCallScreen") == true ||
                         route == "ActiveCallScreen"
             }
+//            BottomNavItem.Transactions -> {
+//                route == "TransactionsScreen" ||
+//                        route == "EReceiptScreen"
+//            }
             BottomNavItem.Transactions -> {
-                route == "TransactionsScreen" ||
-                        route == "EReceiptScreen"
+                route == "CommunityScreen" ||
+                        route == "NewPostScreen"
             }
             BottomNavItem.Profile -> {
                 route == "ProfileScreen" ||

@@ -10,7 +10,7 @@ data class AdminCourseModel(
     val rating: String? = null,
     val students: String? = null,
 
-//    val imageRes: String? = "",
+    val imageRes: String? = "",
     val videos: Int? = null,
 
     val hours: String? = "",

@@ -8,6 +8,9 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mindspark.admin.ui.AdminScreen
+import com.example.mindspark.admin.ui.course.AdminCoursesListScreen
+import com.example.mindspark.community.ui.CommunityScreen
+import com.example.mindspark.community.ui.NewPostScreen
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
@@ -20,6 +23,7 @@ import com.example.mindspark.transactions.ui.TransactionsScreen
 import com.example.mindspark.courses.ui.PopularCoursesList
 import com.example.mindspark.courses.ui.SingleMentorDetails
 import com.example.mindspark.courses.ui.TopMentorScreen
+import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.myCourses.data.sampleData
 import com.example.mindspark.myCourses.ui.CertificateScreen
 import com.example.mindspark.myCourses.ui.MyCourseCompleted
@@ -45,11 +49,34 @@ fun NavGraphBuilder.UserNavigation(navController: NavController) {
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
     ) { AdminScreen(navController) }
 
+
+    composable(
+        route = "CommunityScreen",
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
+    ) {
+        CommunityScreen(navController)
+    }
+
+    composable(
+        route = "NewPostScreen",
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
+    ) {
+        NewPostScreen(navController)
+    }
+
     composable(
             "HomeScreen",
             enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
             exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
         ) { HomeScreen(navController) }
+
+    composable(
+        "SearchScreen",
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
+    ) { SearchScreen(navController) }
 
     composable(
         "ProfileScreen",

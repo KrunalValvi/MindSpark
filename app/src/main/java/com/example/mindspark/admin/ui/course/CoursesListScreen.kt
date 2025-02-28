@@ -23,11 +23,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.navigation.NavController
 import com.example.mindspark.admin.components.AdminCourseCard
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CoursesListScreen(
+fun AdminCoursesListScreen(
     onBack: () -> Unit,
     onCourseClick: (String?) -> Unit // courseId or null for new course
 ) {
