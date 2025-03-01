@@ -7,6 +7,6 @@ sealed class BottomNavItem(val route: String, val label: String, @DrawableRes va
     object Home : BottomNavItem("HomeScreen", "Home", R.drawable.ic_home)
     object MyCourses : BottomNavItem("MyCourseCompleted", "My Courses", R.drawable.ic_courses)
     object Inbox : BottomNavItem("InboxScreen", "Inbox", R.drawable.ic_inbox)
-    object Transactions : BottomNavItem("CommunityScreen", "Transactions", R.drawable.ic_transaction)
+    object Community : BottomNavItem("CommunityScreen", "Transactions", R.drawable.ic_transaction)
     object Profile : BottomNavItem("ProfileScreen", "Profile", R.drawable.ic_profile)
 }

@@ -22,7 +22,7 @@ fun BottomNavigationBar(navController: NavController) {
         BottomNavItem.Home,
         BottomNavItem.MyCourses,
         BottomNavItem.Inbox,
-        BottomNavItem.Transactions,
+        BottomNavItem.Community,
         BottomNavItem.Profile
     )
 
@@ -54,7 +54,7 @@ fun BottomNavigationBar(navController: NavController) {
 //                route == "TransactionsScreen" ||
 //                        route == "EReceiptScreen"
 //            }
-            BottomNavItem.Transactions -> {
+            BottomNavItem.Community -> {
                 route == "CommunityScreen" ||
                         route == "NewPostScreen"
             }

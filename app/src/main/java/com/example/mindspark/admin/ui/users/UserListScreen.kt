@@ -52,7 +52,7 @@ fun UserListScreen(
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             TopAppBar(
-                title = { Text("Use (${Users.size})") },
+                title = { Text("Users (${Users.size})") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Filled.ArrowBack, contentDescription = "Back")

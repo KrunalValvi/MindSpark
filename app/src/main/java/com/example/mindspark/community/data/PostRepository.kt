@@ -35,7 +35,7 @@ class PostRepository {
         postsCollection.orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { querySnapshot, error ->
                 if (error != null) {
-                    // Handle error if needed
+                    // Optionally handle error
                     return@addSnapshotListener
                 }
                 val posts = querySnapshot?.documents?.mapNotNull { doc ->

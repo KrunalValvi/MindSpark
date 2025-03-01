@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mindspark.community.data.CommunityViewModel
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -34,6 +36,11 @@ fun NewPostScreen(navController: NavController) {
     val viewModel: CommunityViewModel = viewModel()
 
     var postContent by remember { mutableStateOf("") }
+
+    // Get the actual logged-in user's details
+    val currentUser = Firebase.auth.currentUser
+    val userId = currentUser?.uid ?: ""
+    val fullName = currentUser?.displayName ?: "Unknown"
 
     Scaffold(
         topBar = {
@@ -65,11 +72,10 @@ fun NewPostScreen(navController: NavController) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Button(
                     onClick = {
-                        // For demo, using dummy user values; replace with actual logged-in user data.
                         viewModel.addNewPost(
                             content = postContent,
-                            userId = "dummyUserId",
-                            userName = "Alex"
+                            userId = userId,
+                            userName = fullName
                         ) { success ->
                             if (success) {
                                 navController.navigateUp()

@@ -14,7 +14,6 @@ import com.example.mindspark.community.ui.NewPostScreen
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.courses.ui.CoursesListScreen
-import com.example.mindspark.inbox.ui.InboxScreen
 import com.example.mindspark.inbox.ui.ActiveCallScreen
 import com.example.mindspark.inbox.ui.ChatDetailScreen
 import com.example.mindspark.courses.ui.CourseDetailScreen
@@ -24,6 +23,7 @@ import com.example.mindspark.courses.ui.PopularCoursesList
 import com.example.mindspark.courses.ui.SingleMentorDetails
 import com.example.mindspark.courses.ui.TopMentorScreen
 import com.example.mindspark.home.ui.SearchScreen
+import com.example.mindspark.inbox.ui.InboxScreen
 import com.example.mindspark.myCourses.data.sampleData
 import com.example.mindspark.myCourses.ui.CertificateScreen
 import com.example.mindspark.myCourses.ui.MyCourseCompleted

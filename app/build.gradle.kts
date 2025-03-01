@@ -126,6 +126,9 @@ dependencies {
     implementation("com.google.android.gms:play-services-auth:20.4.1")
     implementation("io.coil-kt:coil-compose:2.2.2")
 
+    implementation("com.google.accompanist:accompanist-swiperefresh:0.28.0")
+
+
 
     // Material Components
     implementation(libs.material)

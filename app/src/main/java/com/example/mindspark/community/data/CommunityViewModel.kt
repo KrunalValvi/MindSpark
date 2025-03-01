@@ -9,12 +9,12 @@ import com.example.mindspark.community.model.Post
 class CommunityViewModel : ViewModel() {
     private val repository = PostRepository()
 
-    // State to hold the list of posts
+    // Holds the list of posts as a mutable state.
     var posts by mutableStateOf<List<Post>>(emptyList())
         private set
 
     init {
-        // Listen to real-time updates
+        // Start listening for real-time updates
         repository.observePosts { updatedPosts ->
             posts = updatedPosts
         }
@@ -31,6 +31,20 @@ class CommunityViewModel : ViewModel() {
         repository.addPost(newPost,
             onSuccess = { onResult(true) },
             onFailure = { onResult(false) }
+        )
+    }
+
+    // Refresh posts (for pull-to-refresh)
+    fun refreshPosts(onComplete: () -> Unit) {
+        repository.getPosts(
+            onSuccess = { fetchedPosts ->
+                posts = fetchedPosts
+                onComplete()
+            },
+            onFailure = {
+                // Optionally handle the error
+                onComplete()
+            }
         )
     }
 }
