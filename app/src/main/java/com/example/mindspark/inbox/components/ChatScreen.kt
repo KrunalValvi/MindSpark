@@ -1,5 +1,6 @@
 package com.example.mindspark.inbox.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,26 +8,37 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachFile
-import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.inbox.model.ChatModel
+import com.example.mindspark.inbox.ui.InboxScreen
+import com.example.mindspark.ui.theme.LightBlueBackground
 import com.example.mindspark.ui.theme.customTypography
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Composable
 fun ChatItem(
     chat: ChatModel,
-    onChatClick: () -> Unit,
-    onCallClick: () -> Unit
+    onChatClick: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -48,7 +60,7 @@ fun ChatItem(
             modifier = Modifier.weight(1f)
         ) {
             Text(
-                text = chat.name,
+                text = chat.fullName.ifEmpty { "Unknown User" },  // Show fallback name
                 style = MaterialTheme.customTypography.jost.semiBold,
                 fontSize = 16.sp,
             )
@@ -65,13 +77,6 @@ fun ChatItem(
             horizontalAlignment = Alignment.End,
             modifier = Modifier.padding(start = 8.dp)
         ) {
-            Text(
-                text = chat.time,
-                style = MaterialTheme.customTypography.mulish.extraBold,
-                fontSize = 11.sp,
-                color = Color.Gray
-            )
-            Spacer(modifier = Modifier.height(4.dp))
             if (chat.messageCount != "0") {
                 Surface(
                     modifier = Modifier.size(24.dp),
@@ -92,20 +97,9 @@ fun ChatItem(
                 }
             }
         }
-
-        IconButton(
-            onClick = onCallClick,
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.Call,
-                contentDescription = "Call",
-                tint = Color(0xFF2196F3),
-                modifier = Modifier.size(24.dp)
-            )
-        }
     }
 }
+
 
 @Composable
 fun ChatSection(
@@ -118,12 +112,14 @@ fun ChatSection(
     ) {
         items(chatList) { chat ->
             ChatItem(
+//                userId = chat.UserId, // Ensure userId is provided as a String
                 chat = chat,
                 onChatClick = {
-                    navController.navigate("ChatDetailScreen/${chat.id}")
-                },
-                onCallClick = {
-                    navController.navigate("ActiveCallScreen/${chat.id}")
+
+                    val encodedName = URLEncoder.encode(chat.fullName, StandardCharsets.UTF_8.toString())
+                    val encodedEmail = URLEncoder.encode(chat.email, StandardCharsets.UTF_8.toString())
+
+                    navController.navigate("ChatDetailScreen/$encodedName/$encodedEmail")
                 }
             )
             if (chatList.indexOf(chat) < chatList.lastIndex) {
@@ -136,6 +132,17 @@ fun ChatSection(
     }
 }
 
+@Preview(showBackground = true)
+@Composable
+fun ChatInputBarPreview() {
+    ChatInputBar(
+        message = "Hello",
+        onMessageChange = {},
+        onSendClick = {}
+    )
+}
+
+
 @Composable
 fun ChatInputBar(
     message: String,
@@ -144,16 +151,18 @@ fun ChatInputBar(
 ) {
     Surface(
         modifier = Modifier.fillMaxWidth(),
+        color = LightBlueBackground,
         tonalElevation = 4.dp
     ) {
         Row(
             modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                ,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* Open attachment */ }) {
-                Icon(Icons.Default.AttachFile, "Attach")
-            }
+//            IconButton(onClick = { /* Open attachment */ }) {
+//                Icon(Icons.Default.AttachFile, "Attach")
+//            }
             TextField(
                 value = message,
                 onValueChange = onMessageChange,

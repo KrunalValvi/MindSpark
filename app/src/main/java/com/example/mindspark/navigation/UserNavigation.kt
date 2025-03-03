@@ -257,12 +257,14 @@ fun NavGraphBuilder.UserNavigation(navController: NavController) {
         )
     }
 
-    composable(
-        "ChatDetailScreen/{chatId}",
-//        arguments = listOf(navArgument("chatId") { type = NavType.StringType }),
-        enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
-        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
-    ) { ChatDetailScreen(navController = navController) }
+    composable("ChatDetailScreen/{fullName}/{receiverEmail}") { backStackEntry ->
+        val fullName = backStackEntry.arguments?.getString("fullName") ?: "Unknown User"
+        val receiverEmail = backStackEntry.arguments?.getString("receiverEmail") ?: ""
+
+        ChatDetailScreen(navController, fullName, receiverEmail)
+    }
+
+
 
     composable(
         "ActiveCallScreen/{callId}",

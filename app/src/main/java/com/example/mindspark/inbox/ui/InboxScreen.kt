@@ -2,22 +2,40 @@ package com.example.mindspark.inbox.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.inbox.components.CallsSection
 import com.example.mindspark.inbox.components.ChatSection
-import com.example.mindspark.inbox.data.callsList
-import com.example.mindspark.inbox.data.chatList
-import com.example.mindspark.courses.components.ToggleSelectionRowCourses
+import com.example.mindspark.inbox.model.ChatModel
 import com.example.mindspark.ui.theme.LightBlueBackground
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 @Composable
 fun InboxScreen(navController: NavController) {
-    var selectedOption by remember { mutableStateOf("Chat") }
+    var userList by remember { mutableStateOf<List<ChatModel>>(emptyList()) }
+    val db = FirebaseFirestore.getInstance()
+    val auth = FirebaseAuth.getInstance()
+    val currentUserEmail = auth.currentUser?.email
+
+    LaunchedEffect(Unit) {
+        try {
+            val snapshot = db.collection("users").get().await()
+            val users = snapshot.documents.mapNotNull { doc ->
+                val user = doc.toObject(ChatModel::class.java)
+                if(user != null && user.email != currentUserEmail) user else null
+            }
+            userList = users
+        } catch (e: Exception) {
+            println("Error fetching users: ${e.message}")  // Debug error
+        }
+    }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -35,30 +53,18 @@ fun InboxScreen(navController: NavController) {
                 .background(LightBlueBackground)
                 .padding(padding)
         ) {
-            Spacer(modifier = Modifier.height(16.dp))
-
-            ToggleSelectionRowCourses(
-                options = listOf("Chat", "Calls"),
-                selectedOption = selectedOption,
-                onOptionSelected = { selectedOption = it }
+            ChatSection(
+                chatList = userList,
+                navController = navController
             )
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            when (selectedOption) {
-                "Chat" -> {
-                    ChatSection(
-                        chatList = chatList,
-                        navController = navController
-                    )
-                }
-                "Calls" -> {
-                    CallsSection(
-                        callsList = callsList,
-                        navController = navController
-                    )
-                }
-            }
         }
     }
+}
+
+
+
+@Preview(showBackground = true)
+@Composable
+fun InboxScreenPreview() {
+    InboxScreen(navController = NavController(LocalContext.current))
 }
