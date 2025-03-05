@@ -1,14 +1,22 @@
 [versions]
 accompanistPager = "0.20.3"
 accompanistPagerIndicators = "0.20.3"
+accompanistSwiperefresh = "0.28.0"
+accompanistSystemuicontroller = "0.31.0-alpha"
 agp = "8.8.1"
 androidAsyncHttp = "1.4.11"
+androidImageCropper = "4.5.0"
 asynchttpclient = "2.1.1"
 coilCompose = "2.5.0"
+coilComposeVersion = "2.2.2"
+coilKtCoilCompose = "3.1.0"
 coreKtxVersion = "1.9.0"
 credentials = "1.5.0-rc01"
+croppy = "0.2.0"
 firebaseAuthKtx = "23.1.0"
 firebaseBomVersion = "31.1.1"
+firebaseStorage = "20.3.0"
+googlePlayServicesAuth = "20.7.0"
 hiltAndroidCompiler = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 kotlin = "2.0.0"
@@ -25,6 +33,7 @@ lifecycleRuntimeKtxVersion = "2.6.2"
 material3 = "1.0.1"
 materialIconsCore = "1.5.0"
 materialIconsExtended = "1.5.4"
+materialIconsExtendedVersion = "1.5.0"
 materialVersion = "1.7.6"
 navigationCompose = "2.8.5"
 googleGmsGoogleServices = "4.4.2"
@@ -47,11 +56,18 @@ androidxNavigationCompose = "2.8.7"
 firebaseFirestoreKtx = "25.1.2"
 firebaseFirestore = "25.1.2"
 firebaseDatabaseKtx = "21.0.0"
+monitor = "1.7.2"
+junitJunit = "4.12"
+junitKtx = "1.2.1"
+ucrop = "2.2.8"
 
 [libraries]
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
+accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 android-async-http = { module = "com.loopj.android:android-async-http", version.ref = "androidAsyncHttp" }
+android-image-cropper = { module = "com.vanniktech:android-image-cropper", version.ref = "androidImageCropper" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-ktx-v190 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
@@ -63,12 +79,17 @@ androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialVersion" }
 androidx-material-icons-core = { module = "androidx.compose.material:material-icons-core", version.ref = "materialIconsCore" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-material-icons-extended-v150 = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtendedVersion" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-navigation-compose-v240 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingRuntime" }
 asynchttpclient = { module = "com.codepath.libraries:asynchttpclient", version.ref = "asynchttpclient" }
 coil-compose = { module = "io.coil-kt:coil-compose", version.ref = "coilCompose" }
+coil-compose-v222 = { module = "io.coil-kt:coil-compose", version.ref = "coilComposeVersion" }
+coil3-coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilKtCoilCompose" }
+croppy = { module = "com.github.K1rakishou:croppy", version.ref = "croppy" }
 firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx" }
+firebase-storage = { module = "com.google.firebase:firebase-storage", version.ref = "firebaseStorage" }
 google-firebase-auth-ktx = { module = "com.google.firebase:firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
 google-firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBomVersion" }
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroidCompiler" }
@@ -92,6 +113,7 @@ kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-c
 material3 = { module = "androidx.compose.material3:material3", version.ref = "material3" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
 play-services-auth-v2041 = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuthVersion" }
+play-services-auth-v2070 = { module = "com.google.android.gms:play-services-auth", version.ref = "googlePlayServicesAuth" }
 timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -106,6 +128,10 @@ navigation-compose = { group = "androidx.navigation", name = "navigation-compose
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore", version.ref = "firebaseFirestore" }
 firebase-database-ktx = { group = "com.google.firebase", name = "firebase-database-ktx", version.ref = "firebaseDatabaseKtx" }
+androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "monitor" }
+junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

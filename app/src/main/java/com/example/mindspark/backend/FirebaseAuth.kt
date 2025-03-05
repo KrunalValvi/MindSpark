@@ -15,6 +15,7 @@ data class ProfileData(
     val nickname: String = "",
     val dateOfBirth: String = "",
     val gender: String = "",
+    val profileImageUrl: String = "", // Added field for profile image URL
     val fullNameError: String = "",
     val dobError: String = "",
     val emailError: String = "",

@@ -1,6 +1,9 @@
 package com.example.mindspark.profile.ui.sections
 
+import android.net.Uri
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,10 +11,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -41,16 +44,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.example.mindspark.backend.ProfileData
-import com.example.mindspark.backend.fetchUserProfileDataFromFirestore
-import com.example.mindspark.backend.showDatePicker
-import com.example.mindspark.backend.updateUserProfileData
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.GenderDropdown
 import com.example.mindspark.auth.components.StaticAuthTextField
+import com.example.mindspark.backend.ProfileData
+import com.example.mindspark.backend.fetchUserProfileDataFromFirestore
+import com.example.mindspark.backend.showDatePicker
+import com.example.mindspark.backend.updateUserProfileData
 import com.example.mindspark.ui.theme.LightBlueBackground
 
 @Composable
@@ -67,6 +70,13 @@ fun EditProfileScreen(navController: NavController) {
     var isLoading by remember { mutableStateOf(false) }
     var showDatePickerState by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ){ uri: Uri? ->
+        imageUri = uri
+    }
 
     // Fetch profile from Firestore when the screen loads.
     LaunchedEffect(Unit) {
