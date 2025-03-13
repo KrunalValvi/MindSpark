@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -27,7 +28,10 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -38,6 +42,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -49,12 +54,12 @@ import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.GenderDropdown
-import com.example.mindspark.auth.components.StaticAuthTextField
 import com.example.mindspark.backend.ProfileData
 import com.example.mindspark.backend.fetchUserProfileDataFromFirestore
 import com.example.mindspark.backend.showDatePicker
 import com.example.mindspark.backend.updateUserProfileData
 import com.example.mindspark.ui.theme.LightBlueBackground
+import com.example.mindspark.ui.theme.customTypography
 
 @Composable
 fun EditProfileScreen(navController: NavController) {
@@ -67,6 +72,7 @@ fun EditProfileScreen(navController: NavController) {
     var email by remember { mutableStateOf("") }
     var phoneNumber by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
+    var accountType by remember { mutableStateOf("") }  // Account type: "Student" or "Mentor"
     var isLoading by remember { mutableStateOf(false) }
     var showDatePickerState by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
@@ -74,7 +80,7 @@ fun EditProfileScreen(navController: NavController) {
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
-    ){ uri: Uri? ->
+    ) { uri: Uri? ->
         imageUri = uri
     }
 
@@ -89,6 +95,7 @@ fun EditProfileScreen(navController: NavController) {
                 email = profile.email
                 phoneNumber = profile.phoneNumber
                 gender = profile.gender
+                accountType = profile.accountType   // Set the account type from Firestore (e.g., "Student" or "Mentor")
                 isLoading = false
             },
             onFailure = { error ->
@@ -127,6 +134,7 @@ fun EditProfileScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Profile Picture Section
             Box(contentAlignment = Alignment.BottomEnd) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_profile_placeholder),
@@ -155,6 +163,7 @@ fun EditProfileScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(5.dp))
 
+            // Full Name Field
             AuthTextField(
                 value = fullName,
                 onValueChange = { fullName = it },
@@ -167,6 +176,7 @@ fun EditProfileScreen(navController: NavController) {
                 }
             )
 
+            // Nickname Field
             AuthTextField(
                 value = nickname,
                 onValueChange = { nickname = it },
@@ -179,7 +189,7 @@ fun EditProfileScreen(navController: NavController) {
                 }
             )
 
-            // Date of Birth Field: wrapped in a clickable Box that triggers the DatePicker.
+            // Date of Birth Field (clickable to open DatePicker)
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -198,10 +208,10 @@ fun EditProfileScreen(navController: NavController) {
                 )
             }
 
-            // Email field (read-only)
+            // Email Field (read-only)
             AuthTextField(
                 value = email,
-                onValueChange = { /* no-op: email is not editable */ },
+                onValueChange = { /* no-op, email is not editable */ },
                 placeholder = "Email",
                 leadingIcon = {
                     Icon(
@@ -211,6 +221,7 @@ fun EditProfileScreen(navController: NavController) {
                 }
             )
 
+            // Phone Number Field
             AuthTextField(
                 value = phoneNumber,
                 onValueChange = { phoneNumber = it },
@@ -223,17 +234,32 @@ fun EditProfileScreen(navController: NavController) {
                 }
             )
 
+            // Gender Dropdown Field
             GenderDropdown(
                 selectedGender = gender,
                 onGenderSelected = { gender = it }
             )
 
-            StaticAuthTextField(
-                placeholder = "Student"
-            )
+            // Display Account Type (non-editable)
+            // Instead of showing a labeled TextField, we simply display the account type ("Student" or "Mentor")
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, start = 8.dp, end = 8.dp, bottom = 4.dp)
+//                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(15.dp))
+                    .background(Color.White, RoundedCornerShape(15.dp))
+                    .padding(16.dp)
+            ) {
+                Text(
+                    text = accountType, // Shows "Student" or "Mentor"
+                    style = MaterialTheme.customTypography.mulish.bold,
+                    color = Color.Gray
+                )
+            }
 
             Spacer(modifier = Modifier.height(15.dp))
 
+            // Update Button
             AuthButton(
                 text = "Update",
                 onClick = {

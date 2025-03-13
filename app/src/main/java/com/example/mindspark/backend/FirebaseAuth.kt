@@ -15,12 +15,14 @@ data class ProfileData(
     val nickname: String = "",
     val dateOfBirth: String = "",
     val gender: String = "",
+    val accountType: String = "User", // Default to "User"
     val profileImageUrl: String = "", // Added field for profile image URL
     val fullNameError: String = "",
     val dobError: String = "",
     val emailError: String = "",
     val phoneError: String = "",
-    val genderError: String = ""
+    val genderError: String = "",
+    val accountTypeError: String = ""
 )
 
 fun getFirebaseProfileData(): ProfileData {
@@ -32,13 +34,19 @@ fun getFirebaseProfileData(): ProfileData {
     )
 }
 
+
 fun validateProfile(data: ProfileData): ProfileData {
     var updatedData = data
     updatedData = if (data.fullName.isBlank()) updatedData.copy(fullNameError = "Full Name is required") else updatedData.copy(fullNameError = "")
     updatedData = if (data.dateOfBirth.isBlank()) updatedData.copy(dobError = "Date of Birth is required") else updatedData.copy(dobError = "")
-    updatedData = if (data.email.isBlank()) updatedData.copy(emailError = "Email is required") else if (!Patterns.EMAIL_ADDRESS.matcher(data.email).matches()) updatedData.copy(emailError = "Invalid email address") else updatedData.copy(emailError = "")
-    updatedData = if (data.phoneNumber.isBlank()) updatedData.copy(phoneError = "Phone number is required") else if (data.phoneNumber.length != 10) updatedData.copy(phoneError = "Phone number must be 10 digits") else updatedData.copy(phoneError = "")
+    updatedData = if (data.email.isBlank()) updatedData.copy(emailError = "Email is required")
+    else if (!Patterns.EMAIL_ADDRESS.matcher(data.email).matches()) updatedData.copy(emailError = "Invalid email address")
+    else updatedData.copy(emailError = "")
+    updatedData = if (data.phoneNumber.isBlank()) updatedData.copy(phoneError = "Phone number is required")
+    else if (data.phoneNumber.length != 10) updatedData.copy(phoneError = "Phone number must be 10 digits")
+    else updatedData.copy(phoneError = "")
     updatedData = if (data.gender.isBlank()) updatedData.copy(genderError = "Gender is required") else updatedData.copy(genderError = "")
+    updatedData = if (data.accountType.isBlank()) updatedData.copy(accountTypeError = "Account Type is required") else updatedData.copy(accountTypeError = "")
     return updatedData
 }
 
@@ -76,7 +84,8 @@ fun storeProfileData(
         "dateOfBirth" to profileData.dateOfBirth,
         "email" to profileData.email,
         "phoneNumber" to profileData.phoneNumber,
-        "gender" to profileData.gender
+        "gender" to profileData.gender,
+        "accountType" to profileData.accountType
     )
     db.collection("users").document(currentUser.uid)
         .set(userDoc)
@@ -162,7 +171,8 @@ fun fetchUserProfileDataFromFirestore(
                 val email = doc.getString("email") ?: ""
                 val phoneNumber = doc.getString("phoneNumber") ?: ""
                 val gender = doc.getString("gender") ?: ""
-                onSuccess(ProfileData(fullName, email, phoneNumber, nickname, dateOfBirth, gender, "", "", "", "", ""))
+                val accountType = doc.getString("accountType") ?: "User"
+                onSuccess(ProfileData(fullName, email, phoneNumber, nickname, dateOfBirth, gender, accountType, "", "", "", "", "", ""))
             } else {
                 onFailure("Profile not found")
             }
@@ -183,13 +193,14 @@ fun updateUserProfileData(
         return
     }
     val db = FirebaseFirestore.getInstance()
-    // Create a MutableMap<String, Any> so Firestore update() works correctly.
+    // Create a MutableMap<String, Any> for Firestore update.
     val updateMap: MutableMap<String, Any> = hashMapOf(
         "fullName" to profileData.fullName,
         "nickname" to profileData.nickname,
         "dateOfBirth" to profileData.dateOfBirth,
         "phoneNumber" to profileData.phoneNumber,
-        "gender" to profileData.gender
+        "gender" to profileData.gender,
+        "accountType" to profileData.accountType
     )
     db.collection("users").document(currentUser.uid)
         .update(updateMap)
@@ -198,4 +209,3 @@ fun updateUserProfileData(
             onFailure(exception.message ?: "An error occurred")
         }
 }
-

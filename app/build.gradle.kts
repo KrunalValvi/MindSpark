@@ -102,8 +102,4 @@ dependencies {
 
     implementation(libs.coil3.coil.compose)
 
-        implementation(libs.play.services.auth.v2070) // For Google Drive API
-        implementation(libs.firebase.storage) // Firebase Storage
-
-
 }

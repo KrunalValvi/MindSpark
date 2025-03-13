@@ -24,6 +24,7 @@ import com.example.mindspark.courses.ui.SingleMentorDetails
 import com.example.mindspark.courses.ui.TopMentorScreen
 import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.inbox.ui.InboxScreen
+import com.example.mindspark.mentor.ui.MentorScreen
 import com.example.mindspark.myCourses.data.sampleData
 import com.example.mindspark.myCourses.ui.CertificateScreen
 import com.example.mindspark.myCourses.ui.MyCourseCompleted
@@ -49,6 +50,11 @@ fun NavGraphBuilder.UserNavigation(navController: NavController) {
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
     ) { AdminScreen(navController) }
 
+    composable(
+        "MentorScreen",
+        enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
+        exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
+    ) { MentorScreen(navController) }
 
     composable(
         route = "CommunityScreen",

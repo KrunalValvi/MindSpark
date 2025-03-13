@@ -15,16 +15,35 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.mindspark.navigation.model.BottomNavItem
 import com.example.mindspark.ui.theme.customTypography
+import com.google.firebase.Firebase
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
+
+    var isMentor by remember { mutableStateOf(false) }
+    val currentUser = FirebaseAuth.getInstance().currentUser
+
+    LaunchedEffect(currentUser) {
+        currentUser?.let{ user ->
+            FirebaseFirestore.getInstance().collection("users").document(user.uid)
+                .get()
+                .addOnSuccessListener{ document ->
+                    isMentor = document.getString("accountType") == "Mentor"
+                }
+        }
+    }
+
+
     val items = listOf(
         BottomNavItem.Home,
-        BottomNavItem.MyCourses,
+        if (isMentor) BottomNavItem.MentorCourses else BottomNavItem.MyCourses,
         BottomNavItem.Inbox,
         BottomNavItem.Community,
         BottomNavItem.Profile
     )
+
 
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -50,10 +69,9 @@ fun BottomNavigationBar(navController: NavController) {
                         route?.startsWith("ActiveCallScreen") == true ||
                         route == "ActiveCallScreen"
             }
-//            BottomNavItem.Transactions -> {
-//                route == "TransactionsScreen" ||
-//                        route == "EReceiptScreen"
-//            }
+            BottomNavItem.MentorCourses -> {
+                route == "MentorScreen"
+            }
             BottomNavItem.Community -> {
                 route == "CommunityScreen" ||
                         route == "NewPostScreen"

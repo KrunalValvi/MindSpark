@@ -1,28 +1,28 @@
 package com.example.mindspark.auth.ui.register
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,9 +35,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -52,22 +56,19 @@ import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.GenderDropdown
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.launch
 
 @Composable
 fun FillProfileScreen(navController: NavController) {
     val context = LocalContext.current
-    val db = FirebaseFirestore.getInstance()
 
     // Retrieve initial profile data from Firebase.
     var profileData by remember { mutableStateOf(getFirebaseProfileData()) }
-
-    // State to control showing the DatePicker.
     var showDatePickerState by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // Launch DatePicker when showDatePickerState is true.
+    // Launch DatePicker when requested.
     LaunchedEffect(showDatePickerState) {
         if (showDatePickerState) {
             showDatePicker(context) { selectedDate ->
@@ -96,6 +97,7 @@ fun FillProfileScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Profile Picture Section
             Box(contentAlignment = Alignment.BottomEnd) {
                 Image(
                     painter = painterResource(id = R.drawable.ic_profile_placeholder),
@@ -247,9 +249,24 @@ fun FillProfileScreen(navController: NavController) {
                 )
             }
 
+            // Account Type Dropdown Field (User/Mentor)
+            AccountTypeDropdown(
+                selectedAccountType = profileData.accountType,
+                onAccountTypeSelected = { profileData = profileData.copy(accountType = it) }
+            )
+            if (profileData.accountTypeError.isNotEmpty()) {
+                Text(
+                    text = profileData.accountTypeError,
+                    color = Color.Red,
+                    fontSize = 12.sp,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+            }
+
+
             Spacer(modifier = Modifier.height(15.dp))
 
-            // Continue Button: validates, stores data, shows Toast, then navigates.
+            // Continue Button: validates, stores data, then navigates.
             AuthButton(
                 text = "Continue",
                 onClick = {
@@ -259,7 +276,8 @@ fun FillProfileScreen(navController: NavController) {
                         validatedProfile.dobError.isEmpty() &&
                         validatedProfile.emailError.isEmpty() &&
                         validatedProfile.phoneError.isEmpty() &&
-                        validatedProfile.genderError.isEmpty()
+                        validatedProfile.genderError.isEmpty() &&
+                        validatedProfile.accountTypeError.isEmpty()
                     ) {
                         storeProfileData(
                             validatedProfile,
@@ -268,12 +286,126 @@ fun FillProfileScreen(navController: NavController) {
                                     navController.navigate("CreatePinScreen")
                                 }
                             },
-                            onFailure = { errorMessage ->
-                            }
+                            onFailure = { errorMessage -> }
                         )
                     }
                 }
             )
+        }
+    }
+}
+
+
+@Composable
+fun AccountTypeDropdown(
+    selectedAccountType: String,
+    onAccountTypeSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val accountTypes = listOf("Student", "Mentor")
+    val rotationState by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "dropdown_rotation"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .shadow(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(15.dp),
+                    spotColor = Color(0x1A000000),
+                    ambientColor = Color(0x1A000000)
+                )
+                .background(Color.White, RoundedCornerShape(15.dp))
+                .border(
+                    width = 1.dp,
+                    color = if (expanded) Color(0xFF1565C0) else Color.Transparent,
+                    shape = RoundedCornerShape(15.dp)
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Account Type Icon",
+                        tint = Color.Gray,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+
+                    Text(
+                        text = if (selectedAccountType.isEmpty()) "Account Type" else selectedAccountType,
+                        style = MaterialTheme.customTypography.mulish.bold, // Replace with your style if needed.
+                        fontSize = 14.sp,
+                        color = if (selectedAccountType.isEmpty()) Color.Gray else Color(0xFF1A1A1A)
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Dropdown Arrow",
+                    tint = Color(0xFF1565C0),
+                    modifier = Modifier.rotate(rotationState)
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .width(with(LocalDensity.current) {
+                    (LocalConfiguration.current.screenWidthDp - 48).dp
+                })
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .shadow(4.dp, RoundedCornerShape(12.dp))
+        ) {
+            accountTypes.forEach { type ->
+                DropdownMenuItem(
+                    onClick = {
+                        onAccountTypeSelected(type)
+                        expanded = false
+                    },
+                    text = {
+                        Text(
+                            text = type,
+                            style = MaterialTheme.customTypography.mulish.bold, // Replace with your style.
+                            fontSize = 14.sp,
+                            color = if (type == selectedAccountType) Color(0xFF1565C0) else Color.Black
+                        )
+                    },
+                    leadingIcon = if (type == selectedAccountType) {
+                        {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Selected",
+                                tint = Color(0xFF1565C0),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    } else null,
+                    modifier = Modifier.background(
+                        if (type == selectedAccountType) Color(0xFFF5F9FF) else Color.White
+                    )
+                )
+            }
         }
     }
 }

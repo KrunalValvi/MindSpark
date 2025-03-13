@@ -60,8 +60,15 @@ monitor = "1.7.2"
 junitJunit = "4.12"
 junitKtx = "1.2.1"
 ucrop = "2.2.8"
+playServicesBase = "18.0.1"
+googleApiClient = "1.33.0"
+googleApiServicesDrive = "v3-rev20230213-2.0.0"
+
 
 [libraries]
+google-api-client-android = { module = "com.google.api-client:google-api-client-android", version.ref = "googleApiClient" }
+google-api-client-gson = { module = "com.google.api-client:google-api-client-gson", version.ref = "googleApiClient" }
+google-api-services-drive = { module = "com.google.apis:google-api-services-drive", version.ref = "googleApiServicesDrive" }
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" }
 accompanist-pager = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPager" }
 accompanist-swiperefresh = { module = "com.google.accompanist:accompanist-swiperefresh", version.ref = "accompanistSwiperefresh" }
@@ -132,6 +139,7 @@ androidx-monitor = { group = "androidx.test", name = "monitor", version.ref = "m
 junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
 ucrop = { module = "com.github.yalantis:ucrop", version.ref = "ucrop" }
+play-services-base = { group = "com.google.android.gms", name = "play-services-base", version.ref = "playServicesBase" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
