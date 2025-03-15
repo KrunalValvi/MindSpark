@@ -9,6 +9,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.admin.ui.course.AdminCoursesListScreen
@@ -17,10 +18,9 @@ import com.example.mindspark.admin.ui.mentor.MentorDetailScreen
 import com.example.mindspark.admin.ui.mentor.MentorsListScreen
 import com.example.mindspark.admin.ui.users.UserDetailScreen
 import com.example.mindspark.admin.ui.users.UserListScreen
-import com.example.mindspark.courses.ui.CoursesListScreen
+import com.example.mindspark.admin.ui.youtube.YoutubeDetail
 
 sealed class Screen {
-
     object Main : Screen()
 
     object CoursesList : Screen()
@@ -30,9 +30,10 @@ sealed class Screen {
     data class MentorDetail(val mentorId: String?) : Screen() // null means new mentor
 
     object UserList : Screen()
-    data class UserDetail(val userId: String?) : Screen() // null means new Users
+    data class UserDetail(val userId: String?) : Screen() // null means new user
 
-    // You can add Users later...
+    // Only one YouTube screen available
+    object YoutubeDetail : Screen()
 }
 
 @Composable
@@ -61,13 +62,19 @@ fun AdminScreen(navController: NavController) {
                     Text("Courses")
                 }
                 Button(
-                    onClick = { currentScreen = Screen.MentorsList }
+                    onClick = { currentScreen = Screen.MentorsList },
+                    modifier = Modifier.padding(bottom = 16.dp)
                 ) {
                     Text("Mentors")
                 }
+                Button(
+                    onClick = { currentScreen = Screen.YoutubeDetail },
+                    modifier = Modifier.padding(bottom = 16.dp)
+                ) {
+                    Text("Youtube")
+                }
             }
         }
-
         is Screen.CoursesList -> {
             AdminCoursesListScreen(
                 onBack = { currentScreen = Screen.Main },
@@ -82,8 +89,6 @@ fun AdminScreen(navController: NavController) {
                 onBack = { currentScreen = Screen.CoursesList }
             )
         }
-
-
         is Screen.MentorsList -> {
             MentorsListScreen(
                 onBack = { currentScreen = Screen.Main },
@@ -98,8 +103,6 @@ fun AdminScreen(navController: NavController) {
                 onBack = { currentScreen = Screen.MentorsList }
             )
         }
-
-
         is Screen.UserList -> {
             UserListScreen(
                 onBack = { currentScreen = Screen.Main },
@@ -114,7 +117,9 @@ fun AdminScreen(navController: NavController) {
                 onBack = { currentScreen = Screen.UserList }
             )
         }
-
-
+        is Screen.YoutubeDetail -> {
+            // Directly call your single YouTube screen here
+            YoutubeDetail()
+        }
     }
 }
