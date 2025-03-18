@@ -2,8 +2,12 @@
 
 package com.example.mindspark.community.ui
 
+import android.content.Context
+import android.content.Intent
 import android.text.format.DateUtils
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,19 +26,21 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChatBubbleOutline
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,19 +49,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
+import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.community.data.CommunityViewModel
 import com.example.mindspark.community.model.Post
 import com.example.mindspark.ui.theme.LightBlueBackground
-import com.example.mindspark.ui.theme.customTypography
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.google.firebase.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun CommunityScreen(navController: NavController) {
@@ -66,31 +79,19 @@ fun CommunityScreen(navController: NavController) {
         modifier = Modifier.background(LightBlueBackground),
         containerColor = LightBlueBackground,
         topBar = {
-            AuthTopBar(
-                title = "Community",
-                onBackClick = { navController.navigateUp() }
-            )
+            AuthTopBar(title = "Community", onBackClick = { navController.navigateUp() })
         },
         floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("NewPostScreen") },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "New Post"
-                )
+            FloatingActionButton(onClick = { navController.navigate("NewPostScreen") }) {
+                Icon(imageVector = Icons.Default.Add, contentDescription = "New Post")
             }
         }
     ) { paddingValues ->
-        // Wrap your LazyColumn in SwipeRefresh
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
             onRefresh = {
                 isRefreshing = true
-                viewModel.refreshPosts {
-                    isRefreshing = false
-                }
+                viewModel.refreshPosts { isRefreshing = false }
             }
         ) {
             LazyColumn(
@@ -103,7 +104,12 @@ fun CommunityScreen(navController: NavController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 items(viewModel.posts) { post ->
-                    PostCard(post = post)
+                    PostCard(post = post, onLikePost = { postId, isLiked ->
+                        likePost(postId, isLiked,
+                            onSuccess = { viewModel.refreshPosts {} },
+                            onFailure = { /* Handle error */ }
+                        )
+                    })
                 }
             }
         }
@@ -111,85 +117,182 @@ fun CommunityScreen(navController: NavController) {
 }
 
 @Composable
-fun PostCard(post: Post) {
+fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
+    var profileImageUrl by remember { mutableStateOf("") }
+    var showMenu by remember { mutableStateOf(false) }
+    val currentUser = Firebase.auth.currentUser
+    val context = LocalContext.current
+    val isLiked = remember { mutableStateOf(post.likedBy.contains(currentUser?.uid)) }
+
+    val playStoreUrl = "https://play.google.com/store/apps/details?id=your.package.name"
+    val gitHubUrl = "https://github.com/yourusername/yourrepository"
+
+    LaunchedEffect(post.userId) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").document(post.userId)
+            .get()
+            .addOnSuccessListener { document ->
+                profileImageUrl = document.getString("profileImageUrl") ?: ""
+            }
+            .addOnFailureListener { profileImageUrl = "" }
+    }
+
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 8.dp, vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFFFFFFFF))
+        colors = CardDefaults.cardColors(containerColor = Color.White)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            // Header: profile image, name, and timestamp (inspired by Twitter and Threads)
             Row(
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Circular profile placeholder
-                Box(
-                    modifier = Modifier
-                        .size(48.dp)
-                        .clip(CircleShape)
-                        .background(MaterialTheme.colorScheme.primary)
+                Image(
+                    painter = if (profileImageUrl.isNotEmpty()) {
+                        rememberAsyncImagePainter(profileImageUrl)
+                    } else {
+                        painterResource(id = R.drawable.ic_profile_placeholder)
+                    },
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier.size(50.dp).clip(CircleShape).background(Color.Gray),
+                    contentScale = ContentScale.Crop
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Column {
-                    Text(
-                        text = post.userName,
-                        style = MaterialTheme.customTypography.jost.semiBold,
-                        fontSize = 16.sp
 
-                    )
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(text = post.userName, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(
                         text = formatTimestamp(post.timestamp),
-                        style = MaterialTheme.customTypography.mulish.semiBold,
-                        color = Color.Gray,
-                        fontSize = 12.sp
+                        fontSize = 12.sp,
+                        color = Color.Gray
                     )
                 }
+
+                if (currentUser?.uid == post.userId) {
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(
+                                modifier = Modifier.size(24.dp),
+                                painter = painterResource(id = R.drawable.ic_more_vert),
+                                contentDescription = "More Options"
+                            )
+                        }
+                        DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                            DropdownMenuItem(text = { Text("Delete") }, onClick = {
+                                deletePost(
+                                    post.postId,
+                                    onSuccess = { showMenu = false },
+                                    onFailure = { /* Handle failure */ }
+                                )
+                            })
+                        }
+                    }
+                }
             }
+
             Spacer(modifier = Modifier.height(12.dp))
-            // Post content
-            Text(
-                text = post.content,
-                style = MaterialTheme.customTypography.mulish.semiBold,
-                fontSize = 16.sp
-            )
+
+            Text(text = post.content, fontSize = 16.sp)
+
             Spacer(modifier = Modifier.height(12.dp))
-            Divider()  // Separator inspired by clean feed designs on Threads
+            Divider()
             Spacer(modifier = Modifier.height(8.dp))
-            // Action row: Like, Comment, Share (intuitive layout like on Instagram and X)
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { /* TODO: Handle like action */ }) {
+                // Like Button
+                Row(
+                    modifier = Modifier.clickable {
+                        isLiked.value = !isLiked.value
+                        onLikePost(post.postId, isLiked.value)
+                    },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
-                        imageVector = Icons.Filled.FavoriteBorder,
+                        imageVector = if (isLiked.value) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
                         contentDescription = "Like",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = if (isLiked.value) Color.Red else Color.Gray,
+                        modifier = Modifier.size(24.dp)
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = post.likes.toString(), fontSize = 14.sp, color = Color.Gray)
                 }
+
+                // Comment Button
                 IconButton(onClick = { /* TODO: Handle comment action */ }) {
                     Icon(
                         imageVector = Icons.Filled.ChatBubbleOutline,
                         contentDescription = "Comment",
-                        tint = MaterialTheme.colorScheme.primary
+                        tint = Color.Gray
                     )
                 }
-                IconButton(onClick = { /* TODO: Handle share action */ }) {
-                    Icon(
-                        imageVector = Icons.Filled.Share,
-                        contentDescription = "Share",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
+
+                // Share Button
+                IconButton(onClick = {
+                    shareApp(context, playStoreUrl, gitHubUrl)
+                }) {
+                    Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
                 }
             }
         }
     }
 }
 
+
+fun shareApp(context: Context, playStoreUrl: String, gitHubUrl: String) {
+    val shareMessage = "Check out this app:\nGoogle Play Store: $playStoreUrl\nGitHub: $gitHubUrl"
+    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "text/plain"
+        putExtra(Intent.EXTRA_TEXT, shareMessage)
+    }
+    context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+}
+
+fun likePost(postId: String, isLiked: Boolean, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    val db = FirebaseFirestore.getInstance()
+    val userId = Firebase.auth.currentUser?.uid ?: return
+
+    val postRef = db.collection("posts").document(postId)
+
+    db.runTransaction { transaction ->
+        val postSnapshot = transaction.get(postRef)
+        val currentLikes = postSnapshot.getLong("likes") ?: 0
+        val likedByList = (postSnapshot.get("likedBy") as? List<*>)?.mapNotNull { it as? String } ?: listOf()
+
+        val updatedLikes: Long
+        val updatedLikedBy: List<String>
+
+        if (isLiked) {
+            updatedLikes = currentLikes + 1
+            updatedLikedBy = likedByList + userId
+        } else {
+            updatedLikes = (currentLikes - 1).coerceAtLeast(0)
+            updatedLikedBy = likedByList - userId
+        }
+
+        transaction.update(postRef, "likes", updatedLikes)
+        transaction.update(postRef, "likedBy", updatedLikedBy)
+    }.addOnSuccessListener { onSuccess() }
+        .addOnFailureListener { exception -> onFailure(exception) }
+}
+
+
+fun deletePost(postId: String, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+    val db = FirebaseFirestore.getInstance()
+    db.collection("posts").document(postId)
+        .delete()
+        .addOnSuccessListener {
+            onSuccess()
+        }
+        .addOnFailureListener { exception ->
+            onFailure(exception)
+        }
+}
 
 fun formatTimestamp(timestamp: Long): String {
     val now = System.currentTimeMillis()

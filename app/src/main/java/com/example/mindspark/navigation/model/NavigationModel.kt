@@ -8,6 +8,6 @@ sealed class BottomNavItem(val route: String, val label: String, @DrawableRes va
     object MyCourses : BottomNavItem("MyCourseCompleted", "My Courses", R.drawable.ic_courses)
     object MentorCourses : BottomNavItem("MentorScreen", "Mentor", R.drawable.ic_courses) // New Mentor-Specific Screen
     object Inbox : BottomNavItem("InboxScreen", "Inbox", R.drawable.ic_inbox)
-    object Community : BottomNavItem("CommunityScreen", "Transactions", R.drawable.ic_transaction)
+    object Community : BottomNavItem("CommunityScreen", "Community", R.drawable.ic_transaction)
     object Profile : BottomNavItem("ProfileScreen", "Profile", R.drawable.ic_profile)
 }

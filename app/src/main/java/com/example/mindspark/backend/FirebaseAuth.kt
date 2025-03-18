@@ -182,7 +182,7 @@ fun fetchUserProfileDataFromFirestore(
         }
 }
 
-fun updateUserProfileData(
+fun     updateUserProfileData(
     profileData: ProfileData,
     onSuccess: () -> Unit,
     onFailure: (String) -> Unit
@@ -200,7 +200,8 @@ fun updateUserProfileData(
         "dateOfBirth" to profileData.dateOfBirth,
         "phoneNumber" to profileData.phoneNumber,
         "gender" to profileData.gender,
-        "accountType" to profileData.accountType
+        "accountType" to profileData.accountType,
+        "profileImageUrl" to profileData.profileImageUrl
     )
     db.collection("users").document(currentUser.uid)
         .update(updateMap)

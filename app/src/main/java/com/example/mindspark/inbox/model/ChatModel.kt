@@ -8,7 +8,8 @@ data class ChatModel(
     val email: String = "",
     val description: String = "",
     val messageCount: String = "0",
-    val isOnline: Boolean = false
+    val isOnline: Boolean = false,
+    val profileImageUrl: String = "" // Add this field
 )
 
 data class MessageModel(

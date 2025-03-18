@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,19 +33,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
-import com.google.firebase.Firebase
-import com.google.firebase.auth.auth
+import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun ProfileHeader() {
-
+    // Firebase user
     val user = Firebase.auth.currentUser
-    var fullName by remember { mutableStateOf("Loading...") }
     val currentUser = Firebase.auth.currentUser
 
+    // State variables for profile info
+    var fullName by remember { mutableStateOf("Loading...") }
+    var profileImageUrl by remember { mutableStateOf("") }
+
+    // Fetch user data from Firestore
     LaunchedEffect(currentUser) {
         if (currentUser != null) {
             val db = FirebaseFirestore.getInstance()
@@ -55,12 +59,15 @@ fun ProfileHeader() {
                 .addOnSuccessListener { document ->
                     fullName = document.getString("fullName")
                         ?: currentUser.displayName ?: "User"
+                    profileImageUrl = document.getString("profileImageUrl") ?: ""
                 }
                 .addOnFailureListener {
                     fullName = currentUser.displayName ?: "User"
+                    profileImageUrl = ""
                 }
         } else {
             fullName = "User"
+            profileImageUrl = ""
         }
     }
 
@@ -69,29 +76,28 @@ fun ProfileHeader() {
         modifier = Modifier.padding(16.dp)
     ) {
         Box(contentAlignment = Alignment.BottomEnd) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_profile_placeholder), // Replace with actual profile image
-                contentDescription = "Profile Picture",
-                modifier = Modifier
-                    .height(110.dp)
-                    .width(110.dp)
-                    .clip(CircleShape)
-                    .background(Color.Gray),
-                contentScale = ContentScale.Crop
-            )
-//            IconButton(
-//                onClick = { /* Open image picker */ },
-//                modifier = Modifier
-//                    .size(28.dp)
-//                    .clip(CircleShape)
-//                    .background(Color.White)
-//            ) {
-//                Icon(
-//                    painter = painterResource(id = R.drawable.ic_edit_photo), // Replace with actual edit icon
-//                    contentDescription = "Edit Profile",
-//                    tint = Color.Black
-//                )
-//            }
+            // Show the user's avatar if we have a URL, otherwise a placeholder
+            if (profileImageUrl.isNotEmpty()) {
+                Image(
+                    painter = rememberAsyncImagePainter(profileImageUrl),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(110.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
+                    contentScale = ContentScale.Crop
+                )
+            } else {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_profile_placeholder),
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(110.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -104,10 +110,12 @@ fun ProfileHeader() {
         Text(
             text = user?.email ?: "Email",
             style = MaterialTheme.customTypography.mulish.bold,
-            fontSize = 15.sp, color = Color.Gray
+            fontSize = 15.sp,
+            color = Color.Gray
         )
     }
 }
+
 
 @Composable
 fun SettingsList(navController: NavController) {

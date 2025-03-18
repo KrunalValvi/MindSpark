@@ -1,5 +1,6 @@
 package com.example.mindspark.inbox.components
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -35,9 +36,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.mindspark.inbox.model.ChatModel
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.example.mindspark.ui.theme.customTypography
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -53,20 +57,21 @@ fun ChatItem(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Surface(
+        AsyncImage(
+            model = chat.profileImageUrl.ifEmpty { "https://api.dicebear.com/9.x/personas/png?seed=Joseph&size=256" }, // Default avatar
+            contentDescription = "User Profile Picture",
             modifier = Modifier
-                .size(48.dp)
-                .clip(CircleShape),
-            color = Color.LightGray
-        ) { }
+                .size(50.dp)
+                .clip(CircleShape)
+                .border(1.dp, Color.Gray, CircleShape) // Adds a border
+
+        )
 
         Spacer(modifier = Modifier.width(12.dp))
 
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = chat.fullName.ifEmpty { "Unknown User" },  // Show fallback name
+                text = chat.fullName.ifEmpty { "Unknown User" },
                 style = MaterialTheme.customTypography.jost.semiBold,
                 fontSize = 16.sp,
             )
@@ -79,20 +84,14 @@ fun ChatItem(
             )
         }
 
-        Column(
-            horizontalAlignment = Alignment.End,
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
+        Column(horizontalAlignment = Alignment.End, modifier = Modifier.padding(start = 8.dp)) {
             if (chat.messageCount != "0") {
                 Surface(
                     modifier = Modifier.size(24.dp),
                     shape = CircleShape,
                     color = Color(0xFF2196F3)
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.fillMaxSize()
-                    ) {
+                    Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
                         Text(
                             text = chat.messageCount,
                             color = Color.White,
@@ -105,7 +104,6 @@ fun ChatItem(
         }
     }
 }
-
 
 @Composable
 fun ChatSection(
@@ -148,7 +146,6 @@ fun ChatInputBarPreview() {
     )
 }
 
-
 @Composable
 fun ChatInputBar(
     message: String,
@@ -187,3 +184,23 @@ fun ChatInputBar(
         }
     }
 }
+
+suspend fun getUserProfileImage(email: String): String {
+    val db = FirebaseFirestore.getInstance()
+    return try {
+        val querySnapshot = db.collection("users")
+            .whereEqualTo("email", email)
+            .get()
+            .await()
+
+        if (!querySnapshot.isEmpty) {
+            val document = querySnapshot.documents.first()
+            document.getString("profileImageUrl") ?: ""
+        } else {
+            ""
+        }
+    } catch (e: Exception) {
+        ""
+    }
+}
+
