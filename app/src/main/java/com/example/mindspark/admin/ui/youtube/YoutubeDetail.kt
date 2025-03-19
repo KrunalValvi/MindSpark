@@ -38,7 +38,9 @@ fun YoutubeDetail(apiKey: String, navController: NavController) {
     // Hold the model that will be edited. Prepopulate with fetched details.
     var adminYoutubeModel by remember { mutableStateOf(AdminYoutubeModel()) }
 
-    Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
+    Column(modifier = Modifier
+        .fillMaxSize()
+        .padding(16.dp)) {
         if (!showEditScreen) {
             OutlinedTextField(
                 value = playlistUrl,
@@ -95,19 +97,18 @@ fun YoutubeDetail(apiKey: String, navController: NavController) {
             }
         } else {
             AdminEditYoutubeScreen(
-//                navController = navController,
+                navController = navController,
                 initialModel = adminYoutubeModel,
                 playlistViews = playlistItems.size.toString(),
                 playlistVideos = playlistItems.size,
                 playlistDescription = playlistItems.firstOrNull()?.snippet?.description.orEmpty(),
                 estimatedHours = playlistItems.size / 10, // Assuming 10 videos per hour
             ) { updatedModel ->
-                saveAdminYoutubeModelToFirebase(updatedModel,
+                saveAdminYoutubeModelToFirebase(
+                    updatedModel,
                     onSuccess = {
                         // Optionally navigate back or show a success message
                         showEditScreen = false
-                        // For example, you might navigate to a confirmation screen:
-                        navController.navigate("home")
                     },
                     onFailure = { error ->
                         // Handle error, for example show a snackbar or error message.

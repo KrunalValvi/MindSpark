@@ -4,14 +4,19 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -31,6 +36,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -44,6 +50,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
@@ -76,38 +83,47 @@ fun EditProfileScreen(navController: NavController) {
     var showAvatarDialog by remember { mutableStateOf(false) }
     val currentUser = Firebase.auth.currentUser
 
-    val avatarUrls = listOf(
-        "https://api.dicebear.com/9.x/personas/png?seed=Oliver&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Jack&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Harry&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Jacob&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Charlie&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Thomas&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=George&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Oscar&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=James&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=William&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Ella&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Emily&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Isabella&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Sophia&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Mia&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Ava&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Charlotte&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Amelia&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Harper&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Lucas&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Mason&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Ethan&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Logan&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Daniel&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Matthew&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Henry&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Joseph&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=David&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Samuel&size=256",
-        "https://api.dicebear.com/9.x/personas/png?seed=Michael&size=256"
-    )
+    //Normal
+//    val avatarUrls = List(30) { "https://api.dicebear.com/9.x/personas/png?seed=Avatar$it&size=256" }
+
+    //Professional
+    val avatarUrls = List(200) { index ->
+        val baseUrl = "https://api.dicebear.com/9.x/avataaars/png"
+        val seed = if (index % 2 == 0) "ProfessionalMale$index" else "ProfessionalFemale$index"
+        val size = 256
+        // Allowed skin colors (hex codes), chosen to exclude any black skin tone.
+        val skinColors = "F9C9B6,F1C27D,E0AC69,C68642,8D5524"
+        // Limit expressions to simple, friendly ones.
+        val mouth = "smile,default"   // Only simple smiling or neutral expressions.
+        // Set eyes to only include open-eye options.
+        val eyes = "default"    // Both options display open eyes.
+        // Set eyebrows to a friendly style (here "happy").
+        val eyebrow = "happy"
+        // Restrict hair colors to only cool choices: black, brown, and blond (hex codes).
+        val hairColor = "000000,A55728,F4E1C1"
+
+        val params = listOf(
+            "seed=$seed",
+            "size=$size",
+            "skinColor=$skinColors",
+            "mouth=$mouth",
+            "eyes=$eyes",
+            "eyebrow=$eyebrow",
+            "hairColor=$hairColor"
+        ).joinToString("&")
+
+        "$baseUrl?$params"
+    }
+
+
+
+    //try done
+//    val avatarUrls = List(200) { index ->
+//        if (index % 2 == 0)
+//            "https://avatar.iran.liara.run/public/boy?unique=$index"
+//        else
+//            "https://avatar.iran.liara.run/public/girl?unique=$index"
+//    }
 
 
     LaunchedEffect(currentUser) {
@@ -133,7 +149,6 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
-    // Launch DatePickerDialog when requested.
     LaunchedEffect(showDatePickerState) {
         if (showDatePickerState) {
             showDatePicker(context) { selectedDate ->
@@ -164,10 +179,10 @@ fun EditProfileScreen(navController: NavController) {
         ) {
             Box(contentAlignment = Alignment.BottomEnd) {
                 Image(
-                    painter = rememberAsyncImagePainter(profileImageUrl.takeIf { it.isNotEmpty() } ?: R.drawable.ic_profile_placeholder),
+                    painter = rememberAsyncImagePainter(profileImageUrl.ifEmpty { R.drawable.ic_profile_placeholder }),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .size(110.dp)
+                        .size(120.dp)
                         .clip(CircleShape)
                         .background(Color.Gray),
                     contentScale = ContentScale.Crop
@@ -231,13 +246,17 @@ fun EditProfileScreen(navController: NavController) {
                 text = "Update",
                 onClick = {
                     isLoading = true
-                    updateUserProfileData(ProfileData(fullName, email, phoneNumber, nickname, dateOfBirth, gender, accountType, profileImageUrl), onSuccess = {
-                        isLoading = false
-                        Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
-                    }, onFailure = { error ->
-                        isLoading = false
-                        Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
-                    })
+                    updateUserProfileData(
+                        ProfileData(fullName, email, phoneNumber, nickname, dateOfBirth, gender, accountType, profileImageUrl),
+                        onSuccess = {
+                            isLoading = false
+                            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                        },
+                        onFailure = { error ->
+                            isLoading = false
+                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                        }
+                    )
                 }
             )
         }
@@ -254,7 +273,6 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
-    // Avatar Selection Dialog
     if (showAvatarDialog) {
         AvatarSelectionDialog(
             avatars = avatarUrls,
@@ -273,6 +291,13 @@ fun AvatarSelectionDialog(
     onAvatarSelected: (String) -> Unit,
     onDismissRequest: () -> Unit
 ) {
+    // Create a mutable list to track if each image has loaded.
+    // Initially, all images are marked as not loaded.
+    val loadedStates = remember { mutableStateListOf<Boolean>().apply { repeat(avatars.size) { add(false) } } }
+    // Calculate how many images are loaded and how many remain.
+    val loadedCount = loadedStates.count { it }
+    val remainingCount = avatars.size - loadedCount
+
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
             shape = RoundedCornerShape(8.dp),
@@ -282,24 +307,62 @@ fun AvatarSelectionDialog(
             Column(
                 modifier = Modifier
                     .padding(16.dp)
-                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
             ) {
                 Text(
                     text = "Select an Avatar",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-                avatars.forEach { avatarUrl ->
-                    Image(
-                        painter = rememberAsyncImagePainter(avatarUrl),
-                        contentDescription = "Avatar",
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .clickable { onAvatarSelected(avatarUrl) }
-                            .padding(8.dp),
-                        contentScale = ContentScale.Crop
+
+                // Show loading status if not all images are loaded
+                if (remainingCount > 0) {
+                    Text(
+                        text = "Loading: $remainingCount images left",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(bottom = 8.dp)
                     )
+                }
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(3), // 3 avatars per row
+                    modifier = Modifier.height(300.dp), // fixed height to enable scrolling
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    itemsIndexed(avatars) { index, avatarUrl ->
+                        // Use Coil's async image painter
+                        val painter = rememberAsyncImagePainter(model = avatarUrl)
+                        val painterState = painter.state
+
+                        // When the image is successfully loaded, mark it as loaded.
+                        if (painterState is AsyncImagePainter.State.Success && !loadedStates[index]) {
+                            loadedStates[index] = true
+                        }
+
+                        Box(
+                            modifier = Modifier
+                                .size(80.dp)
+                                .clip(CircleShape)
+                                .clickable { onAvatarSelected(avatarUrl) }
+                        ) {
+                            Image(
+                                painter = painter,
+                                contentDescription = "Avatar",
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier.fillMaxSize()
+                            )
+                            // If still loading, overlay a CircularProgressIndicator.
+                            if (painterState is AsyncImagePainter.State.Loading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.align(Alignment.Center),
+                                    strokeWidth = 2.dp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }

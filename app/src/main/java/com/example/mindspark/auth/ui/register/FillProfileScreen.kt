@@ -1,11 +1,22 @@
 package com.example.mindspark.auth.ui.register
 
+import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -47,15 +58,17 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.rememberAsyncImagePainter
 import com.example.mindspark.R
-import com.example.mindspark.backend.getFirebaseProfileData
-import com.example.mindspark.backend.showDatePicker
-import com.example.mindspark.backend.validateProfile
-import com.example.mindspark.backend.storeProfileData
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.auth.components.GenderDropdown
+import com.example.mindspark.backend.getFirebaseProfileData
+import com.example.mindspark.backend.showDatePicker
+import com.example.mindspark.backend.storeProfileData
+import com.example.mindspark.backend.validateProfile
+import com.example.mindspark.profile.ui.sections.AvatarSelectionDialog
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.launch
 
@@ -67,6 +80,38 @@ fun FillProfileScreen(navController: NavController) {
     var profileData by remember { mutableStateOf(getFirebaseProfileData()) }
     var showDatePickerState by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
+
+    var profileImageUrl by remember { mutableStateOf("") }
+    var showAvatarDialog by remember { mutableStateOf(false) }
+
+    //Professional
+    val avatarUrls = List(200) { index ->
+        val baseUrl = "https://api.dicebear.com/9.x/avataaars/png"
+        val seed = if (index % 2 == 0) "ProfessionalMale$index" else "ProfessionalFemale$index"
+        val size = 256
+        // Allowed skin colors (hex codes), chosen to exclude any black skin tone.
+        val skinColors = "F9C9B6,F1C27D,E0AC69,C68642,8D5524"
+        // Limit expressions to simple, friendly ones.
+        val mouth = "smile,default"   // Only simple smiling or neutral expressions.
+        // Set eyes to only include open-eye options.
+        val eyes = "default"    // Both options display open eyes.
+        // Set eyebrows to a friendly style (here "happy").
+        val eyebrow = "happy"
+        // Restrict hair colors to only cool choices: black, brown, and blond (hex codes).
+        val hairColor = "000000,A55728,F4E1C1"
+
+        val params = listOf(
+            "seed=$seed",
+            "size=$size",
+            "skinColor=$skinColors",
+            "mouth=$mouth",
+            "eyes=$eyes",
+            "eyebrow=$eyebrow",
+            "hairColor=$hairColor"
+        ).joinToString("&")
+
+        "$baseUrl?$params"
+    }
 
     // Launch DatePicker when requested.
     LaunchedEffect(showDatePickerState) {
@@ -100,17 +145,16 @@ fun FillProfileScreen(navController: NavController) {
             // Profile Picture Section
             Box(contentAlignment = Alignment.BottomEnd) {
                 Image(
-                    painter = painterResource(id = R.drawable.ic_profile_placeholder),
+                    painter = rememberAsyncImagePainter(profileImageUrl.ifEmpty { R.drawable.ic_profile_placeholder }),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .height(110.dp)
-                        .width(110.dp)
+                        .size(120.dp)
                         .clip(CircleShape)
                         .background(Color.Gray),
                     contentScale = ContentScale.Crop
                 )
                 IconButton(
-                    onClick = { /* Open image picker if needed */ },
+                    onClick = { showAvatarDialog = true },
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
@@ -272,6 +316,7 @@ fun FillProfileScreen(navController: NavController) {
                 onClick = {
                     val validatedProfile = validateProfile(profileData)
                     profileData = validatedProfile
+
                     if (validatedProfile.fullNameError.isEmpty() &&
                         validatedProfile.dobError.isEmpty() &&
                         validatedProfile.emailError.isEmpty() &&
@@ -280,18 +325,32 @@ fun FillProfileScreen(navController: NavController) {
                         validatedProfile.accountTypeError.isEmpty()
                     ) {
                         storeProfileData(
-                            validatedProfile,
+                            validatedProfile.copy(profileImageUrl = profileImageUrl), // ✅ Ensure avatar is saved
                             onSuccess = {
                                 coroutineScope.launch {
                                     navController.navigate("CreatePinScreen")
                                 }
                             },
-                            onFailure = { errorMessage -> }
+                            onFailure = { errorMessage ->
+                                Toast.makeText(context, "Failed to save profile: $errorMessage", Toast.LENGTH_SHORT).show()
+                            }
                         )
                     }
                 }
             )
+
         }
+    }
+    if (showAvatarDialog) {
+        AvatarSelectionDialog(
+            avatars = avatarUrls,
+            onAvatarSelected = { avatarUrl ->
+                profileImageUrl = avatarUrl
+                profileData = profileData.copy(profileImageUrl = avatarUrl) // Update profileData here
+                showAvatarDialog = false
+            },
+            onDismissRequest = { showAvatarDialog = false }
+        )
     }
 }
 

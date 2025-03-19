@@ -1,28 +1,28 @@
 package com.example.mindspark.navigation
 
-import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.mindspark.admin.ui.AdminScreen
-import com.example.mindspark.admin.ui.course.AdminCoursesListScreen
 import com.example.mindspark.community.ui.CommunityScreen
 import com.example.mindspark.community.ui.NewPostScreen
-import com.example.mindspark.home.ui.HomeScreen
-import com.example.mindspark.profile.ui.ProfileScreen
-import com.example.mindspark.courses.ui.CoursesListScreen
-import com.example.mindspark.inbox.ui.ActiveCallScreen
-import com.example.mindspark.inbox.ui.ChatDetailScreen
 import com.example.mindspark.courses.ui.CourseDetailScreen
 import com.example.mindspark.courses.ui.CoursesFilterScreen
-import com.example.mindspark.transactions.ui.TransactionsScreen
+import com.example.mindspark.courses.ui.CoursesListScreen
 import com.example.mindspark.courses.ui.PopularCoursesList
 import com.example.mindspark.courses.ui.SingleMentorDetails
 import com.example.mindspark.courses.ui.TopMentorScreen
+import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.home.ui.SearchScreen
+import com.example.mindspark.inbox.ui.ActiveCallScreen
+import com.example.mindspark.inbox.ui.ChatDetailScreen
 import com.example.mindspark.inbox.ui.InboxScreen
 import com.example.mindspark.mentor.ui.MentorScreen
 import com.example.mindspark.myCourses.data.sampleData
@@ -32,6 +32,7 @@ import com.example.mindspark.myCourses.ui.MyLessons
 import com.example.mindspark.myCourses.ui.MyOngoingLessons
 import com.example.mindspark.notifications.ui.NotificationsScreen
 import com.example.mindspark.payment.ui.PaymentScreen
+import com.example.mindspark.profile.ui.ProfileScreen
 import com.example.mindspark.profile.ui.sections.AddNewCardScreen
 import com.example.mindspark.profile.ui.sections.EditProfileScreen
 import com.example.mindspark.profile.ui.sections.HelpCenterScreen
@@ -42,6 +43,7 @@ import com.example.mindspark.profile.ui.sections.ProfileNotificationsScreen
 import com.example.mindspark.profile.ui.sections.SecurityScreen
 import com.example.mindspark.profile.ui.sections.TermsScreen
 import com.example.mindspark.transactions.ui.EReceiptScreen
+import com.example.mindspark.transactions.ui.TransactionsScreen
 
 fun NavGraphBuilder.UserNavigation(navController: NavController) {
     composable(

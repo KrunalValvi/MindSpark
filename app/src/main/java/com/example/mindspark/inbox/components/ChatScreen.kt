@@ -64,7 +64,6 @@ fun ChatItem(
                 .size(50.dp)
                 .clip(CircleShape)
                 .border(1.dp, Color.Gray, CircleShape) // Adds a border
-
         )
 
         Spacer(modifier = Modifier.width(12.dp))

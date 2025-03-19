@@ -1,5 +1,6 @@
 package com.example.mindspark.admin.ui.youtube
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,13 +31,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.mindspark.admin.model.AdminYoutubeModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AdminEditYoutubeScreen(
+    navController: NavController,
     initialModel: AdminYoutubeModel,
     playlistViews: String,  // Extracted from YouTube API
     playlistVideos: Int,    // Extracted from YouTube API
@@ -74,7 +78,12 @@ fun AdminEditYoutubeScreen(
     var certification by remember { mutableStateOf(false) }
     var description by remember { mutableStateOf(playlistDescription) } // **Now showing Playlist Description**
     var imageRes by remember { mutableStateOf(initialModel.imageRes) }
-    var selectedFeatures by remember { mutableStateOf(initialModel.features.split(",").filter { it.isNotBlank() }) }
+    var selectedFeatures by remember {
+        mutableStateOf(
+            initialModel.features.split(",").filter { it.isNotBlank() })
+    }
+    val context = LocalContext.current // Get context for showing Toast
+
 
     Column(
         modifier = Modifier
@@ -83,7 +92,11 @@ fun AdminEditYoutubeScreen(
             .padding(16.dp)
     ) {
         // **Category Dropdown (Now Works)**
-        DropdownMenuField(label = "Category", selectedValue = selectedCategory, options = categories) { selectedCategory = it }
+        DropdownMenuField(
+            label = "Category",
+            selectedValue = selectedCategory,
+            options = categories
+        ) { selectedCategory = it }
 
         // **Title**
         OutlinedTextField(
@@ -103,16 +116,30 @@ fun AdminEditYoutubeScreen(
 //        OutlinedTextField(value = views, onValueChange = {}, label = { Text("Views") }, modifier = Modifier.fillMaxWidth(), readOnly = true)
 
         // **Videos Count (Read-Only)**
-        OutlinedTextField(value = videos, onValueChange = {}, label = { Text("Total Videos") }, modifier = Modifier.fillMaxWidth(), readOnly = true)
+        OutlinedTextField(
+            value = videos,
+            onValueChange = {},
+            label = { Text("Total Videos") },
+            modifier = Modifier.fillMaxWidth(),
+            readOnly = true
+        )
 
         // **Hours (Auto-filled, but editable)**
         NumericTextField("Hours to Complete", hours) { hours = it }
 
         // **Difficulty Level Dropdown (Now Works)**
-        DropdownMenuField(label = "Difficulty Level", selectedValue = selectedDifficulty, options = difficultyLevels) { selectedDifficulty = it }
+        DropdownMenuField(
+            label = "Difficulty Level",
+            selectedValue = selectedDifficulty,
+            options = difficultyLevels
+        ) { selectedDifficulty = it }
 
         // **Language Dropdown (Now Works)**
-        DropdownMenuField(label = "Language", selectedValue = selectedLanguage, options = languages) { selectedLanguage = it }
+        DropdownMenuField(
+            label = "Language",
+            selectedValue = selectedLanguage,
+            options = languages
+        ) { selectedLanguage = it }
 
         // **Certification Toggle**
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -121,17 +148,26 @@ fun AdminEditYoutubeScreen(
         }
 
         // **Description (Now Shows Playlist Description)**
-        OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Description") }, modifier = Modifier.fillMaxWidth())
+        OutlinedTextField(
+            value = description,
+            onValueChange = { description = it },
+            label = { Text("Description") },
+            modifier = Modifier.fillMaxWidth()
+        )
 
         // **Features (Checkbox Selection)**
         Text("Features")
         predefinedFeatures.forEach { feature ->
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(feature)
                 Checkbox(
                     checked = selectedFeatures.contains(feature),
                     onCheckedChange = { isChecked ->
-                        selectedFeatures = if (isChecked) selectedFeatures + feature else selectedFeatures - feature
+                        selectedFeatures =
+                            if (isChecked) selectedFeatures + feature else selectedFeatures - feature
                     }
                 )
             }
@@ -157,6 +193,14 @@ fun AdminEditYoutubeScreen(
                     features = selectedFeatures.joinToString(", ")
                 )
                 onSave(updatedModel)
+
+                // Show success message
+                Toast.makeText(context, "Course saved successfully!", Toast.LENGTH_SHORT).show()
+
+                // Navigate to AdminScreen and clear backstack to prevent double navigation
+                navController.navigate("AdminScreen") {
+                    popUpTo("AdminScreen") { inclusive = true }
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -166,7 +210,12 @@ fun AdminEditYoutubeScreen(
 }
 
 @Composable
-fun DropdownMenuField(label: String, selectedValue: String, options: List<String>, onValueChange: (String) -> Unit) {
+fun DropdownMenuField(
+    label: String,
+    selectedValue: String,
+    options: List<String>,
+    onValueChange: (String) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     Column {
         Text(label)

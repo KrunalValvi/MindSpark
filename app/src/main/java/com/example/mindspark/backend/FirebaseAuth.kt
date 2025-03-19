@@ -85,7 +85,8 @@ fun storeProfileData(
         "email" to profileData.email,
         "phoneNumber" to profileData.phoneNumber,
         "gender" to profileData.gender,
-        "accountType" to profileData.accountType
+        "accountType" to profileData.accountType,
+        "profileImageUrl" to profileData.profileImageUrl // ✅ Now avatar is saved
     )
     db.collection("users").document(currentUser.uid)
         .set(userDoc)
