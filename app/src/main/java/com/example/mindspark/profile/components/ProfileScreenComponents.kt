@@ -1,5 +1,8 @@
 package com.example.mindspark.profile.components
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -28,6 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -38,16 +42,18 @@ import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import com.google.firebase.ktx.Firebase
 
 @Composable
 fun ProfileHeader() {
     // Firebase user
     val user = Firebase.auth.currentUser
-    val currentUser = Firebase.auth.currentUser
+    val currentUser = user
 
     // State variables for profile info
     var fullName by remember { mutableStateOf("Loading...") }
+    // Here profileImageUrl is expected to be a Base64 string
     var profileImageUrl by remember { mutableStateOf("") }
 
     // Fetch user data from Firestore
@@ -76,18 +82,33 @@ fun ProfileHeader() {
         modifier = Modifier.padding(16.dp)
     ) {
         Box(contentAlignment = Alignment.BottomEnd) {
-            // Show the user's avatar if we have a URL, otherwise a placeholder
             if (profileImageUrl.isNotEmpty()) {
-                Image(
-                    painter = rememberAsyncImagePainter(profileImageUrl),
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(110.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray),
-                    contentScale = ContentScale.Crop
-                )
+                // Decode the Base64 string to Bitmap and display it
+                val bitmap = decodeBase64ToBitmap(profileImageUrl)
+                if (bitmap != null) {
+                    Image(
+                        painter = BitmapPainter(bitmap.asImageBitmap()),
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .size(110.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    // Fallback to placeholder if decoding fails
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_profile_placeholder),
+                        contentDescription = "Profile Picture",
+                        modifier = Modifier
+                            .size(110.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Crop
+                    )
+                }
             } else {
+                // Show placeholder if no image is provided
                 Image(
                     painter = painterResource(id = R.drawable.ic_profile_placeholder),
                     contentDescription = "Profile Picture",
@@ -115,7 +136,6 @@ fun ProfileHeader() {
         )
     }
 }
-
 
 @Composable
 fun SettingsList(navController: NavController) {
@@ -160,3 +180,14 @@ fun SettingItem(icon: Int, title: String, onClick: () -> Unit) {
     }
 }
 
+fun decodeBase64ToBitmap(base64Str: String): Bitmap? {
+    return try {
+        // Remove any "data:image/..." prefix if present.
+        val pureBase64 = if (base64Str.contains(",")) base64Str.substringAfter(",") else base64Str
+        val decodedBytes = Base64.decode(pureBase64, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}

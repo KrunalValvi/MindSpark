@@ -4,7 +4,9 @@ package com.example.mindspark.community.ui
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.text.format.DateUtils
+import android.util.Base64
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,6 +51,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -58,7 +62,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
+import coil3.Bitmap
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.community.data.CommunityViewModel
@@ -105,7 +109,8 @@ fun CommunityScreen(navController: NavController) {
             ) {
                 items(viewModel.posts) { post ->
                     PostCard(post = post, onLikePost = { postId, isLiked ->
-                        likePost(postId, isLiked,
+                        likePost(
+                            postId, isLiked,
                             onSuccess = { viewModel.refreshPosts {} },
                             onFailure = { /* Handle error */ }
                         )
@@ -122,6 +127,7 @@ fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
     val currentUser = Firebase.auth.currentUser
     val context = LocalContext.current
+    var userFullName by remember { mutableStateOf("User") }
     val isLiked = remember { mutableStateOf(post.likedBy.contains(currentUser?.uid)) }
 
     val playStoreUrl = "https://play.google.com/store/apps/details?id=your.package.name"
@@ -133,12 +139,18 @@ fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
             .get()
             .addOnSuccessListener { document ->
                 profileImageUrl = document.getString("profileImageUrl") ?: ""
+                userFullName = document.getString("fullName") ?: "User"
             }
-            .addOnFailureListener { profileImageUrl = "" }
+            .addOnFailureListener {
+                profileImageUrl = ""
+                userFullName = "User"
+            }
     }
 
     Card(
-        modifier = Modifier.fillMaxWidth().padding(8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
         shape = RoundedCornerShape(16.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White)
@@ -148,21 +160,31 @@ fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
-                    painter = if (profileImageUrl.isNotEmpty()) {
-                        rememberAsyncImagePainter(profileImageUrl)
-                    } else {
+                // Decode the profileImageUrl (assumed to be Base64) to a Bitmap.
+                val painter = if (profileImageUrl.isNotEmpty()) {
+                    val bitmap = decodeBase64ToBitmap(profileImageUrl)
+                    if (bitmap != null)
+                        BitmapPainter(bitmap.asImageBitmap())
+                    else
                         painterResource(id = R.drawable.ic_profile_placeholder)
-                    },
+                } else {
+                    painterResource(id = R.drawable.ic_profile_placeholder)
+                }
+                Image(
+                    painter = painter,
                     contentDescription = "Profile Picture",
-                    modifier = Modifier.size(50.dp).clip(CircleShape).background(Color.Gray),
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
                     contentScale = ContentScale.Crop
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = post.userName, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    // Use fullName from Firestore instead of post.userName
+                    Text(text = userFullName, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(
                         text = formatTimestamp(post.timestamp),
                         fontSize = 12.sp,
@@ -253,7 +275,12 @@ fun shareApp(context: Context, playStoreUrl: String, gitHubUrl: String) {
     context.startActivity(Intent.createChooser(shareIntent, "Share via"))
 }
 
-fun likePost(postId: String, isLiked: Boolean, onSuccess: () -> Unit, onFailure: (Exception) -> Unit) {
+fun likePost(
+    postId: String,
+    isLiked: Boolean,
+    onSuccess: () -> Unit,
+    onFailure: (Exception) -> Unit
+) {
     val db = FirebaseFirestore.getInstance()
     val userId = Firebase.auth.currentUser?.uid ?: return
 
@@ -262,7 +289,8 @@ fun likePost(postId: String, isLiked: Boolean, onSuccess: () -> Unit, onFailure:
     db.runTransaction { transaction ->
         val postSnapshot = transaction.get(postRef)
         val currentLikes = postSnapshot.getLong("likes") ?: 0
-        val likedByList = (postSnapshot.get("likedBy") as? List<*>)?.mapNotNull { it as? String } ?: listOf()
+        val likedByList =
+            (postSnapshot.get("likedBy") as? List<*>)?.mapNotNull { it as? String } ?: listOf()
 
         val updatedLikes: Long
         val updatedLikedBy: List<String>
@@ -301,6 +329,18 @@ fun formatTimestamp(timestamp: Long): String {
         now,
         DateUtils.MINUTE_IN_MILLIS
     ).toString()
+}
+
+fun decodeBase64ToBitmap(base64Str: String): Bitmap? {
+    return try {
+        // Remove any data URI prefix if present.
+        val pureBase64 = if (base64Str.contains(",")) base64Str.substringAfter(",") else base64Str
+        val decodedBytes = Base64.decode(pureBase64, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
 }
 
 @Preview(showBackground = true)

@@ -14,6 +14,7 @@ data class Post(
     val postId: String = "",
     val userId: String = "",
     val userName: String = "",
+    val fullName: String = "",
     val commentId: String = "",
     val profileImageUrl: String = "",
     val content: String = "",

@@ -1,15 +1,17 @@
 package com.example.mindspark.inbox.model
 
+import com.google.firebase.firestore.IgnoreExtraProperties
 
+@IgnoreExtraProperties
 data class ChatModel(
-    val UserId: String = "",  // Firestore usually stores IDs as Strings
+    val UserId: String = "",  // The Firestore document’s user ID (must be non-empty)
     val ChatId: Int = 0,
     val fullName: String = "",
     val email: String = "",
     val description: String = "",
     val messageCount: String = "0",
     val isOnline: Boolean = false,
-    val profileImageUrl: String = "" // Add this field
+    val profileImageUrl: String = "" // This can be a Base64 string or a URL
 )
 
 data class MessageModel(

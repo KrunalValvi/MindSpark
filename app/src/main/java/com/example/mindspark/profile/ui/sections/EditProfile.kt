@@ -1,6 +1,12 @@
 package com.example.mindspark.profile.ui.sections
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.net.Uri
+import android.util.Base64
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -39,11 +45,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -65,11 +74,16 @@ import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun EditProfileScreen(navController: NavController) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
+    // Profile fields
     var fullName by remember { mutableStateOf("") }
     var nickname by remember { mutableStateOf("") }
     var dateOfBirth by remember { mutableStateOf("") }
@@ -77,55 +91,28 @@ fun EditProfileScreen(navController: NavController) {
     var phoneNumber by remember { mutableStateOf("") }
     var gender by remember { mutableStateOf("") }
     var accountType by remember { mutableStateOf("") }
-    var profileImageUrl by remember { mutableStateOf("") }
+    // This variable will hold the Base64 string for the profile image.
+    var profileImageBase64 by remember { mutableStateOf("") }
     var showDatePickerState by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
     var showAvatarDialog by remember { mutableStateOf(false) }
     val currentUser = Firebase.auth.currentUser
 
-    //Normal
-//    val avatarUrls = List(30) { "https://api.dicebear.com/9.x/personas/png?seed=Avatar$it&size=256" }
+    // New state to hold the selected image URI from the phone.
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
 
-    //Professional
-    val avatarUrls = List(200) { index ->
-        val baseUrl = "https://api.dicebear.com/9.x/avataaars/png"
-        val seed = if (index % 2 == 0) "ProfessionalMale$index" else "ProfessionalFemale$index"
-        val size = 256
-        // Allowed skin colors (hex codes), chosen to exclude any black skin tone.
-        val skinColors = "F9C9B6,F1C27D,E0AC69,C68642,8D5524"
-        // Limit expressions to simple, friendly ones.
-        val mouth = "smile,default"   // Only simple smiling or neutral expressions.
-        // Set eyes to only include open-eye options.
-        val eyes = "default"    // Both options display open eyes.
-        // Set eyebrows to a friendly style (here "happy").
-        val eyebrow = "happy"
-        // Restrict hair colors to only cool choices: black, brown, and blond (hex codes).
-        val hairColor = "000000,A55728,F4E1C1"
-
-        val params = listOf(
-            "seed=$seed",
-            "size=$size",
-            "skinColor=$skinColors",
-            "mouth=$mouth",
-            "eyes=$eyes",
-            "eyebrow=$eyebrow",
-            "hairColor=$hairColor"
-        ).joinToString("&")
-
-        "$baseUrl?$params"
+    // Launcher for image picking from the device.
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            // Clear any previously stored Base64 string if a new image is selected.
+            profileImageBase64 = ""
+        }
     }
 
-
-
-    //try done
-//    val avatarUrls = List(200) { index ->
-//        if (index % 2 == 0)
-//            "https://avatar.iran.liara.run/public/boy?unique=$index"
-//        else
-//            "https://avatar.iran.liara.run/public/girl?unique=$index"
-//    }
-
-
+    // Load existing profile data from Firestore.
     LaunchedEffect(currentUser) {
         currentUser?.let { user ->
             val db = FirebaseFirestore.getInstance()
@@ -140,7 +127,8 @@ fun EditProfileScreen(navController: NavController) {
                         phoneNumber = document.getString("phoneNumber") ?: ""
                         gender = document.getString("gender") ?: ""
                         accountType = document.getString("accountType") ?: ""
-                        profileImageUrl = document.getString("profileImageUrl") ?: ""
+                        // Existing Base64 string (if any)
+                        profileImageBase64 = document.getString("profileImageUrl") ?: ""
                     }
                 }
                 .addOnFailureListener {
@@ -149,6 +137,7 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
+    // Show date picker when needed.
     LaunchedEffect(showDatePickerState) {
         if (showDatePickerState) {
             showDatePicker(context) { selectedDate ->
@@ -177,9 +166,24 @@ fun EditProfileScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            // Profile image display box.
             Box(contentAlignment = Alignment.BottomEnd) {
+                // If a new image was selected, load it using its URI.
+                // Otherwise, if there is an existing Base64 string, decode and display it.
+                val painter = when {
+                    selectedImageUri != null -> {
+                        rememberAsyncImagePainter(selectedImageUri)
+                    }
+                    profileImageBase64.isNotEmpty() -> {
+                        val bitmap = decodeBase64ToBitmap(profileImageBase64)
+                        if (bitmap != null)
+                            BitmapPainter(bitmap.asImageBitmap())
+                        else painterResource(id = R.drawable.ic_profile_placeholder)
+                    }
+                    else -> painterResource(id = R.drawable.ic_profile_placeholder)
+                }
                 Image(
-                    painter = rememberAsyncImagePainter(profileImageUrl.ifEmpty { R.drawable.ic_profile_placeholder }),
+                    painter = painter,
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .size(120.dp)
@@ -188,7 +192,10 @@ fun EditProfileScreen(navController: NavController) {
                     contentScale = ContentScale.Crop
                 )
                 IconButton(
-                    onClick = { showAvatarDialog = true },
+                    onClick = {
+                        // Launch image picker when icon clicked.
+                        imagePickerLauncher.launch("image/*")
+                    },
                     modifier = Modifier
                         .size(28.dp)
                         .clip(CircleShape)
@@ -203,8 +210,22 @@ fun EditProfileScreen(navController: NavController) {
             }
 
             Spacer(modifier = Modifier.height(10.dp))
-            AuthTextField(value = fullName, onValueChange = { fullName = it }, placeholder = "Full Name", leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Person, contentDescription = "Full Name Icon") })
-            AuthTextField(value = nickname, onValueChange = { nickname = it }, placeholder = "Nickname", leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Person, contentDescription = "Nickname Icon") })
+            AuthTextField(
+                value = fullName,
+                onValueChange = { fullName = it },
+                placeholder = "Full Name",
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Person, contentDescription = "Full Name Icon")
+                }
+            )
+            AuthTextField(
+                value = nickname,
+                onValueChange = { nickname = it },
+                placeholder = "Nickname",
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Person, contentDescription = "Nickname Icon")
+                }
+            )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -212,56 +233,95 @@ fun EditProfileScreen(navController: NavController) {
             ) {
                 AuthTextField(
                     value = dateOfBirth,
-                    onValueChange = { /* no-op, use date picker */ },
+                    onValueChange = { /* no-op; use date picker */ },
                     placeholder = "Date of Birth",
                     leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Date of Birth Icon"
-                        )
+                        Icon(imageVector = Icons.Default.DateRange, contentDescription = "Date of Birth Icon")
                     }
                 )
             }
-            AuthTextField(value = email, onValueChange = {}, placeholder = "Email", leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Email, contentDescription = "Email Icon") })
-            AuthTextField(value = phoneNumber, onValueChange = { phoneNumber = it }, placeholder = "Phone Number", leadingIcon = { Icon(imageVector = androidx.compose.material.icons.Icons.Default.Phone, contentDescription = "Phone Number Icon") })
+            AuthTextField(
+                value = email,
+                onValueChange = {},
+                placeholder = "Email",
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Email, contentDescription = "Email Icon")
+                }
+            )
+            AuthTextField(
+                value = phoneNumber,
+                onValueChange = { phoneNumber = it },
+                placeholder = "Phone Number",
+                leadingIcon = {
+                    Icon(imageVector = Icons.Default.Phone, contentDescription = "Phone Number Icon")
+                }
+            )
             GenderDropdown(selectedGender = gender, onGenderSelected = { gender = it })
             Spacer(modifier = Modifier.height(10.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 10.dp, start = 8.dp, end = 8.dp, bottom = 4.dp)
-//                    .shadow(elevation = 4.dp, shape = RoundedCornerShape(15.dp))
-                    .background(Color.White, RoundedCornerShape(15.dp))
+                    .background(Color.White, shape = RoundedCornerShape(15.dp))
                     .padding(16.dp)
             ) {
                 Text(
-                    text = accountType, // Shows "Student" or "Mentor"
+                    text = accountType, // For example "Student" or "Mentor"
                     style = MaterialTheme.customTypography.mulish.bold,
                     color = Color.Gray
                 )
             }
             Spacer(modifier = Modifier.height(10.dp))
-
             AuthButton(
                 text = "Update",
                 onClick = {
                     isLoading = true
-                    updateUserProfileData(
-                        ProfileData(fullName, email, phoneNumber, nickname, dateOfBirth, gender, accountType, profileImageUrl),
-                        onSuccess = {
-                            isLoading = false
-                            Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
-                        },
-                        onFailure = { error ->
-                            isLoading = false
-                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                    coroutineScope.launch {
+                        // If a new image is selected, convert it to a Base64 string.
+                        if (selectedImageUri != null) {
+                            val base64 = withContext(Dispatchers.IO) {
+                                try {
+                                    context.contentResolver.openInputStream(selectedImageUri!!)?.readBytes()
+                                        ?.let { bytes ->
+                                            Base64.encodeToString(bytes, Base64.DEFAULT)
+                                        } ?: ""
+                                } catch (e: Exception) {
+                                    e.printStackTrace()
+                                    ""
+                                }
+                            }
+                            profileImageBase64 = base64
+                            // Clear the selected image URI after conversion.
+                            selectedImageUri = null
                         }
-                    )
+                        // Call your update function with the updated profile data.
+                        updateUserProfileData(
+                            ProfileData(
+                                fullName = fullName,
+                                email = email,
+                                phoneNumber = phoneNumber,
+                                nickname = nickname,
+                                dateOfBirth = dateOfBirth,
+                                gender = gender,
+                                accountType = accountType,
+                                profileImageUrl = profileImageBase64
+                            ),
+                            onSuccess = {
+                                isLoading = false
+                                Toast.makeText(context, "Profile updated", Toast.LENGTH_SHORT).show()
+                            },
+                            onFailure = { error ->
+                                isLoading = false
+                                Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    }
                 }
             )
         }
     }
 
+    // Display a loading overlay while updating.
     if (isLoading) {
         Box(
             modifier = Modifier
@@ -273,15 +333,29 @@ fun EditProfileScreen(navController: NavController) {
         }
     }
 
-    if (showAvatarDialog) {
-        AvatarSelectionDialog(
-            avatars = avatarUrls,
-            onAvatarSelected = { avatarUrl ->
-                profileImageUrl = avatarUrl
-                showAvatarDialog = false
-            },
-            onDismissRequest = { showAvatarDialog = false }
-        )
+    // Show the avatar selection dialog if enabled.
+//    if (showAvatarDialog) {
+//        AvatarSelectionDialog(
+//            avatars = avatarUrls,
+//            onAvatarSelected = { avatarUrl ->
+//                // When an avatar is selected from the dialog, update the Base64 string.
+//                // (If your avatars are provided as URLs, you may need to fetch and encode them.)
+//                profileImageBase64 = avatarUrl
+//                showAvatarDialog = false
+//            },
+//            onDismissRequest = { showAvatarDialog = false }
+//        )
+//    }
+}
+
+// Helper to decode a Base64 string into a Bitmap.
+fun decodeBase64ToBitmap(base64Str: String): Bitmap? {
+    return try {
+        val decodedBytes = Base64.decode(base64Str, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
     }
 }
 
@@ -291,10 +365,8 @@ fun AvatarSelectionDialog(
     onAvatarSelected: (String) -> Unit,
     onDismissRequest: () -> Unit
 ) {
-    // Create a mutable list to track if each image has loaded.
-    // Initially, all images are marked as not loaded.
+    // Track load states for each avatar.
     val loadedStates = remember { mutableStateListOf<Boolean>().apply { repeat(avatars.size) { add(false) } } }
-    // Calculate how many images are loaded and how many remain.
     val loadedCount = loadedStates.count { it }
     val remainingCount = avatars.size - loadedCount
 
@@ -314,8 +386,6 @@ fun AvatarSelectionDialog(
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
-
-                // Show loading status if not all images are loaded
                 if (remainingCount > 0) {
                     Text(
                         text = "Loading: $remainingCount images left",
@@ -323,24 +393,19 @@ fun AvatarSelectionDialog(
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
                 }
-
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(3), // 3 avatars per row
-                    modifier = Modifier.height(300.dp), // fixed height to enable scrolling
+                    columns = GridCells.Fixed(3),
+                    modifier = Modifier.height(300.dp),
                     contentPadding = PaddingValues(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     itemsIndexed(avatars) { index, avatarUrl ->
-                        // Use Coil's async image painter
                         val painter = rememberAsyncImagePainter(model = avatarUrl)
                         val painterState = painter.state
-
-                        // When the image is successfully loaded, mark it as loaded.
                         if (painterState is AsyncImagePainter.State.Success && !loadedStates[index]) {
                             loadedStates[index] = true
                         }
-
                         Box(
                             modifier = Modifier
                                 .size(80.dp)
@@ -353,7 +418,6 @@ fun AvatarSelectionDialog(
                                 contentScale = ContentScale.Crop,
                                 modifier = Modifier.fillMaxSize()
                             )
-                            // If still loading, overlay a CircularProgressIndicator.
                             if (painterState is AsyncImagePainter.State.Loading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier.align(Alignment.Center),

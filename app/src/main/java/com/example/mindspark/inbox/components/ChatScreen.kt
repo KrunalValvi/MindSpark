@@ -1,5 +1,9 @@
 package com.example.mindspark.inbox.components
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.util.Base64
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -27,10 +31,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -39,11 +45,24 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mindspark.inbox.model.ChatModel
 import com.example.mindspark.ui.theme.LightBlueBackground
-import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+
+/**
+ * Decodes a Base64 string into a Bitmap.
+ */
+fun decodeBase64Image(base64String: String): Bitmap? {
+    return try {
+        val pureBase64Encoded = base64String.substringAfter(",") // Remove metadata if present
+        val decodedBytes = Base64.decode(pureBase64Encoded, Base64.DEFAULT)
+        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
 
 @Composable
 fun ChatItem(
@@ -57,27 +76,43 @@ fun ChatItem(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        AsyncImage(
-            model = chat.profileImageUrl.ifEmpty { "https://api.dicebear.com/9.x/personas/png?seed=Joseph&size=256" }, // Default avatar
-            contentDescription = "User Profile Picture",
-            modifier = Modifier
-                .size(50.dp)
-                .clip(CircleShape)
-                .border(1.dp, Color.Gray, CircleShape) // Adds a border
-        )
+        val decodedImage = remember(chat.profileImageUrl) {
+            decodeBase64Image(chat.profileImageUrl)
+        }
+
+        if (decodedImage != null) {
+            Image(
+                bitmap = decodedImage.asImageBitmap(),
+                contentDescription = "User Profile Picture",
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .border(1.dp, Color.Gray, CircleShape)
+            )
+        } else {
+            AsyncImage(
+                model = if (chat.profileImageUrl.startsWith("http")) chat.profileImageUrl
+                else "https://api.dicebear.com/9.x/personas/png?seed=Joseph&size=256", // Default avatar
+                contentDescription = "User Profile Picture",
+                modifier = Modifier
+                    .size(50.dp)
+                    .clip(CircleShape)
+                    .border(1.dp, Color.Gray, CircleShape)
+            )
+        }
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = chat.fullName.ifEmpty { "Unknown User" },
-                style = MaterialTheme.customTypography.jost.semiBold,
+                style = MaterialTheme.typography.bodyLarge,
                 fontSize = 16.sp,
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = chat.description,
-                style = MaterialTheme.customTypography.mulish.bold,
+                style = MaterialTheme.typography.bodyMedium,
                 fontSize = 13.sp,
                 color = Color.Gray
             )

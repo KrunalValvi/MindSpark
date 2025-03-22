@@ -84,34 +84,34 @@ fun FillProfileScreen(navController: NavController) {
     var profileImageUrl by remember { mutableStateOf("") }
     var showAvatarDialog by remember { mutableStateOf(false) }
 
-    //Professional
-    val avatarUrls = List(200) { index ->
-        val baseUrl = "https://api.dicebear.com/9.x/avataaars/png"
-        val seed = if (index % 2 == 0) "ProfessionalMale$index" else "ProfessionalFemale$index"
-        val size = 256
-        // Allowed skin colors (hex codes), chosen to exclude any black skin tone.
-        val skinColors = "F9C9B6,F1C27D,E0AC69,C68642,8D5524"
-        // Limit expressions to simple, friendly ones.
-        val mouth = "smile,default"   // Only simple smiling or neutral expressions.
-        // Set eyes to only include open-eye options.
-        val eyes = "default"    // Both options display open eyes.
-        // Set eyebrows to a friendly style (here "happy").
-        val eyebrow = "happy"
-        // Restrict hair colors to only cool choices: black, brown, and blond (hex codes).
-        val hairColor = "000000,A55728,F4E1C1"
-
-        val params = listOf(
-            "seed=$seed",
-            "size=$size",
-            "skinColor=$skinColors",
-            "mouth=$mouth",
-            "eyes=$eyes",
-            "eyebrow=$eyebrow",
-            "hairColor=$hairColor"
-        ).joinToString("&")
-
-        "$baseUrl?$params"
-    }
+//    //Professional
+//    val avatarUrls = List(200) { index ->
+//        val baseUrl = "https://api.dicebear.com/9.x/avataaars/png"
+//        val seed = if (index % 2 == 0) "ProfessionalMale$index" else "ProfessionalFemale$index"
+//        val size = 256
+//        // Allowed skin colors (hex codes), chosen to exclude any black skin tone.
+//        val skinColors = "F9C9B6,F1C27D,E0AC69,C68642,8D5524"
+//        // Limit expressions to simple, friendly ones.
+//        val mouth = "smile,default"   // Only simple smiling or neutral expressions.
+//        // Set eyes to only include open-eye options.
+//        val eyes = "default"    // Both options display open eyes.
+//        // Set eyebrows to a friendly style (here "happy").
+//        val eyebrow = "happy"
+//        // Restrict hair colors to only cool choices: black, brown, and blond (hex codes).
+//        val hairColor = "000000,A55728,F4E1C1"
+//
+//        val params = listOf(
+//            "seed=$seed",
+//            "size=$size",
+//            "skinColor=$skinColors",
+//            "mouth=$mouth",
+//            "eyes=$eyes",
+//            "eyebrow=$eyebrow",
+//            "hairColor=$hairColor"
+//        ).joinToString("&")
+//
+//        "$baseUrl?$params"
+//    }
 
     // Launch DatePicker when requested.
     LaunchedEffect(showDatePickerState) {
@@ -143,30 +143,30 @@ fun FillProfileScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // Profile Picture Section
-            Box(contentAlignment = Alignment.BottomEnd) {
-                Image(
-                    painter = rememberAsyncImagePainter(profileImageUrl.ifEmpty { R.drawable.ic_profile_placeholder }),
-                    contentDescription = "Profile Picture",
-                    modifier = Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .background(Color.Gray),
-                    contentScale = ContentScale.Crop
-                )
-                IconButton(
-                    onClick = { showAvatarDialog = true },
-                    modifier = Modifier
-                        .size(28.dp)
-                        .clip(CircleShape)
-                        .background(Color.White)
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_edit_photo),
-                        contentDescription = "Edit Profile",
-                        tint = Color.Black
-                    )
-                }
-            }
+//            Box(contentAlignment = Alignment.BottomEnd) {
+//                Image(
+//                    painter = rememberAsyncImagePainter(profileImageUrl.ifEmpty { R.drawable.ic_profile_placeholder }),
+//                    contentDescription = "Profile Picture",
+//                    modifier = Modifier
+//                        .size(120.dp)
+//                        .clip(CircleShape)
+//                        .background(Color.Gray),
+//                    contentScale = ContentScale.Crop
+//                )
+//                IconButton(
+//                    onClick = { showAvatarDialog = true },
+//                    modifier = Modifier
+//                        .size(28.dp)
+//                        .clip(CircleShape)
+//                        .background(Color.White)
+//                ) {
+//                    Icon(
+//                        painter = painterResource(id = R.drawable.ic_edit_photo),
+//                        contentDescription = "Edit Profile",
+//                        tint = Color.Black
+//                    )
+//                }
+//            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -341,17 +341,17 @@ fun FillProfileScreen(navController: NavController) {
 
         }
     }
-    if (showAvatarDialog) {
-        AvatarSelectionDialog(
-            avatars = avatarUrls,
-            onAvatarSelected = { avatarUrl ->
-                profileImageUrl = avatarUrl
-                profileData = profileData.copy(profileImageUrl = avatarUrl) // Update profileData here
-                showAvatarDialog = false
-            },
-            onDismissRequest = { showAvatarDialog = false }
-        )
-    }
+//    if (showAvatarDialog) {
+//        AvatarSelectionDialog(
+//            avatars = avatarUrls,
+//            onAvatarSelected = { avatarUrl ->
+//                profileImageUrl = avatarUrl
+//                profileData = profileData.copy(profileImageUrl = avatarUrl) // Update profileData here
+//                showAvatarDialog = false
+//            },
+//            onDismissRequest = { showAvatarDialog = false }
+//        )
+//    }
 }
 
 
