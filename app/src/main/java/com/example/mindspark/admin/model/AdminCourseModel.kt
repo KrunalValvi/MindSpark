@@ -1,7 +1,7 @@
 package com.example.mindspark.admin.model
 
 data class AdminCourseModel(
-    val id: Int? = null,
+    val id: String = "",  // Change from courseId to id
     val category: String = "",
 
     val title: String = "",

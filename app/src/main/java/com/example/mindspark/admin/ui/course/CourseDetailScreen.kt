@@ -1,12 +1,32 @@
 package com.example.mindspark.admin.ui.course
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mindspark.admin.model.AdminCourseModel
@@ -36,6 +56,7 @@ fun CourseDetailScreen(
     var language by remember { mutableStateOf("") }
     var features by remember { mutableStateOf("") }
     var mentorIds by remember { mutableStateOf("") }
+    var imageRes by remember { mutableStateOf("") }
 
     // Fetch course details if editing an existing course
     LaunchedEffect(courseId) {
@@ -49,6 +70,7 @@ fun CourseDetailScreen(
                     price = it.price
                     rating = it.rating ?: ""
                     students = it.students ?: ""
+                    imageRes = it.imageRes ?: ""
                     videos = it.videos?.toString() ?: ""
                     hours = it.hours ?: ""
                     about = it.about
@@ -64,12 +86,13 @@ fun CourseDetailScreen(
         }
     }
 
+
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
             title = { Text(if (courseId != null) "Edit Course" else "New Course") },
             navigationIcon = {
                 IconButton(onClick = onBack) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Back")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                 }
             }
         )
@@ -84,6 +107,8 @@ fun CourseDetailScreen(
             OutlinedTextField(value = videos, onValueChange = { videos = it }, label = { Text("Videos (Number)") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = hours, onValueChange = { hours = it }, label = { Text("Duration Hours") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = about, onValueChange = { about = it }, label = { Text("About Course") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = rating, onValueChange = { rating = it }, label = { Text("Rating") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(value = students, onValueChange = { students = it }, label = { Text("Students") }, modifier = Modifier.fillMaxWidth())
 
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 Text("Certification Available")
@@ -95,7 +120,7 @@ fun CourseDetailScreen(
             OutlinedTextField(value = difficultyLevel, onValueChange = { difficultyLevel = it }, label = { Text("Difficulty Level") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = features, onValueChange = { features = it }, label = { Text("Features (comma-separated)") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = mentorIds, onValueChange = { mentorIds = it }, label = { Text("Mentor IDs (comma-separated)") }, modifier = Modifier.fillMaxWidth())
-
+            OutlinedTextField(value = imageRes, onValueChange = { imageRes = it }, label = { Text("Image URL") }, modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
@@ -107,6 +132,7 @@ fun CourseDetailScreen(
                             price = price,
                             rating = rating.takeIf { it.isNotEmpty() },
                             students = students.takeIf { it.isNotEmpty() },
+                            imageRes = imageRes.takeIf { it.isNotEmpty() },
                             videos = videos.toIntOrNull(),
                             hours = hours,
                             about = about,
