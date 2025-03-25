@@ -18,7 +18,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.R
@@ -113,13 +112,11 @@ fun CourseDetailComponents(
                             }
                         }
                     }
-
                     1 -> CurriculumContent()
                 }
             }
         }
         InstructorsSection(mentors, onMentorClick = onMentorClick)
-        FeaturesSection(course)
         ReviewsSection()
     }
 }
@@ -198,9 +195,10 @@ private fun CourseHeader(course: CourseModel) {
 @Composable
 private fun CurriculumContent() {
     val sectionsList = remember { getSampleSections() }
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(300.dp) // or any fixed height that suits your design
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(300.dp)
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
@@ -215,64 +213,6 @@ private fun CurriculumContent() {
         }
     }
 }
-
-//@Composable
-//private fun CurriculumSection(title: String, duration: String, lessons: List<Pair<String, String>>) {
-//    Column {
-//        Row(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(horizontal = 16.dp),
-//            horizontalArrangement = Arrangement.SpaceBetween,
-//            verticalAlignment = Alignment.CenterVertically
-//        ) {
-//            Text(
-//                text = title,
-//                style = MaterialTheme.customTypography.jost.semiBold,
-//                fontSize = 15.sp
-//            )
-//            Text(
-//                text = duration,
-//                style = MaterialTheme.customTypography.mulish.extraBold,
-//                color = Color.Gray,
-//                fontSize = 12.sp
-//            )
-//        }
-//        Spacer(modifier = Modifier.height(8.dp))
-//        lessons.forEachIndexed { index, (title, duration) ->
-//            LessonItem(index = index + 1, title = title, duration = duration)
-//        }
-//    }
-//}
-
-//@Composable
-//private fun LessonItem(index: Int, title: String, duration: String) {
-//    Row(
-//        modifier = Modifier
-//            .fillMaxWidth()
-//            .padding(vertical = 8.dp)
-//            .background(Color(0xFFF5F9FF), RoundedCornerShape(10.dp))
-//            .padding(16.dp),
-//        verticalAlignment = Alignment.CenterVertically
-//    ) {
-//        Text(
-//            text = index.toString().padStart(2, '0'),
-//            style = MaterialTheme.customTypography.jost.semiBold,
-//            color = MaterialTheme.colorScheme.primary,
-//            modifier = Modifier.padding(end = 8.dp)
-//        )
-//        Column(modifier = Modifier.weight(1f)) {
-//            Text(text = title, style = MaterialTheme.customTypography.jost.semiBold, fontSize = 16.sp)
-//            Text(text = duration, style = MaterialTheme.customTypography.mulish.bold, fontSize = 13.sp)
-//        }
-//        Icon(
-//            imageVector = Icons.Default.PlayCircle,
-//            contentDescription = "Play",
-//            tint = MaterialTheme.colorScheme.primary,
-//            modifier = Modifier.size(24.dp)
-//        )
-//    }
-//}
 
 @Composable
 private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
@@ -309,36 +249,6 @@ private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (Mento
                 }
             }
             Spacer(Modifier.height(16.dp))
-        }
-    }
-}
-
-@Composable
-private fun FeaturesSection(course: CourseModel) {
-    Column(modifier = Modifier.padding(16.dp)) {
-        Text(
-            text = "What You'll Get",
-            style = MaterialTheme.customTypography.jost.semiBold,
-            fontSize = 18.sp
-        )
-        Spacer(Modifier.height(8.dp))
-        course.features.forEach { feature ->
-            Row(
-                modifier = Modifier.padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = feature.iconRes),
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(Modifier.width(8.dp))
-                Text(
-                    text = feature.description,
-                    style = MaterialTheme.customTypography.mulish.bold,
-                    fontSize = 14.sp
-                )
-            }
         }
     }
 }
@@ -389,9 +299,7 @@ private fun ReviewItem(review: Review) {
                 style = MaterialTheme.customTypography.jost.semiBold,
                 fontSize = 17.sp,
             )
-
             Spacer(modifier = Modifier.height(8.dp))
-
             Text(
                 text = review.review,
                 style = MaterialTheme.customTypography.mulish.bold,
@@ -426,56 +334,4 @@ private fun ReviewItem(review: Review) {
             }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun CourseDetailComponentsPreview() {
-    val course = CourseModel(
-        id = 1,
-        category = "Graphic Design",
-        title = "Graphic Design Basics",
-        price = "1000/-",
-        rating = "4.4",
-        students = "3000 Std",
-        videos = "15",
-        hours = "30",
-        difficultyLevel = "Beginner",
-        language = "English",
-        certification = "Yes",
-        about = "Understand the basics of graphic design, including color theory, typography, and layout.",
-        features = listOf(
-            FeatureModel("15 Lessons", R.drawable.ic_lessons),
-            FeatureModel("Access Mobile, Desktop & TV", R.drawable.ic_access_devices),
-            FeatureModel("Beginner Level", R.drawable.ic_beginner_level),
-            FeatureModel("Certificate of Completion", R.drawable.ic_certificate)
-        ),
-        mentorIds = listOf(1, 2),
-        imageRes = R.drawable.image_fingerprint
-    )
-    val mentors = listOf(
-        MentorModel(
-            id = 1,
-            name = "John Doe",
-            profession = "Graphic Designer",
-            courses = 5,
-            students = 1500,
-            ratings = 300,
-            coursesList = emptyList(),
-            reviews = emptyList(),
-            imageRes = R.drawable.mentor_jiya
-        ),
-        MentorModel(
-            id = 2,
-            name = "Jane Smith",
-            profession = "Illustrator",
-            courses = 3,
-            students = 1200,
-            ratings = 250,
-            coursesList = emptyList(),
-            reviews = emptyList(),
-            imageRes = R.drawable.mentor_arjun
-        )
-    )
-    CourseDetailComponents(course, mentors, onMentorClick = {})
 }

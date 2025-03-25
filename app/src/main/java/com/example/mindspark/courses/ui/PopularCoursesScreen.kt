@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,19 +24,34 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.home.components.CategoriesList
 import com.example.mindspark.courses.data.CourseData
+import com.example.mindspark.courses.model.CourseModel
+import com.example.mindspark.courses.model.CourseCategory
 import com.example.mindspark.home.components.PopularCoursesListHorizontal
-import com.example.mindspark.home.components.PopularCoursesListVertical
+import com.example.mindspark.home.components.CategoriesList
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
-
 
 @Composable
 fun PopularCoursesList(navController: NavController) {
     var selectedCategory by remember { mutableStateOf("All") }
-    val allCourses = CourseData.getPopularCourses()
-    val filteredCourses by remember(selectedCategory) {
+    var allCourses by remember { mutableStateOf(listOf<CourseModel>()) }
+    var categoryStrings by remember { mutableStateOf(listOf("All")) }
+
+    // Load courses and categories asynchronously
+    LaunchedEffect(Unit) {
+        allCourses = CourseData.getPopularCourses()
+        // Compute distinct categories from loaded courses and prepend "All"
+        categoryStrings = listOf("All") + allCourses.map { it.category }.distinct()
+    }
+
+    // Convert list of String to list of CourseCategory using enum values.
+    // (Ensure that your CourseCategory enum includes a value "All" and that each category's 'value' property matches the strings.)
+    val categories: List<CourseCategory> = categoryStrings.map { categoryName ->
+        CourseCategory.values().find { it.value == categoryName } ?: CourseCategory.All
+    }
+
+    val filteredCourses by remember(selectedCategory, allCourses) {
         derivedStateOf {
             if (selectedCategory == "All") {
                 allCourses
@@ -63,9 +79,9 @@ fun PopularCoursesList(navController: NavController) {
                 .padding(start = 4.dp, end = 4.dp, top = 12.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Categories List
+            // Categories List using computed categories
             CategoriesList(
-                categories = CourseData.getAllCategories(),
+                categories = categories,
                 selectedCategory = selectedCategory,
                 onCategorySelected = { selectedCategory = it }
             )

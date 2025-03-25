@@ -12,13 +12,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -27,18 +23,27 @@ import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.CourseDetailComponents
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
+import com.example.mindspark.courses.model.CourseModel
+import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.ui.theme.customTypography
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
 fun CourseDetailScreen(navController: NavController, id: Int) {
-    val course = CourseData.getCourseById(id)
-    val mentors = course?.mentorIds?.mapNotNull { MentorData.getMentorById(it) }
+    var course by remember { mutableStateOf<CourseModel?>(null) }
+    var mentors by remember { mutableStateOf<List<MentorModel>>(emptyList()) }
     val scrollState = rememberScrollState()
     val isAtBottom = remember { mutableStateOf(false) }
 
-    // Track scroll position to show/hide the Apply button
+    // Fetch course data from Firebase inside a coroutine
+    LaunchedEffect(id) {
+        course = CourseData.getCourseById(id)
+        // Assuming MentorData.getMentorById is a synchronous function.
+        mentors = course?.mentorIds?.mapNotNull { MentorData.getMentorById(it) } ?: emptyList()
+    }
+
+    // Track scroll position to show/hide the Purchase button
     LaunchedEffect(scrollState) {
         snapshotFlow { scrollState.value }
             .collect { scrollPosition ->
@@ -63,11 +68,11 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
                     .padding(padding)
                     .verticalScroll(scrollState)
             ) {
-                if (course != null && !mentors.isNullOrEmpty()) {
-                    CourseDetailComponents(course, mentors) {
+                if (course != null && mentors.isNotEmpty()) {
+                    CourseDetailComponents(course!!, mentors) {
                         navController.navigate("SingleMentorDetails/${it.id}")
                     }
-                    // Add extra padding at the bottom for the Apply button
+                    // Add extra padding at the bottom for the Purchase button
                     Spacer(modifier = Modifier.height(80.dp))
                 } else {
                     Column(
@@ -106,10 +111,8 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
                     .wrapContentHeight()
             )
         }
-
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

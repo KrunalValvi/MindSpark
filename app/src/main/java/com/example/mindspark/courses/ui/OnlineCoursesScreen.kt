@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,7 +36,6 @@ import com.example.mindspark.courses.components.ToggleSelectionRowCourses
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.home.components.PopularCoursesListHorizontal
-import com.example.mindspark.home.components.PopularCoursesListVertical
 import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.TopMentorsListVertical
 
@@ -48,6 +48,13 @@ fun CoursesListScreen(
 ) {
     var search by remember { mutableStateOf("") }
     var selectedOption by remember { mutableStateOf(if (startWithMentors) "Mentors" else "Courses") }
+
+    // State for courses loaded from Firebase
+    var courses by remember { mutableStateOf(listOf<com.example.mindspark.courses.model.CourseModel>()) }
+    // Load courses asynchronously
+    LaunchedEffect(Unit) {
+        courses = CourseData.getPopularCourses()
+    }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -64,7 +71,6 @@ fun CoursesListScreen(
                 .fillMaxSize()
                 .background(LightBlueBackground)
                 .padding(start = 16.dp, end = 16.dp, top = 50.dp),
-
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -84,9 +90,9 @@ fun CoursesListScreen(
                 trailingIcon = {
                     Box(
                         modifier = Modifier
-                            .size(38.dp) // Size of the box for the image
-                            .offset(x = (-6).dp) // Shift the image a little to the left
-                            .clip(RoundedCornerShape(20)) // Round corners for the image
+                            .size(38.dp)
+                            .offset(x = (-6).dp)
+                            .clip(RoundedCornerShape(20))
                             .clickable { navController.navigate("FilterScreen") }
                     ) {
                         Image(
@@ -94,7 +100,7 @@ fun CoursesListScreen(
                             contentDescription = "Filter",
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clickable { navController.navigate("CoursesFilterScreen") } // Ensure the image fills the box
+                                .clickable { navController.navigate("CoursesFilterScreen") }
                         )
                     }
                 }
@@ -105,31 +111,29 @@ fun CoursesListScreen(
             ToggleSelectionRowCourses(
                 options = listOf("Courses", "Mentors"),
                 selectedOption = selectedOption,
-                onOptionSelected = { selectedOption = it },
+                onOptionSelected = { selectedOption = it }
             )
 
             when (selectedOption) {
                 "Courses" -> {
-
                     // Popular Courses Section
                     SectionHeader(
                         title = "Result for \"Graphic Design\"",
                         onSeeAllClick = { navController.navigate("PopularCoursesList") }
                     )
 
-                    // Popular Courses List
+                    // Popular Courses List (loaded from Firebase)
                     PopularCoursesListHorizontal(
-                        courses = CourseData.getPopularCourses(),
+                        courses = courses,
                         onCourseClick = { course ->
                             navController.navigate("CourseDetailScreen/${course.id}")
                         }
                     )
                 }
-
                 "Mentors" -> {
-                    // Mentors section with updated title
+                    // Mentors section
                     SectionHeader(
-                        title = "Available Mentors",  // Updated title
+                        title = "Available Mentors",
                         onSeeAllClick = { navController.navigate("TopMentorScreen") }
                     )
 

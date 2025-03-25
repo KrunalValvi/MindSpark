@@ -21,39 +21,31 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import com.example.mindspark.R
-import com.example.mindspark.courses.model.CourseModel
-import com.example.mindspark.myCourses.ui.MyCourseCompleted
+import coil.compose.AsyncImage
 import com.example.mindspark.ui.theme.customTypography
+import com.example.mindspark.courses.model.CourseModel
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.foundation.Image as ComposeImage
+import androidx.compose.ui.res.painterResource
+import com.example.mindspark.R
 
 @Composable
 fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) -> Unit) {
-    var isChecked by remember { mutableStateOf(false) }
+    val isCheckedState = remember { mutableStateOf(false) }
     val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
     val uncheckedImage = painterResource(R.drawable.ic_unchecked_bookmark)
 
     Card(
         modifier = Modifier
             .padding(8.dp)
-//            .width(250.dp)
-//            .wrapContentHeight()
             .size(width = 280.dp, height = 240.dp)
             .clickable { onCourseClick(course) },
         shape = RoundedCornerShape(12.dp),
@@ -63,15 +55,14 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
                 .fillMaxWidth()
                 .background(Color.White)
         ) {
-            // Course Image
-            Image(
-                painter = painterResource(id = course.imageRes),
-                contentDescription = course.title,
+            AsyncImage(
+                model = course.imageRes,
+                contentDescription = "Course Image",
                 modifier = Modifier
-//                    .fillMaxWidth()
-//                    .height(120.dp)
-                    .size(width = 280.dp, height = 134.dp)
-                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(Color.LightGray),
+                alignment = Alignment.Center,
                 contentScale = ContentScale.Crop
             )
 
@@ -80,13 +71,12 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .size(width = 280.dp, height = 106.dp)
                     .padding(8.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         text = course.category,
@@ -94,10 +84,12 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
                         style = MaterialTheme.customTypography.mulish.bold,
                         fontSize = 12.sp
                     )
-                    Image(
-                        painter = if (isChecked) checkedImage else uncheckedImage,
+                    ComposeImage(
+                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
                         contentDescription = "Bookmark",
-                        modifier = Modifier.padding(end = 10.dp).clickable { isChecked = !isChecked }
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .clickable { isCheckedState.value = !isCheckedState.value }
                     )
                 }
 
@@ -163,22 +155,14 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
 }
 
 @Composable
-fun PopularCourseCardHorizontal(
-    course: CourseModel,
-    onCourseClick: (CourseModel) -> Unit,
-) {
-    // Track bookmark state
-    var isChecked by remember { mutableStateOf(false) }
-
-    // Bookmark icons
+fun PopularCourseCardHorizontal(course: CourseModel, onCourseClick: (CourseModel) -> Unit) {
+    val isCheckedState = remember { mutableStateOf(false) }
     val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
     val uncheckedImage = painterResource(R.drawable.ic_unchecked_bookmark)
 
     Card(
         modifier = Modifier
             .padding(8.dp)
-//            .fillMaxWidth()
-//            .wrapContentHeight()
             .size(width = 360.dp, height = 130.dp)
             .clickable { onCourseClick(course) },
         shape = RoundedCornerShape(16.dp),
@@ -188,32 +172,27 @@ fun PopularCourseCardHorizontal(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            // --- LEFT SIDE: Image or Placeholder ---
-            Image(
-                painter = painterResource(id = course.imageRes),
-                contentDescription = course.title,
+            AsyncImage(
+                model = course.imageRes,
+                contentDescription = "Course Image",
                 modifier = Modifier
-                    .width(120.dp) // Adjust width for your design
-//                    .height(120.dp)
-                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)),
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(Color.LightGray),
+                alignment = Alignment.Center,
                 contentScale = ContentScale.Crop
             )
-
-            // Add spacing between the image and text column
             Spacer(modifier = Modifier.width(8.dp))
-
-            // --- RIGHT SIDE: Text content ---
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = 10.dp)
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
-                // Top row: Category (orange text) + Bookmark icon on the right
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         text = course.category,
@@ -221,16 +200,15 @@ fun PopularCourseCardHorizontal(
                         style = MaterialTheme.customTypography.mulish.bold,
                         fontSize = 12.sp
                     )
-                    Image(
-                        painter = if (isChecked) checkedImage else uncheckedImage,
+                    ComposeImage(
+                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
                         contentDescription = "Bookmark",
-                        modifier = Modifier.padding(end = 10.dp).clickable { isChecked = !isChecked }
+                        modifier = Modifier
+                            .padding(end = 10.dp)
+                            .clickable { isCheckedState.value = !isCheckedState.value }
                     )
                 }
-
                 Spacer(modifier = Modifier.height(10.dp))
-
-                // Course title
                 Text(
                     text = course.title,
                     style = MaterialTheme.customTypography.jost.semiBold,
@@ -239,26 +217,15 @@ fun PopularCourseCardHorizontal(
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp
                 )
-
                 Spacer(modifier = Modifier.height(4.dp))
-
-                // Price, rating, and student count
-
-                // Price
                 Text(
-                    text = course.price, // e.g. "7058/-"
+                    text = course.price,
                     style = MaterialTheme.customTypography.mulish.extraBold,
                     fontSize = 17.sp,
                     color = Color(0xFF007BFF)
                 )
-
-                // Spacing
                 Spacer(modifier = Modifier.height(10.dp))
-
                 Row {
-
-
-                    // Rating with star icon
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "Rating",
@@ -267,13 +234,11 @@ fun PopularCourseCardHorizontal(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = course.rating, // e.g. "4.2"
+                        text = course.rating,
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 11.sp,
                         color = Color.Black
                     )
-
-                    // Optional separator
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "|",
@@ -282,10 +247,8 @@ fun PopularCourseCardHorizontal(
                         color = Color.Gray
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-
-                    // Student count
                     Text(
-                        text = course.students, // e.g. "7830 Std"
+                        text = course.students,
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 11.sp,
                         color = Color.Gray
@@ -293,7 +256,5 @@ fun PopularCourseCardHorizontal(
                 }
             }
         }
-
     }
 }
-
