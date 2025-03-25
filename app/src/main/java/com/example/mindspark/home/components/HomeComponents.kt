@@ -42,7 +42,6 @@ import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.courses.model.SpecialOfferModel
 import com.example.mindspark.ui.theme.customTypography
-import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -50,7 +49,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 fun HomeHeader(navController: NavController) {
     val context = LocalContext.current
     var fullName by remember { mutableStateOf("Loading...") }
-    val currentUser = Firebase.auth.currentUser
+    val currentUser = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
 
     LaunchedEffect(currentUser) {
         if (currentUser != null) {
@@ -101,7 +100,6 @@ fun HomeHeader(navController: NavController) {
     }
 }
 
-
 @Composable
 fun SectionHeader(
     title: String,
@@ -136,11 +134,10 @@ fun CategoriesListShow(
     categories: List<CourseCategory>,
     selectedCategory: String,
     onCategorySelected: (String) -> Unit,
-    onAllSelected: () -> Unit // Callback for "All" navigation
+    onAllSelected: () -> Unit
 ) {
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -153,9 +150,9 @@ fun CategoriesListShow(
                     .clickable {
                         val category = categories[index].value
                         if (category == CourseCategory.All.value) {
-                            onAllSelected() // Trigger navigation to the new page
+                            onAllSelected()
                         } else {
-                            onCategorySelected(category) // Handle regular category selection
+                            onCategorySelected(category)
                         }
                     }
                     .padding(horizontal = 16.dp, vertical = 5.dp)
@@ -163,7 +160,7 @@ fun CategoriesListShow(
                 Text(
                     text = categories[index].value,
                     style = MaterialTheme.customTypography.mulish.bold,
-                    color = if (isSelected) Color.White else Color(0xFF202244), // Text color
+                    color = if (isSelected) Color.White else Color(0xFF202244),
                     fontSize = 13.sp
                 )
             }
@@ -178,8 +175,7 @@ fun CategoriesList(
     onCategorySelected: (String) -> Unit
 ) {
     LazyRow(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -189,15 +185,13 @@ fun CategoriesList(
                 modifier = Modifier
                     .clip(RoundedCornerShape(50))
                     .background(if (isSelected) Color(0xFF167F71) else Color(0xFFE8F1FF))
-                    .clickable {
-                        onCategorySelected(categories[index].value)
-                    }
+                    .clickable { onCategorySelected(categories[index].value) }
                     .padding(horizontal = 16.dp, vertical = 5.dp)
             ) {
                 Text(
                     text = categories[index].value,
                     style = MaterialTheme.customTypography.mulish.bold,
-                    color = if (isSelected) Color.White else Color(0xFF202244), // Text color
+                    color = if (isSelected) Color.White else Color(0xFF202244),
                     fontSize = 13.sp
                 )
             }
@@ -218,7 +212,6 @@ fun SpecialOfferCard(cards: List<SpecialOfferModel>) {
         }
     }
 }
-
 
 @Composable
 fun PopularCoursesListVertical(courses: List<CourseModel>, onCourseClick: (CourseModel) -> Unit) {
@@ -241,7 +234,7 @@ fun PopularCoursesListHorizontal(courses: List<CourseModel>, onCourseClick: (Cou
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp) // Add spacing between items
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(courses.size) { index ->
             val course = courses[index]
@@ -266,7 +259,7 @@ fun TopMentorsListHorizontal(mentors: List<MentorModel>, onMentorClick: (MentorM
 fun TopMentorsListVertical(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp) // Add spacing between items
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(mentors.size) { index ->
             TopMentorCardVertical(mentors[index], onClick = onMentorClick)

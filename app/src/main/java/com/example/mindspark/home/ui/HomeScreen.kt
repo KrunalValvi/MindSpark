@@ -1,5 +1,6 @@
 package com.example.mindspark.home.ui
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -12,10 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -34,6 +35,8 @@ import com.example.mindspark.auth.components.CustomTextField
 import com.example.mindspark.courses.data.CardData
 import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.data.MentorData
+import com.example.mindspark.courses.model.CourseCategory
+import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.home.components.CategoriesListShow
 import com.example.mindspark.home.components.HomeHeader
 import com.example.mindspark.home.components.PopularCoursesListVertical
@@ -41,13 +44,36 @@ import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.SpecialOfferCard
 import com.example.mindspark.home.components.TopMentorsListHorizontal
 
+private val LightBlueBackground = Color(0xFFF5F9FF)
+
 @Composable
 fun HomeScreen(navController: NavController) {
     var search by remember { mutableStateOf("") }
     var selectedCategory by remember { mutableStateOf("All") }
     val cards = CardData.getCardDetails()
-    val allCourses = CourseData.getPopularCourses()
-    val filteredCourses by remember(selectedCategory) {
+
+    // State for courses loaded from Firebase
+    var allCourses by remember { mutableStateOf(listOf<CourseModel>()) }
+    var categoryStrings by remember { mutableStateOf(listOf("All")) }
+
+    LaunchedEffect(Unit) {
+        // Fetch courses and log the number of courses loaded
+        allCourses = CourseData.getPopularCourses()
+        Log.d("HomeScreen", "Loaded courses: ${allCourses.size}")
+        categoryStrings = listOf("All") + allCourses.map { it.category }.distinct()
+    }
+
+    // Convert category strings to a list of CourseCategory
+    val categories: List<CourseCategory> by remember(categoryStrings) {
+        derivedStateOf {
+            categoryStrings.map { str ->
+                CourseCategory.values().find { it.value == str } ?: CourseCategory.All
+            }
+        }
+    }
+
+    // Filter courses based on selected category
+    val filteredCourses by remember(selectedCategory, allCourses) {
         derivedStateOf {
             if (selectedCategory == "All") {
                 allCourses
@@ -59,18 +85,14 @@ fun HomeScreen(navController: NavController) {
 
     Box(
         modifier = Modifier
-            .background(Color(0xFFF5F9FF))
+            .background(LightBlueBackground)
             .fillMaxSize()
     ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(
-                    start = 3.dp,
-                    end = 3.dp,
-                    top = 3.dp,
-                )
+                .padding(start = 3.dp, end = 3.dp, top = 3.dp)
         ) {
             // Header Section
             HomeHeader(navController = navController)
@@ -81,7 +103,7 @@ fun HomeScreen(navController: NavController) {
                 onValueChange = { search = it },
                 placeholder = "Search",
                 leadingIcon = {
-                    Icon(
+                    androidx.compose.material3.Icon(
                         painter = painterResource(id = R.drawable.ic_search),
                         contentDescription = "Search Icon",
                         modifier = Modifier
@@ -112,14 +134,12 @@ fun HomeScreen(navController: NavController) {
 
             Spacer(modifier = Modifier.height(5.dp))
 
-            // Categories List
+            // Categories List Show using computed CourseCategory list
             CategoriesListShow(
-                categories = CourseData.getAllCategories(),
+                categories = categories,
                 selectedCategory = selectedCategory,
                 onCategorySelected = { selectedCategory = it },
-                onAllSelected = {
-                    selectedCategory = "All"
-                }
+                onAllSelected = { selectedCategory = "All" }
             )
 
             // Popular Courses List with filtered courses
@@ -149,7 +169,6 @@ fun HomeScreen(navController: NavController) {
             TopMentorsListHorizontal(
                 mentors = MentorData.getTopMentors(),
                 onMentorClick = { mentor ->
-                    // Navigate to SingleMentorDetails with the mentor's ID
                     navController.navigate("SingleMentorDetails/${mentor.id}")
                 }
             )
@@ -161,5 +180,5 @@ fun HomeScreen(navController: NavController) {
 @Preview(showBackground = true)
 @Composable
 fun HomeScreenPreview() {
-    HomeScreen(navController = NavController(context = LocalContext.current))
+    HomeScreen(navController = NavController(LocalContext.current))
 }

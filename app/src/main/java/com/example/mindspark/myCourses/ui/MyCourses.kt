@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,10 +44,16 @@ fun MyCourseCompleted(
     navController: NavController,
     startWithMentors: Boolean = false // New parameter
 ) {
-
     var search by remember { mutableStateOf("") }
-//    var selectedOption by remember { mutableStateOf(if (startWithMentors) "Completed" else "Ongoing") }
     var selectedOption by remember { mutableStateOf(if (startWithMentors) "Ongoing" else "Completed") }
+
+    // State for courses loaded from Firebase
+    var courses by remember { mutableStateOf(listOf<com.example.mindspark.courses.model.CourseModel>()) }
+
+    // Load courses asynchronously using LaunchedEffect
+    LaunchedEffect(Unit) {
+        courses = CourseData.getPopularCourses()
+    }
 
     Scaffold(
         modifier = Modifier.background(LightBlueBackground),
@@ -63,10 +70,8 @@ fun MyCourseCompleted(
                 .fillMaxSize()
                 .background(LightBlueBackground)
                 .padding(start = 16.dp, end = 16.dp, top = 50.dp),
-
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             CustomTextField_Image(
                 value = search,
                 onValueChange = { search = it },
@@ -93,7 +98,7 @@ fun MyCourseCompleted(
                             contentDescription = "Filter",
                             modifier = Modifier
                                 .fillMaxSize()
-                                .clickable { navController.navigate("CoursesFilterScreen") } // Ensure the image fills the box
+                                .clickable { navController.navigate("CoursesFilterScreen") }
                         )
                     }
                 }
@@ -109,28 +114,23 @@ fun MyCourseCompleted(
 
             when (selectedOption) {
                 "Completed" -> {
-
-                    // Popular Courses List
+                    // Completed Courses List
                     MyCompletedCourseHorizontal(
-                        navController = navController, // Pass existing NavController
-                        courses = CourseData.getPopularCourses(),
+                        navController = navController,
+                        courses = courses,
                         onCourseClick = { course ->
                             navController.navigate("MyLessons")
                         }
                     )
-
                 }
-
                 "Ongoing" -> {
-
-                    // Popular Courses List
+                    // Ongoing Courses List
                     MyOngoingCourseHorizontal(
-                        courses = CourseData.getPopularCourses(),
+                        courses = courses,
                         onCourseClick = { course ->
                             navController.navigate("MyOngoingLessons")
                         }
                     )
-
                 }
             }
         }
