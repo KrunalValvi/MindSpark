@@ -43,6 +43,8 @@ import com.example.mindspark.home.components.PopularCoursesListVertical
 import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.SpecialOfferCard
 import com.example.mindspark.home.components.TopMentorsListHorizontal
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
@@ -55,12 +57,38 @@ fun HomeScreen(navController: NavController) {
     // State for courses loaded from Firebase
     var allCourses by remember { mutableStateOf(listOf<CourseModel>()) }
     var categoryStrings by remember { mutableStateOf(listOf("All")) }
+    var isLoading by remember { mutableStateOf(true) }
+    var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(Unit) {
-        // Fetch courses and log the number of courses loaded
-        allCourses = CourseData.getPopularCourses()
-        Log.d("HomeScreen", "Loaded courses: ${allCourses.size}")
-        categoryStrings = listOf("All") + allCourses.map { it.category }.distinct()
+        try {
+            // Use withContext to handle potential long-running operation
+            val loadedCourses = withContext(Dispatchers.IO) {
+                CourseData.getPopularCourses()
+            }
+
+            // Log detailed course information
+            Log.d("HomeScreen", "Loaded courses: ${loadedCourses.size}")
+            loadedCourses.forEach { course ->
+                Log.d("HomeScreen", "Course Details: " +
+                        "ID: ${course.id}, " +
+                        "Title: ${course.title}, " +
+                        "Category: ${course.category}, " +
+                        "Price: ${course.price}"
+                )
+            }
+
+            // Update states
+            allCourses = loadedCourses
+            categoryStrings = listOf("All") + loadedCourses.map { it.category }.distinct()
+
+            // Update loading state
+            isLoading = false
+        } catch (e: Exception) {
+            Log.e("HomeScreen", "Error loading courses", e)
+            errorMessage = "Failed to load courses: ${e.localizedMessage}"
+            isLoading = false
+        }
     }
 
     // Convert category strings to a list of CourseCategory
@@ -142,21 +170,40 @@ fun HomeScreen(navController: NavController) {
                 onAllSelected = { selectedCategory = "All" }
             )
 
-            // Popular Courses List with filtered courses
-            if (filteredCourses.isEmpty()) {
-                Text(
-                    text = "Course not available",
-                    style = MaterialTheme.typography.bodyLarge,
-                    color = Color.Gray,
-                    modifier = Modifier.padding(16.dp)
-                )
-            } else {
-                PopularCoursesListVertical(
-                    courses = filteredCourses,
-                    onCourseClick = { course ->
-                        navController.navigate("CourseDetailScreen/${course.id}")
-                    }
-                )
+            // Loading and Error Handling
+            when {
+                isLoading -> {
+                    Text(
+                        text = "Loading courses...",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                errorMessage != null -> {
+                    Text(
+                        text = errorMessage ?: "Unknown error occurred",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Red,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                allCourses.isEmpty() -> {
+                    Text(
+                        text = "No courses available. Please check your connection.",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = Color.Red,
+                        modifier = Modifier.padding(16.dp)
+                    )
+                }
+                else -> {
+                    // Popular Courses List with filtered courses
+                    PopularCoursesListVertical(
+                        courses = filteredCourses,
+                        onCourseClick = { course ->
+                            navController.navigate("CourseDetailScreen/${course.id}")
+                        }
+                    )
+                }
             }
 
             // Top Mentors Section

@@ -29,7 +29,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.mindspark.admin.model.AdminCourseModel
+import com.example.mindspark.courses.model.CourseModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -43,6 +43,7 @@ fun CourseDetailScreen(
     val db = FirebaseFirestore.getInstance()
     val scope = rememberCoroutineScope()
 
+    // Mutable state variables for course details
     var category by remember { mutableStateOf("") }
     var title by remember { mutableStateOf("") }
     var price by remember { mutableStateOf("") }
@@ -63,18 +64,18 @@ fun CourseDetailScreen(
         if (courseId != null) {
             try {
                 val doc = db.collection("courses").document(courseId).get().await()
-                val course = doc.toObject(AdminCourseModel::class.java)
+                val course = doc.toObject(CourseModel::class.java)
                 course?.let {
                     category = it.category
                     title = it.title
                     price = it.price
-                    rating = it.rating ?: ""
-                    students = it.students ?: ""
-                    imageRes = it.imageRes ?: ""
-                    videos = it.videos?.toString() ?: ""
-                    hours = it.hours ?: ""
+                    rating = it.rating
+                    students = it.students
+                    imageRes = it.imageRes
+                    videos = it.getVideosAsString() // Use the conversion method
+                    hours = it.hours
                     about = it.about
-                    difficultyLevel = it.difficultylevel
+                    difficultyLevel = it.difficultyLevel // Corrected property name
                     certification = it.certification
                     language = it.language
                     features = it.features.joinToString(", ")
@@ -85,7 +86,6 @@ fun CourseDetailScreen(
             }
         }
     }
-
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
@@ -126,17 +126,17 @@ fun CourseDetailScreen(
             Button(
                 onClick = {
                     scope.launch {
-                        val newCourse = AdminCourseModel(
+                        val newCourse = CourseModel(
                             category = category,
                             title = title,
                             price = price,
-                            rating = rating.takeIf { it.isNotEmpty() },
-                            students = students.takeIf { it.isNotEmpty() },
-                            imageRes = imageRes.takeIf { it.isNotEmpty() },
-                            videos = videos.toIntOrNull(),
+                            rating = rating,
+                            students = students,
+                            imageRes = imageRes,
+                            videos = videos.toIntOrNull() ?: "", // Handle conversion more safely
                             hours = hours,
                             about = about,
-                            difficultylevel = difficultyLevel,
+                            difficultyLevel = difficultyLevel, // Corrected property name
                             certification = certification,
                             language = language,
                             features = features.split(",").map { it.trim() },

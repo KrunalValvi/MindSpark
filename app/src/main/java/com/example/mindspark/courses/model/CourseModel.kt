@@ -13,22 +13,33 @@ data class FeatureModel(
 
 @IgnoreExtraProperties
 data class CourseModel(
-    @PropertyName("course_id") val id: Int = 0, // if Firestore uses "course_id" instead of "id"
+    @PropertyName("course_id") val id: Int = 0,
     val category: String = "",
     val title: String = "",
     val price: String = "",
     val rating: String = "",
     val students: String = "",
     val imageRes: String = "",
-    val videos: String = "",
+    val videos: Any = "", // Kept flexible to handle different types
     val hours: String = "",
     val about: String = "",
     val difficultyLevel: String = "",
-    val certification: Boolean = false, // Was String, must be Boolean to match Firestore
+    val certification: Boolean = false,
     val language: String = "",
     val mentorIds: List<Int> = emptyList(),
+    val features: List<String> = emptyList(),
     var isBookmarked: Boolean = false
-)
+) {
+    // Conversion method to handle different video field types
+    fun getVideosAsString(): String {
+        return when (videos) {
+            is String -> videos
+            is Number -> videos.toString()
+            else -> ""
+        }
+    }
+}
+
 data class Review(
     val name: String,
     val review: String,

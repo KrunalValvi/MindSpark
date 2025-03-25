@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mindspark.admin.components.AdminCourseCard
-import com.example.mindspark.admin.model.AdminCourseModel
+import com.example.mindspark.courses.model.CourseModel
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
 
@@ -35,14 +35,14 @@ fun AdminCoursesListScreen(
     onBack: () -> Unit,
     onCourseClick: (String?) -> Unit // courseId or null for new course
 ) {
-    var courses by remember { mutableStateOf<List<Pair<String, AdminCourseModel>>>(emptyList()) }
+    var courses by remember { mutableStateOf<List<Pair<String, CourseModel>>>(emptyList()) }
 
     // Fetch courses from Firestore once.
     LaunchedEffect(Unit) {
         val db = FirebaseFirestore.getInstance()
         val snapshot = db.collection("courses").get().await()
         courses = snapshot.documents.mapNotNull { doc ->
-            doc.toObject(AdminCourseModel::class.java)?.let { course ->
+            doc.toObject(CourseModel::class.java)?.let { course ->
                 doc.id to course
             }
         }
@@ -63,7 +63,7 @@ fun AdminCoursesListScreen(
                     AdminCourseCard(
                         category = course.category,
                         title = course.title,
-                        description = course.difficultylevel,
+                        description = course.difficultyLevel,
                         imageUrl = course.imageRes,
                         rating = course.rating,
                         students = course.students,
@@ -71,7 +71,6 @@ fun AdminCoursesListScreen(
                     )
                 }
             }
-
         }
         FloatingActionButton(
             onClick = { onCourseClick(null) },

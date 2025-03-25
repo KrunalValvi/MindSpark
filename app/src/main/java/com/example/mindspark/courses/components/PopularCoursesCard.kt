@@ -15,31 +15,37 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.example.mindspark.ui.theme.customTypography
-import com.example.mindspark.courses.model.CourseModel
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.foundation.Image as ComposeImage
-import androidx.compose.ui.res.painterResource
 import com.example.mindspark.R
+import com.example.mindspark.courses.model.CourseModel
+import com.example.mindspark.ui.theme.customTypography
+import androidx.compose.foundation.Image as ComposeImage
 
 @Composable
 fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) -> Unit) {
-    val isCheckedState = remember { mutableStateOf(false) }
+    var isChecked by remember { mutableStateOf(false) }
+    // Use local bookmark resources for checked/unchecked states
     val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
     val uncheckedImage = painterResource(R.drawable.ic_unchecked_bookmark)
 
@@ -48,21 +54,22 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
             .padding(8.dp)
             .size(width = 280.dp, height = 240.dp)
             .clickable { onCourseClick(course) },
-        shape = RoundedCornerShape(12.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.White)
         ) {
+            // Course Image loaded with Coil (AsyncImage) from Firebase backend.
             AsyncImage(
                 model = course.imageRes,
                 contentDescription = "Course Image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color.LightGray),
-                alignment = Alignment.Center,
+//                    .fillMaxWidth()
+//                    .height(160.dp)
+                    .size(width = 280.dp, height = 134.dp)
+                    .clip(RoundedCornerShape(topStart = 12.dp, topEnd = 12.dp)),
                 contentScale = ContentScale.Crop
             )
 
@@ -84,12 +91,10 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
                         style = MaterialTheme.customTypography.mulish.bold,
                         fontSize = 12.sp
                     )
-                    ComposeImage(
-                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
+                    Image(
+                        painter = if (isChecked) checkedImage else uncheckedImage,
                         contentDescription = "Bookmark",
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .clickable { isCheckedState.value = !isCheckedState.value }
+                        modifier = Modifier.padding(end = 10.dp).clickable { isChecked = !isChecked }
                     )
                 }
 
