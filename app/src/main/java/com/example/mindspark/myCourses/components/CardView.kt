@@ -22,10 +22,8 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,13 +33,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import coil.compose.AsyncImage
 import com.example.mindspark.R
 import com.example.mindspark.courses.model.CourseModel
-import com.example.mindspark.myCourses.ui.MyCourseCompleted
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
@@ -49,18 +46,13 @@ fun MyCompletedCourseCardHorizontal(
     course: CourseModel,
     onCourseClick: (CourseModel) -> Unit,
 ) {
-    // Track bookmark state
-    var isChecked by remember { mutableStateOf(false) }
-
-    // Bookmark icons
+    val isCheckedState = remember { mutableStateOf(false) }
     val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
     val uncheckedImage = painterResource(R.drawable.ic_unchecked_bookmark)
 
     Card(
         modifier = Modifier
             .padding(8.dp)
-//            .fillMaxWidth()
-//            .wrapContentHeight()
             .size(width = 360.dp, height = 134.dp)
             .clickable { onCourseClick(course) },
         shape = RoundedCornerShape(16.dp),
@@ -70,32 +62,27 @@ fun MyCompletedCourseCardHorizontal(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            // --- LEFT SIDE: Image or Placeholder ---
-            Image(
-                painter = painterResource(id = course.imageRes),
-                contentDescription = course.title,
+            AsyncImage(
+                model = course.imageRes,
+                contentDescription = "Course Image",
                 modifier = Modifier
-                    .width(120.dp) // Adjust width for your design
-//                    .height(120.dp)
-                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)),
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(Color.LightGray),
+                alignment = Alignment.Center,
                 contentScale = ContentScale.Crop
             )
-
-            // Add spacing between the image and text column
             Spacer(modifier = Modifier.width(8.dp))
-
-            // --- RIGHT SIDE: Text content ---
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = 10.dp)
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
-                // Top row: Category (orange text) + Bookmark icon on the right
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         text = course.category,
@@ -104,17 +91,14 @@ fun MyCompletedCourseCardHorizontal(
                         fontSize = 12.sp
                     )
                     Image(
-                        painter = if (isChecked) checkedImage else uncheckedImage,
+                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
                         contentDescription = "Bookmark",
                         modifier = Modifier
                             .padding(end = 10.dp)
-                            .clickable { isChecked = !isChecked }
+                            .clickable { isCheckedState.value = !isCheckedState.value }
                     )
                 }
-
                 Spacer(modifier = Modifier.height(10.dp))
-
-                // Course title
                 Text(
                     text = course.title,
                     style = MaterialTheme.customTypography.jost.semiBold,
@@ -123,24 +107,8 @@ fun MyCompletedCourseCardHorizontal(
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp
                 )
-
-//                Spacer(modifier = Modifier.height(4.dp))
-//
-//                // Price, rating, and student count
-//
-//                // Price
-//                Text(
-//                    text = course.price, // e.g. "7058/-"
-//                    style = MaterialTheme.customTypography.mulish.extraBold,
-//                    fontSize = 17.sp,
-//                    color = Color(0xFF007BFF)
-//                )
-
-                // Spacing
                 Spacer(modifier = Modifier.height(10.dp))
-
                 Row {
-                    // Rating with star icon
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "Rating",
@@ -149,13 +117,11 @@ fun MyCompletedCourseCardHorizontal(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = course.rating, // e.g. "4.2"
+                        text = course.rating,
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 11.sp,
                         color = Color.Black
                     )
-
-                    // Optional separator
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "|",
@@ -164,24 +130,20 @@ fun MyCompletedCourseCardHorizontal(
                         color = Color.Gray
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-
-                    // Student count
                     Text(
-                        text = course.students, // e.g. "7830 Std"
+                        text = course.students,
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 11.sp,
                         color = Color.Gray
                     )
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
-
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 5.dp),
                     horizontalArrangement = Arrangement.End
-                ){
+                ) {
                     Text(
                         modifier = Modifier.padding(end = 8.dp),
                         text = "Download Certificate",
@@ -196,25 +158,15 @@ fun MyCompletedCourseCardHorizontal(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun CoursesListScreenPreview() {
-    MyCourseCompleted(navController = NavController(LocalContext.current))
-}
-
 @Composable
 fun MyOngoingCourseCardHorizontal(
     course: CourseModel,
     onCourseClick: (CourseModel) -> Unit,
 ) {
-    // Track bookmark state
-    var isChecked by remember { mutableStateOf(false) }
-
-    // Bookmark icons
+    val isCheckedState = remember { mutableStateOf(false) }
     val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
     val uncheckedImage = painterResource(R.drawable.ic_unchecked_bookmark)
-
-    val progressValue by remember { mutableStateOf(0.23f) }
+    val progressValue = 0.23f
     val totalUnits = 100
     val completedUnits = (progressValue * totalUnits).toInt()
 
@@ -230,30 +182,27 @@ fun MyOngoingCourseCardHorizontal(
                 .fillMaxSize()
                 .background(Color.White)
         ) {
-            Image(
-                painter = painterResource(id = course.imageRes),
-                contentDescription = course.title,
+            AsyncImage(
+                model = course.imageRes,
+                contentDescription = "Course Image",
                 modifier = Modifier
-                    .width(120.dp) // Adjust width for your design
-                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)),
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(Color.LightGray),
+                alignment = Alignment.Center,
                 contentScale = ContentScale.Crop
             )
-
-            // Add spacing between the image and text column
             Spacer(modifier = Modifier.width(8.dp))
-
-            // --- RIGHT SIDE: Text content ---
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(top = 10.dp)
                     .padding(vertical = 8.dp, horizontal = 8.dp)
             ) {
-                // Top row: Category (orange text) + Bookmark icon on the right
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Absolute.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     Text(
                         text = course.category,
@@ -262,17 +211,14 @@ fun MyOngoingCourseCardHorizontal(
                         fontSize = 12.sp
                     )
                     Image(
-                        painter = if (isChecked) checkedImage else uncheckedImage,
+                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
                         contentDescription = "Bookmark",
                         modifier = Modifier
                             .padding(end = 10.dp)
-                            .clickable { isChecked = !isChecked }
+                            .clickable { isCheckedState.value = !isCheckedState.value }
                     )
                 }
-
                 Spacer(modifier = Modifier.height(10.dp))
-
-                // Course title
                 Text(
                     text = course.title,
                     style = MaterialTheme.customTypography.jost.semiBold,
@@ -281,12 +227,8 @@ fun MyOngoingCourseCardHorizontal(
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp
                 )
-
-                // Spacing
                 Spacer(modifier = Modifier.height(10.dp))
-
                 Row {
-                    // Rating with star icon
                     Icon(
                         imageVector = Icons.Default.Star,
                         contentDescription = "Rating",
@@ -295,13 +237,11 @@ fun MyOngoingCourseCardHorizontal(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = course.rating, // e.g. "4.2"
+                        text = course.rating,
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 11.sp,
                         color = Color.Black
                     )
-
-                    // Optional separator
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = "|",
@@ -310,30 +250,25 @@ fun MyOngoingCourseCardHorizontal(
                         color = Color.Gray
                     )
                     Spacer(modifier = Modifier.width(8.dp))
-
-                    // Student count
                     Text(
-                        text = course.students, // e.g. "7830 Std"
+                        text = course.students,
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 11.sp,
                         color = Color.Gray
                     )
                 }
-
                 Spacer(modifier = Modifier.height(8.dp))
-
-                // Progress bar with text showing "completed/total"
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     LinearProgressIndicator(
-                        progress = { progressValue },
+                        progress = progressValue,
                         modifier = Modifier
                             .weight(1f)
                             .height(8.dp)
                             .clip(RoundedCornerShape(4.dp)),
-                        color = Color(0xFF167F71),
+                        color = Color(0xFF167F71)
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
@@ -343,7 +278,6 @@ fun MyOngoingCourseCardHorizontal(
                         color = Color.Black
                     )
                 }
-
             }
         }
     }

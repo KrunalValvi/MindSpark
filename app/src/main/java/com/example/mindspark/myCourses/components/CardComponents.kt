@@ -14,7 +14,7 @@ import com.example.mindspark.courses.model.CourseModel
 
 @Composable
 fun MyCompletedCourseHorizontal(
-    navController: NavController, // Accept NavController
+    navController: NavController,
     courses: List<CourseModel>,
     onCourseClick: (CourseModel) -> Unit
 ) {
@@ -26,11 +26,10 @@ fun MyCompletedCourseHorizontal(
     ) {
         items(courses.size) { index ->
             val course = courses[index]
-            MyCompletedCourseCardHorizontal(course, onCourseClick) // Pass NavController
+            MyCompletedCourseCardHorizontal(course, onCourseClick)
         }
     }
 }
-
 
 @Composable
 fun MyOngoingCourseHorizontal(courses: List<CourseModel>, onCourseClick: (CourseModel) -> Unit) {
@@ -38,7 +37,7 @@ fun MyOngoingCourseHorizontal(courses: List<CourseModel>, onCourseClick: (Course
         modifier = Modifier
             .fillMaxWidth()
             .padding(top = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp) // Add spacing between items
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(courses.size) { index ->
             val course = courses[index]
