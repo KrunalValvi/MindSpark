@@ -30,13 +30,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.mindspark.courses.model.CourseModel
+import com.example.mindspark.courses.model.fetchYoutubePlaylistData
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CourseDetailScreen(
+fun AdminCourseDetailScreen(
     courseId: String?,
     onBack: () -> Unit
 ) {
@@ -58,6 +59,7 @@ fun CourseDetailScreen(
     var features by remember { mutableStateOf("") }
     var mentorIds by remember { mutableStateOf("") }
     var imageRes by remember { mutableStateOf("") }
+    var youtubePlaylistLink by remember { mutableStateOf("") }
 
     // Fetch course details if editing an existing course
     LaunchedEffect(courseId) {
@@ -80,6 +82,7 @@ fun CourseDetailScreen(
                     language = it.language
                     features = it.features.joinToString(", ")
                     mentorIds = it.mentorIds.joinToString(", ")
+                    // Optionally, you can also set youtubePlaylistLink here if stored
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -121,11 +124,22 @@ fun CourseDetailScreen(
             OutlinedTextField(value = features, onValueChange = { features = it }, label = { Text("Features (comma-separated)") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = mentorIds, onValueChange = { mentorIds = it }, label = { Text("Mentor IDs (comma-separated)") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = imageRes, onValueChange = { imageRes = it }, label = { Text("Image URL") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = youtubePlaylistLink,
+                onValueChange = { youtubePlaylistLink = it },
+                label = { Text("YouTube Playlist Link") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
             Spacer(modifier = Modifier.height(16.dp))
 
             Button(
                 onClick = {
                     scope.launch {
+                        // Fetch the playlist videos on a background thread
+                        val playlistVideos = fetchYoutubePlaylistData(youtubePlaylistLink)
+
+                        // Create a new CourseModel including the fetched playlistVideos
                         val newCourse = CourseModel(
                             category = category,
                             title = title,
@@ -133,15 +147,17 @@ fun CourseDetailScreen(
                             rating = rating,
                             students = students,
                             imageRes = imageRes,
-                            videos = videos.toIntOrNull() ?: "", // Handle conversion more safely
+                            videos = videos.toIntOrNull() ?: 0, // Adjusted type if CourseModel expects an Int
                             hours = hours,
                             about = about,
-                            difficultyLevel = difficultyLevel, // Corrected property name
+                            difficultyLevel = difficultyLevel,
                             certification = certification,
                             language = language,
                             features = features.split(",").map { it.trim() },
-                            mentorIds = mentorIds.split(",").mapNotNull { it.trim().toIntOrNull() }
+                            mentorIds = mentorIds.split(",").mapNotNull { it.trim().toIntOrNull() },
+                            playlistVideos = playlistVideos // Set the playlist videos field
                         )
+
                         try {
                             if (courseId == null) {
                                 db.collection("courses").add(newCourse).await()
