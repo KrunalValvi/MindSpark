@@ -1,4 +1,4 @@
-package com.example.mindspark.courses.components
+package com.example.mindspark.home.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

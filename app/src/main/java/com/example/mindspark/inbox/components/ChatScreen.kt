@@ -194,7 +194,7 @@ fun ChatInputBar(
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                ,
+            ,
             verticalAlignment = Alignment.CenterVertically
         ) {
 //            IconButton(onClick = { /* Open attachment */ }) {

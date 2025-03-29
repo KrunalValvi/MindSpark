@@ -19,6 +19,7 @@ import com.example.mindspark.courses.ui.CoursesListScreen
 import com.example.mindspark.courses.ui.PopularCoursesList
 import com.example.mindspark.courses.ui.SingleMentorDetails
 import com.example.mindspark.courses.ui.TopMentorScreen
+import com.example.mindspark.courses.ui.VideoPlayerScreen
 import com.example.mindspark.home.ui.HomeScreen
 import com.example.mindspark.home.ui.SearchScreen
 import com.example.mindspark.inbox.ui.ActiveCallScreen
@@ -228,14 +229,24 @@ fun NavGraphBuilder.UserNavigation(navController: NavController) {
     ) }
 
     composable(
-        "CourseDetailScreen/{courseId}",
-        arguments = listOf(navArgument("courseId") { type = NavType.IntType }),
+        "CourseDetailScreen/{courseDocId}",
+        arguments = listOf(navArgument("courseDocId") { type = NavType.StringType }),
         enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
     ) { backStackEntry ->
-        val courseId = backStackEntry.arguments?.getInt("courseId") ?: 0
-        CourseDetailScreen(navController, courseId)
+        val courseDocId = backStackEntry.arguments?.getString("courseDocId") ?: ""
+        CourseDetailScreen(navController, courseDocId)
     }
+
+    composable(
+        "VideoPlayerScreen/{videoUrl}",
+        arguments = listOf(navArgument("videoUrl") { type = NavType.StringType })
+    ) { backStackEntry ->
+        val videoUrl = backStackEntry.arguments?.getString("videoUrl") ?: ""
+        VideoPlayerScreen(navController, videoUrl)
+    }
+
+
 
     composable(
         "SingleMentorDetails/{mentorId}",

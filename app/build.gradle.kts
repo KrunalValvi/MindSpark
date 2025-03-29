@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -104,6 +106,10 @@ dependencies {
 
     implementation(libs.coil3.coil.compose)
     implementation("io.coil-kt:coil-compose:2.2.2")
+
+    implementation("androidx.webkit:webkit:1.7.0")
+    implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:11.1.0")
+
 
     implementation("com.pierfrancescosoffritti.androidyoutubeplayer:core:12.0.0")
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

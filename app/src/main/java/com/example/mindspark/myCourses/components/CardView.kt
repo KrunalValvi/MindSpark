@@ -66,10 +66,9 @@ fun MyCompletedCourseCardHorizontal(
                 model = course.imageRes,
                 contentDescription = "Course Image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color.LightGray),
-                alignment = Alignment.Center,
+                    .width(120.dp) // Adjust width for your design
+//                    .height(120.dp)
+                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -90,13 +89,13 @@ fun MyCompletedCourseCardHorizontal(
                         style = MaterialTheme.customTypography.mulish.bold,
                         fontSize = 12.sp
                     )
-                    Image(
-                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
-                        contentDescription = "Bookmark",
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .clickable { isCheckedState.value = !isCheckedState.value }
-                    )
+//                    Image(
+//                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
+//                        contentDescription = "Bookmark",
+//                        modifier = Modifier
+//                            .padding(end = 10.dp)
+//                            .clickable { isCheckedState.value = !isCheckedState.value }
+//                    )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(
@@ -186,10 +185,9 @@ fun MyOngoingCourseCardHorizontal(
                 model = course.imageRes,
                 contentDescription = "Course Image",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color.LightGray),
-                alignment = Alignment.Center,
+                    .width(120.dp) // Adjust width for your design
+//                    .height(120.dp)
+                    .clip(RoundedCornerShape(topStart = 12.dp, bottomStart = 12.dp)),
                 contentScale = ContentScale.Crop
             )
             Spacer(modifier = Modifier.width(8.dp))
@@ -210,13 +208,13 @@ fun MyOngoingCourseCardHorizontal(
                         style = MaterialTheme.customTypography.mulish.bold,
                         fontSize = 12.sp
                     )
-                    Image(
-                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
-                        contentDescription = "Bookmark",
-                        modifier = Modifier
-                            .padding(end = 10.dp)
-                            .clickable { isCheckedState.value = !isCheckedState.value }
-                    )
+//                    Image(
+//                        painter = if (isCheckedState.value) checkedImage else uncheckedImage,
+//                        contentDescription = "Bookmark",
+//                        modifier = Modifier
+//                            .padding(end = 10.dp)
+//                            .clickable { isCheckedState.value = !isCheckedState.value }
+//                    )
                 }
                 Spacer(modifier = Modifier.height(10.dp))
                 Text(

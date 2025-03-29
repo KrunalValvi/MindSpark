@@ -200,7 +200,7 @@ fun HomeScreen(navController: NavController) {
                     PopularCoursesListVertical(
                         courses = filteredCourses,
                         onCourseClick = { course ->
-                            navController.navigate("CourseDetailScreen/${course.id}")
+                            navController.navigate("CourseDetailScreen/${course.docId}")
                         }
                     )
                 }

@@ -1,7 +1,7 @@
 package com.example.mindspark.courses.ui
 
+import android.net.Uri
 import androidx.compose.animation.*
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,7 +13,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,16 +29,16 @@ import com.example.mindspark.ui.theme.customTypography
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
 @Composable
-fun CourseDetailScreen(navController: NavController, id: Int) {
+fun CourseDetailScreen(navController: NavController, id: String) {
     var course by remember { mutableStateOf<CourseModel?>(null) }
     var mentors by remember { mutableStateOf<List<MentorModel>>(emptyList()) }
     val scrollState = rememberScrollState()
     val isAtBottom = remember { mutableStateOf(false) }
 
-    // Fetch course data from Firebase inside a coroutine
+    // Fetch course data from Firebase using the document ID
     LaunchedEffect(id) {
-        course = CourseData.getCourseById(id)
-        // Assuming MentorData.getMentorById is a synchronous function.
+        course = CourseData.getCourseByDocId(id)
+        // Even if no mentors are found, we want to show course details.
         mentors = course?.mentorIds?.mapNotNull { MentorData.getMentorById(it) } ?: emptyList()
     }
 
@@ -68,11 +67,20 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
                     .padding(padding)
                     .verticalScroll(scrollState)
             ) {
-                if (course != null && mentors.isNotEmpty()) {
-                    CourseDetailComponents(course!!, mentors) {
-                        navController.navigate("SingleMentorDetails/${it.id}")
-                    }
-                    // Add extra padding at the bottom for the Purchase button
+                if (course != null) {
+                    // Display course details. We pass a lambda for onMentorClick.
+                    CourseDetailComponents(
+                        course = course!!,
+                        mentors = mentors,
+                        onMentorClick = { mentor ->
+                            navController.navigate("SingleMentorDetails/${mentor.id}")
+                        },
+                        onPlayVideo = { videoUrl ->
+                            // Encode the video URL before passing it to the route.
+                            val encodedUrl = Uri.encode(videoUrl)
+                            navController.navigate("VideoPlayerScreen/$encodedUrl")
+                        }
+                    )
                     Spacer(modifier = Modifier.height(80.dp))
                 } else {
                     Column(
@@ -114,8 +122,10 @@ fun CourseDetailScreen(navController: NavController, id: Int) {
     }
 }
 
+/* Uncomment preview if needed
 @Preview(showBackground = true)
 @Composable
 fun CourseDetailScreenPreview() {
-    CourseDetailScreen(navController = NavController(LocalContext.current), id = 1)
+    CourseDetailScreen(navController = NavController(LocalContext.current), id = "sampleDocId")
 }
+*/

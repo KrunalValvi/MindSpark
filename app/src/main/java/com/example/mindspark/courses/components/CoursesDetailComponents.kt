@@ -9,7 +9,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.AccessTime
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Videocam
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -22,10 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mindspark.R
 import com.example.mindspark.courses.model.CourseModel
-import com.example.mindspark.courses.model.FeatureModel
 import com.example.mindspark.courses.model.MentorModel
-import com.example.mindspark.myCourses.components.SectionCard
-import com.example.mindspark.myCourses.data.getSampleSections
+import com.example.mindspark.courses.model.VideoDetails
 import com.example.mindspark.ui.theme.customTypography
 
 @Composable
@@ -33,6 +36,7 @@ fun CourseDetailComponents(
     course: CourseModel,
     mentors: List<MentorModel>,
     onMentorClick: (MentorModel) -> Unit,
+    onPlayVideo: (videoUrl: String) -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(0) }
     var expanded by remember { mutableStateOf(false) }
@@ -54,7 +58,12 @@ fun CourseDetailComponents(
             Icon(
                 imageVector = Icons.Default.PlayCircle,
                 contentDescription = "Play Video",
-                modifier = Modifier.size(50.dp),
+                modifier = Modifier
+                    .size(50.dp)
+                    .clickable {
+                        // Play first video if available
+                        onPlayVideo(course.playlistVideos.firstOrNull()?.videoUrl ?: "")
+                    },
                 tint = Color.White
             )
         }
@@ -112,7 +121,20 @@ fun CourseDetailComponents(
                             }
                         }
                     }
-                    1 -> CurriculumContent()
+                    1 -> {
+                        // Wrap LazyColumn in a fixed height Box to avoid infinite height error.
+                        Box(modifier = Modifier
+                            .fillMaxWidth()
+                            .height(300.dp)
+                        ) {
+                            CurriculumContent(
+                                playlistVideos = course.playlistVideos,
+                                onPlayVideo = { videoUrl ->
+                                    onPlayVideo(videoUrl)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -137,36 +159,32 @@ private fun CourseHeader(course: CourseModel) {
             )
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
-                    Icons.Default.Star,
+                    imageVector = Icons.Default.Star,
                     contentDescription = "Rating",
                     modifier = Modifier.size(12.dp),
                     tint = Color(0xFFFF9C07)
                 )
                 Text(
-                    course.rating,
+                    text = course.rating,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.Bold
                 )
             }
         }
-
         Spacer(modifier = Modifier.height(5.dp))
-
         Text(
             text = course.title,
             style = MaterialTheme.customTypography.jost.semiBold,
             fontSize = 20.sp
         )
-
         Spacer(modifier = Modifier.height(15.dp))
-
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Videocam, null, Modifier.size(17.dp))
+                Icon(Icons.Default.Videocam, contentDescription = null, Modifier.size(17.dp))
                 Text(
                     " ${course.videos} Classes ",
                     style = MaterialTheme.customTypography.mulish.bold,
@@ -175,7 +193,7 @@ private fun CourseHeader(course: CourseModel) {
                 Spacer(Modifier.width(8.dp))
                 Text("|")
                 Spacer(Modifier.width(8.dp))
-                Icon(Icons.Default.AccessTime, null, Modifier.size(17.dp))
+                Icon(Icons.Default.AccessTime, contentDescription = null, Modifier.size(17.dp))
                 Text(
                     " ${course.hours} Hours ",
                     style = MaterialTheme.customTypography.mulish.bold,
@@ -193,24 +211,52 @@ private fun CourseHeader(course: CourseModel) {
 }
 
 @Composable
-private fun CurriculumContent() {
-    val sectionsList = remember { getSampleSections() }
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(300.dp)
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            itemsIndexed(sectionsList) { index, section ->
-                SectionCard(
-                    section = section,
-                    sectionIndex = index + 1
-                )
-                Spacer(modifier = Modifier.height(12.dp))
+fun CurriculumContent(
+    playlistVideos: List<VideoDetails>,
+    onPlayVideo: (videoUrl: String) -> Unit
+) {
+    if (playlistVideos.isEmpty()) {
+        Box(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+            Text(text = "No curriculum available", style = MaterialTheme.typography.bodyMedium)
+        }
+    } else {
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            itemsIndexed(playlistVideos) { index, video ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onPlayVideo(video.videoUrl) }
+                        .padding(horizontal = 16.dp, vertical = 12.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Video number and title
+                    Text(
+                        text = "${index + 1}. ${video.title}",
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.customTypography.jost.semiBold,
+                        fontSize = 15.sp
+                    )
+                    // Video duration
+                    Text(
+                        text = video.duration,
+                        modifier = Modifier.padding(end = 8.dp),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    // Play icon
+                    IconButton(onClick = { onPlayVideo(video.videoUrl) }) {
+                        Icon(
+                            modifier = Modifier.size(20.dp),
+                            painter = painterResource(id = R.drawable.ic_play_circle),
+                            contentDescription = "Play Video",
+                            tint = Color(0xFF007BFF)
+                        )
+                    }
+                }
+                Divider(modifier = Modifier.padding(horizontal = 16.dp))
             }
         }
+
+
     }
 }
 
@@ -297,7 +343,7 @@ private fun ReviewItem(review: Review) {
             Text(
                 text = review.name,
                 style = MaterialTheme.customTypography.jost.semiBold,
-                fontSize = 17.sp,
+                fontSize = 17.sp
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(

@@ -27,7 +27,7 @@ data class VideoDetails(
 
 @IgnoreExtraProperties
 data class CourseModel(
-    @PropertyName("course_id") val id: Int = 0,
+    @PropertyName("course_id") val id: Int = 0, // legacy field (can be ignored)
     val category: String = "",
     val title: String = "",
     val price: String = "",
@@ -43,7 +43,8 @@ data class CourseModel(
     val mentorIds: List<Int> = emptyList(),
     val features: List<String> = emptyList(),
     val playlistVideos: List<VideoDetails> = emptyList(),
-    var isBookmarked: Boolean = false
+    var isBookmarked: Boolean = false,
+    val docId: String = "" // New property to store the Firestore document ID
 ) {
     // Conversion method to handle different video field types
     fun getVideosAsString(): String {
@@ -54,6 +55,7 @@ data class CourseModel(
         }
     }
 }
+
 
 data class Review(
     val name: String,

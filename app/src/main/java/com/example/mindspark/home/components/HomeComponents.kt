@@ -42,7 +42,6 @@ import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.courses.model.SpecialOfferModel
 import com.example.mindspark.ui.theme.customTypography
-import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
@@ -208,7 +207,7 @@ fun SpecialOfferCard(cards: List<SpecialOfferModel>) {
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         items(cards) { card ->
-            com.example.mindspark.courses.components.SpecialOfferCard(card)
+            SpecialOfferCard(card)
         }
     }
 }
