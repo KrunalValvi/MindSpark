@@ -1,6 +1,10 @@
 package com.example.mindspark.auth.ui.register
 
+import android.net.Uri
+import android.util.Base64
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -49,6 +53,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -69,8 +75,11 @@ import com.example.mindspark.backend.showDatePicker
 import com.example.mindspark.backend.storeProfileData
 import com.example.mindspark.backend.validateProfile
 import com.example.mindspark.profile.ui.sections.AvatarSelectionDialog
+import com.example.mindspark.profile.ui.sections.decodeBase64ToBitmap
 import com.example.mindspark.ui.theme.customTypography
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @Composable
 fun FillProfileScreen(navController: NavController) {
@@ -81,37 +90,25 @@ fun FillProfileScreen(navController: NavController) {
     var showDatePickerState by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
+    // This is now only used for avatar dialog selection if needed
     var profileImageUrl by remember { mutableStateOf("") }
     var showAvatarDialog by remember { mutableStateOf(false) }
+    var isLoading by remember { mutableStateOf(false) }
 
-//    //Professional
-//    val avatarUrls = List(200) { index ->
-//        val baseUrl = "https://api.dicebear.com/9.x/avataaars/png"
-//        val seed = if (index % 2 == 0) "ProfessionalMale$index" else "ProfessionalFemale$index"
-//        val size = 256
-//        // Allowed skin colors (hex codes), chosen to exclude any black skin tone.
-//        val skinColors = "F9C9B6,F1C27D,E0AC69,C68642,8D5524"
-//        // Limit expressions to simple, friendly ones.
-//        val mouth = "smile,default"   // Only simple smiling or neutral expressions.
-//        // Set eyes to only include open-eye options.
-//        val eyes = "default"    // Both options display open eyes.
-//        // Set eyebrows to a friendly style (here "happy").
-//        val eyebrow = "happy"
-//        // Restrict hair colors to only cool choices: black, brown, and blond (hex codes).
-//        val hairColor = "000000,A55728,F4E1C1"
-//
-//        val params = listOf(
-//            "seed=$seed",
-//            "size=$size",
-//            "skinColor=$skinColors",
-//            "mouth=$mouth",
-//            "eyes=$eyes",
-//            "eyebrow=$eyebrow",
-//            "hairColor=$hairColor"
-//        ).joinToString("&")
-//
-//        "$baseUrl?$params"
-//    }
+    // New state to hold the selected image URI from the phone.
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var profileImageBase64 by remember { mutableStateOf("") }
+
+    // Launcher for image picking from the device.
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            // Clear any previously stored Base64 string if a new image is selected.
+            profileImageBase64 = ""
+        }
+    }
 
     // Launch DatePicker when requested.
     LaunchedEffect(showDatePickerState) {
@@ -142,31 +139,48 @@ fun FillProfileScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Profile Picture Section
-//            Box(contentAlignment = Alignment.BottomEnd) {
-//                Image(
-//                    painter = rememberAsyncImagePainter(profileImageUrl.ifEmpty { R.drawable.ic_profile_placeholder }),
-//                    contentDescription = "Profile Picture",
-//                    modifier = Modifier
-//                        .size(120.dp)
-//                        .clip(CircleShape)
-//                        .background(Color.Gray),
-//                    contentScale = ContentScale.Crop
-//                )
-//                IconButton(
-//                    onClick = { showAvatarDialog = true },
-//                    modifier = Modifier
-//                        .size(28.dp)
-//                        .clip(CircleShape)
-//                        .background(Color.White)
-//                ) {
-//                    Icon(
-//                        painter = painterResource(id = R.drawable.ic_edit_photo),
-//                        contentDescription = "Edit Profile",
-//                        tint = Color.Black
-//                    )
-//                }
-//            }
+            // Profile image display box.
+            Box(contentAlignment = Alignment.BottomEnd) {
+                // If a new image was selected, load it using its URI.
+                // Otherwise, if there is an existing Base64 string, decode and display it.
+                val painter = when {
+                    selectedImageUri != null -> {
+                        rememberAsyncImagePainter(selectedImageUri)
+                    }
+                    profileImageBase64.isNotEmpty() -> {
+                        val bitmap = decodeBase64ToBitmap(profileImageBase64)
+                        if (bitmap != null)
+                            BitmapPainter(bitmap.asImageBitmap())
+                        else painterResource(id = R.drawable.ic_profile_placeholder)
+                    }
+                    else -> painterResource(id = R.drawable.ic_profile_placeholder)
+                }
+                Image(
+                    painter = painter,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
+                    contentScale = ContentScale.Crop
+                )
+                IconButton(
+                    onClick = {
+                        // Launch image picker when icon clicked.
+                        imagePickerLauncher.launch("image/*")
+                    },
+                    modifier = Modifier
+                        .size(28.dp)
+                        .clip(CircleShape)
+                        .background(Color.White)
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_edit_photo),
+                        contentDescription = "Edit Profile",
+                        tint = Color.Black
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.height(5.dp))
 
@@ -307,13 +321,13 @@ fun FillProfileScreen(navController: NavController) {
                 )
             }
 
-
             Spacer(modifier = Modifier.height(15.dp))
 
             // Continue Button: validates, stores data, then navigates.
             AuthButton(
                 text = "Continue",
                 onClick = {
+                    isLoading = true
                     val validatedProfile = validateProfile(profileData)
                     profileData = validatedProfile
 
@@ -324,36 +338,73 @@ fun FillProfileScreen(navController: NavController) {
                         validatedProfile.genderError.isEmpty() &&
                         validatedProfile.accountTypeError.isEmpty()
                     ) {
-                        storeProfileData(
-                            validatedProfile.copy(profileImageUrl = profileImageUrl), // ✅ Ensure avatar is saved
-                            onSuccess = {
-                                coroutineScope.launch {
-                                    navController.navigate("CreatePinScreen")
+                        coroutineScope.launch {
+                            // If a new image is selected, convert it to a Base64 string.
+                            if (selectedImageUri != null) {
+                                val base64 = withContext(Dispatchers.IO) {
+                                    try {
+                                        context.contentResolver.openInputStream(selectedImageUri!!)?.readBytes()
+                                            ?.let { bytes ->
+                                                Base64.encodeToString(bytes, Base64.DEFAULT)
+                                            } ?: ""
+                                    } catch (e: Exception) {
+                                        e.printStackTrace()
+                                        ""
+                                    }
                                 }
-                            },
-                            onFailure = { errorMessage ->
-                                Toast.makeText(context, "Failed to save profile: $errorMessage", Toast.LENGTH_SHORT).show()
+                                profileImageBase64 = base64
+                                // Clear the selected image URI after conversion.
+                                selectedImageUri = null
                             }
-                        )
+
+                            // Store profile data with the profile image Base64 string
+                            storeProfileData(
+                                validatedProfile.copy(profileImageUrl = profileImageBase64),
+                                onSuccess = {
+                                    isLoading = false
+                                    navController.navigate("CreatePinScreen")
+                                },
+                                onFailure = { errorMessage ->
+                                    isLoading = false
+                                    Toast.makeText(context, "Failed to save profile: $errorMessage", Toast.LENGTH_SHORT).show()
+                                }
+                            )
+                        }
+                    } else {
+                        isLoading = false
                     }
                 }
             )
-
         }
     }
-//    if (showAvatarDialog) {
-//        AvatarSelectionDialog(
-//            avatars = avatarUrls,
-//            onAvatarSelected = { avatarUrl ->
-//                profileImageUrl = avatarUrl
-//                profileData = profileData.copy(profileImageUrl = avatarUrl) // Update profileData here
-//                showAvatarDialog = false
-//            },
-//            onDismissRequest = { showAvatarDialog = false }
-//        )
-//    }
-}
 
+    // Display a loading overlay while updating.
+    if (isLoading) {
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.3f)),
+            contentAlignment = Alignment.Center
+        ) {
+            androidx.compose.material3.CircularProgressIndicator(color = Color.White)
+        }
+    }
+
+    // Uncomment and use this if you want to implement avatar selection dialog
+    /*
+    if (showAvatarDialog) {
+        AvatarSelectionDialog(
+            avatars = avatarUrls,
+            onAvatarSelected = { avatarUrl ->
+                profileImageUrl = avatarUrl
+                profileData = profileData.copy(profileImageUrl = avatarUrl) // Update profileData here
+                showAvatarDialog = false
+            },
+            onDismissRequest = { showAvatarDialog = false }
+        )
+    }
+    */
+}
 
 @Composable
 fun AccountTypeDropdown(

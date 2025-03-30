@@ -4,7 +4,7 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-03-29T11:39:24.305615600Z">
+        <DropdownSelection timestamp="2025-03-30T05:23:35.786375200Z">
           <Target type="DEFAULT_BOOT">
             <handle>
               <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCW92392ET" />
@@ -15,12 +15,12 @@
           <targets>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCW92392ET" />
+                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\valvi\.android\avd\Medium_Phone.avd" />
               </handle>
             </Target>
             <Target type="DEFAULT_BOOT">
               <handle>
-                <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\valvi\.android\avd\Medium_Phone.avd" />
+                <DeviceId pluginId="PhysicalDevice" identifier="serial=RZCW92392ET" />
               </handle>
             </Target>
           </targets>

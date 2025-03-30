@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -28,28 +29,41 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChatBubbleOutline
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Send
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.BottomSheetScaffold
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.BitmapPainter
@@ -57,6 +71,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -65,70 +80,272 @@ import androidx.navigation.NavController
 import coil3.Bitmap
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
+import com.example.mindspark.community.components.CommunityCategoriesList
 import com.example.mindspark.community.data.CommunityViewModel
+import com.example.mindspark.community.model.Comment
 import com.example.mindspark.community.model.Post
+import com.example.mindspark.profile.components.decodeBase64ToBitmap
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CommunityScreen(navController: NavController) {
     val viewModel: CommunityViewModel = viewModel()
     var isRefreshing by remember { mutableStateOf(false) }
+    val scaffoldState = rememberBottomSheetScaffoldState()
+    val scope = rememberCoroutineScope()
+    var postContent by remember { mutableStateOf("") }
+    val currentUser = Firebase.auth.currentUser
+    val userId = currentUser?.uid ?: ""
+    val fullName = currentUser?.displayName ?: "Unknown"
+    val categories = remember { listOf("All", "Questions", "Advice", "Success Stories", "Challenges") }
+    var selectedCategory by remember { mutableStateOf("All") }
+    var expandedPostId by remember { mutableStateOf<String?>(null) }
+    val focusRequester = remember { FocusRequester() }
 
-    Scaffold(
-        modifier = Modifier.background(LightBlueBackground),
-        containerColor = LightBlueBackground,
-        topBar = {
-            AuthTopBar(title = "Community", onBackClick = { navController.navigateUp() })
-        },
-        floatingActionButton = {
-            FloatingActionButton(onClick = { navController.navigate("NewPostScreen") }) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "New Post")
+    // Filter posts based on selected category (assuming you'd add a category field to Post model)
+    val filteredPosts = if (selectedCategory == "All") {
+        viewModel.posts
+    } else {
+        viewModel.posts.filter { it.category == selectedCategory }
+    }
+
+    // LaunchedEffect to observe state changes
+    LaunchedEffect(isRefreshing) {
+        if (isRefreshing) {
+            viewModel.refreshPosts {
+                isRefreshing = false
             }
         }
+    }
+
+    BottomSheetScaffold(
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 0.dp,
+        sheetContent = {
+            NewPostSheet(
+                postContent = postContent,
+                onPostContentChange = { postContent = it },
+                onClose = {
+                    scope.launch {
+                        scaffoldState.bottomSheetState.hide()
+                        postContent = ""
+                    }
+                },
+                onPost = {
+                    viewModel.addNewPost(
+                        content = postContent,
+                        userId = userId,
+                        userName = fullName,
+                        category = selectedCategory
+                    ) { success ->
+                        if (success) {
+                            scope.launch {
+                                scaffoldState.bottomSheetState.hide()
+                                postContent = ""
+                                viewModel.refreshPosts {}
+                            }
+                        }
+                    }
+                }
+            )
+        },
+        sheetContainerColor = Color.White,
+        sheetContentColor = Color.Black,
+        sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+        modifier = Modifier.background(LightBlueBackground),
+        containerColor = LightBlueBackground,
     ) { paddingValues ->
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
-            onRefresh = {
-                isRefreshing = true
-                viewModel.refreshPosts { isRefreshing = false }
+        Scaffold(
+            modifier = Modifier.background(LightBlueBackground),
+            containerColor = LightBlueBackground,
+            topBar = {
+                AuthTopBar(title = "Community", onBackClick = { navController.navigateUp() })
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = {
+                        scope.launch {
+                            scaffoldState.bottomSheetState.expand()
+                            // Request focus after animation completes
+                            scaffoldState.bottomSheetState.expand()
+                        }
+                    },
+                    containerColor = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "New Post",
+                        tint = Color.White
+                    )
+                }
             }
-        ) {
-            LazyColumn(
+        ) { innerPadding ->
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(LightBlueBackground)
-                    .padding(paddingValues)
-                    .padding(horizontal = 8.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(innerPadding)
             ) {
-                items(viewModel.posts) { post ->
-                    PostCard(post = post, onLikePost = { postId, isLiked ->
-                        likePost(
-                            postId, isLiked,
-                            onSuccess = { viewModel.refreshPosts {} },
-                            onFailure = { /* Handle error */ }
-                        )
-                    })
+                // Categories list
+                CommunityCategoriesList(
+                    categories = categories,
+                    selectedCategory = selectedCategory,
+                    onCategorySelected = { category ->
+                        selectedCategory = category
+                    }
+                )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                SwipeRefresh(
+                    state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
+                    onRefresh = {
+                        isRefreshing = true
+                    }
+                ) {
+                    if (filteredPosts.isEmpty()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (isRefreshing) {
+                                CircularProgressIndicator()
+                            } else {
+                                Text(
+                                    text = "No posts yet. Be the first to share!",
+                                    color = Color.Gray,
+                                    textAlign = TextAlign.Center,
+                                    modifier = Modifier.padding(16.dp)
+                                )
+                            }
+                        }
+                    } else {
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .background(LightBlueBackground)
+                                .padding(horizontal = 8.dp, vertical = 12.dp),
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            items(filteredPosts) { post ->
+                                PostCard(
+                                    post = post,
+                                    isExpanded = expandedPostId == post.postId,
+                                    onLikePost = { postId, isLiked ->
+                                        likePost(
+                                            postId, isLiked,
+                                            onSuccess = { viewModel.refreshPosts {} },
+                                            onFailure = { /* Handle error */ }
+                                        )
+                                    },
+                                    onCommentClick = {
+                                        expandedPostId = if (expandedPostId == post.postId) null else post.postId
+                                    },
+                                    onAddComment = { postId, comment ->
+                                        viewModel.addComment(postId, comment) {
+                                            viewModel.refreshPosts {}
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
+fun NewPostSheet(
+    postContent: String,
+    onPostContentChange: (String) -> Unit,
+    onClose: () -> Unit,
+    onPost: () -> Unit
+) {
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            IconButton(onClick = onClose) {
+                Icon(Icons.Default.Close, contentDescription = "Close")
+            }
+
+            Text(
+                text = "New Post",
+                fontSize = 18.sp,
+                fontWeight = FontWeight.Bold
+            )
+
+            Button(
+                onClick = onPost,
+                enabled = postContent.isNotBlank(),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    disabledContainerColor = Color.Gray
+                ),
+                shape = RoundedCornerShape(20.dp)
+            ) {
+                Text("Post")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        OutlinedTextField(
+            value = postContent,
+            onValueChange = onPostContentChange,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(180.dp)
+                .focusRequester(focusRequester),
+            placeholder = { Text("What's on your mind?") },
+            colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = Color.LightGray
+            )
+        )
+    }
+}
+
+@Composable
+fun PostCard(
+    post: Post,
+    isExpanded: Boolean,
+    onLikePost: (String, Boolean) -> Unit,
+    onCommentClick: () -> Unit,
+    onAddComment: (String, Comment) -> Unit
+) {
     var profileImageUrl by remember { mutableStateOf("") }
     var showMenu by remember { mutableStateOf(false) }
+    var commentText by remember { mutableStateOf("") }
     val currentUser = Firebase.auth.currentUser
     val context = LocalContext.current
     var userFullName by remember { mutableStateOf("User") }
     val isLiked = remember { mutableStateOf(post.likedBy.contains(currentUser?.uid)) }
+    val commentsCount = post.comments?.size ?: 0
 
     val playStoreUrl = "https://play.google.com/store/apps/details?id=your.package.name"
     val gitHubUrl = "https://github.com/yourusername/yourrepository"
@@ -160,7 +377,7 @@ fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Decode the profileImageUrl (assumed to be Base64) to a Bitmap.
+                // Profile image
                 val painter = if (profileImageUrl.isNotEmpty()) {
                     val bitmap = decodeBase64ToBitmap(profileImageUrl)
                     if (bitmap != null)
@@ -183,7 +400,6 @@ fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
                 Spacer(modifier = Modifier.width(12.dp))
 
                 Column(modifier = Modifier.weight(1f)) {
-                    // Use fullName from Firestore instead of post.userName
                     Text(text = userFullName, fontSize = 16.sp, fontWeight = FontWeight.Bold)
                     Text(
                         text = formatTimestamp(post.timestamp),
@@ -216,9 +432,13 @@ fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text(text = post.content, fontSize = 16.sp)
+            Text(
+                text = post.content,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
             Divider()
             Spacer(modifier = Modifier.height(8.dp))
 
@@ -245,26 +465,154 @@ fun PostCard(post: Post, onLikePost: (String, Boolean) -> Unit) {
                     Text(text = post.likes.toString(), fontSize = 14.sp, color = Color.Gray)
                 }
 
-                // Comment Button
-                IconButton(onClick = { /* TODO: Handle comment action */ }) {
+                // Comment Button with counter
+                Row(
+                    modifier = Modifier.clickable { onCommentClick() },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Icon(
                         imageVector = Icons.Filled.ChatBubbleOutline,
                         contentDescription = "Comment",
-                        tint = Color.Gray
+                        tint = Color.Gray,
+                        modifier = Modifier.size(24.dp)
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(text = commentsCount.toString(), fontSize = 14.sp, color = Color.Gray)
                 }
 
                 // Share Button
                 IconButton(onClick = {
                     shareApp(context, playStoreUrl, gitHubUrl)
                 }) {
-                    Icon(imageVector = Icons.Default.Share, contentDescription = "Share")
+                    Icon(
+                        imageVector = Icons.Default.Share,
+                        contentDescription = "Share",
+                        tint = Color.Gray
+                    )
+                }
+            }
+
+            // Comments section - only show when expanded
+            if (isExpanded) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Divider()
+                Spacer(modifier = Modifier.height(8.dp))
+
+                // List existing comments
+                post.comments?.forEach { comment ->
+                    CommentItem(comment = comment)
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
+
+                // Add new comment
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = commentText,
+                        onValueChange = { commentText = it },
+                        placeholder = { Text("Add a comment...") },
+                        modifier = Modifier.weight(1f),
+                        maxLines = 2
+                    )
+
+                    IconButton(
+                        onClick = {
+                            if (commentText.isNotBlank()) {
+                                val newComment = Comment(
+                                    userId = currentUser?.uid ?: "",
+                                    userName = currentUser?.displayName ?: "User",
+                                    content = commentText,
+                                    timestamp = System.currentTimeMillis()
+                                )
+                                onAddComment(post.postId, newComment)
+                                commentText = ""
+                            }
+                        },
+                        enabled = commentText.isNotBlank()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Send,
+                            contentDescription = "Send Comment",
+                            tint = if (commentText.isBlank()) Color.Gray else MaterialTheme.colorScheme.primary
+                        )
+                    }
                 }
             }
         }
     }
 }
 
+@Composable
+fun CommentItem(comment: Comment) {
+    var profileImageUrl by remember { mutableStateOf("") }
+    var userFullName by remember { mutableStateOf(comment.userName) }
+
+    LaunchedEffect(comment.userId) {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("users").document(comment.userId)
+            .get()
+            .addOnSuccessListener { document ->
+                profileImageUrl = document.getString("profileImageUrl") ?: ""
+                userFullName = document.getString("fullName") ?: comment.userName
+            }
+    }
+
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        verticalAlignment = Alignment.Top
+    ) {
+        // Profile image
+        val painter = if (profileImageUrl.isNotEmpty()) {
+            val bitmap = decodeBase64ToBitmap(profileImageUrl)
+            if (bitmap != null)
+                BitmapPainter(bitmap.asImageBitmap())
+            else
+                painterResource(id = R.drawable.ic_profile_placeholder)
+        } else {
+            painterResource(id = R.drawable.ic_profile_placeholder)
+        }
+
+        Image(
+            painter = painter,
+            contentDescription = "Profile Picture",
+            modifier = Modifier
+                .size(32.dp)
+                .clip(CircleShape)
+                .background(Color.Gray),
+            contentScale = ContentScale.Crop
+        )
+
+        Spacer(modifier = Modifier.width(8.dp))
+
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = userFullName,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.width(8.dp))
+
+                Text(
+                    text = formatTimestamp(comment.timestamp),
+                    fontSize = 12.sp,
+                    color = Color.Gray
+                )
+            }
+
+            Text(
+                text = comment.content,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(top = 4.dp)
+            )
+        }
+    }
+}
 
 fun shareApp(context: Context, playStoreUrl: String, gitHubUrl: String) {
     val shareMessage = "Check out this app:\nGoogle Play Store: $playStoreUrl\nGitHub: $gitHubUrl"
