@@ -44,13 +44,17 @@ import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuDefaults.outlinedTextFieldColors
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SheetState
+import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -84,7 +88,6 @@ import com.example.mindspark.community.components.CommunityCategoriesList
 import com.example.mindspark.community.data.CommunityViewModel
 import com.example.mindspark.community.model.Comment
 import com.example.mindspark.community.model.Post
-import com.example.mindspark.profile.components.decodeBase64ToBitmap
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -98,18 +101,28 @@ import kotlinx.coroutines.launch
 fun CommunityScreen(navController: NavController) {
     val viewModel: CommunityViewModel = viewModel()
     var isRefreshing by remember { mutableStateOf(false) }
-    val scaffoldState = rememberBottomSheetScaffoldState()
+
+    // Fix for the bottom sheet state issue - create with skipHiddenState = false
+    val bottomSheetState = remember {
+        SheetState(
+            skipPartiallyExpanded = false,
+            skipHiddenState = false,
+            initialValue = SheetValue.Hidden
+        )
+    }
+    val scaffoldState = rememberBottomSheetScaffoldState(bottomSheetState = bottomSheetState)
     val scope = rememberCoroutineScope()
     var postContent by remember { mutableStateOf("") }
     val currentUser = Firebase.auth.currentUser
     val userId = currentUser?.uid ?: ""
     val fullName = currentUser?.displayName ?: "Unknown"
-    val categories = remember { listOf("All", "Questions", "Advice", "Success Stories", "Challenges") }
+    val categories =
+        remember { listOf("All", "Questions", "Advice", "Success Stories", "Challenges") }
     var selectedCategory by remember { mutableStateOf("All") }
     var expandedPostId by remember { mutableStateOf<String?>(null) }
     val focusRequester = remember { FocusRequester() }
 
-    // Filter posts based on selected category (assuming you'd add a category field to Post model)
+    // Filter posts based on selected category
     val filteredPosts = if (selectedCategory == "All") {
         viewModel.posts
     } else {
@@ -134,6 +147,7 @@ fun CommunityScreen(navController: NavController) {
                 onPostContentChange = { postContent = it },
                 onClose = {
                     scope.launch {
+                        // Use partialExpand or hide based on current state
                         scaffoldState.bottomSheetState.hide()
                         postContent = ""
                     }
@@ -172,8 +186,7 @@ fun CommunityScreen(navController: NavController) {
                 FloatingActionButton(
                     onClick = {
                         scope.launch {
-                            scaffoldState.bottomSheetState.expand()
-                            // Request focus after animation completes
+                            // Just use expand, not calling it twice
                             scaffoldState.bottomSheetState.expand()
                         }
                     },
@@ -194,13 +207,13 @@ fun CommunityScreen(navController: NavController) {
                     .padding(innerPadding)
             ) {
                 // Categories list
-                CommunityCategoriesList(
-                    categories = categories,
-                    selectedCategory = selectedCategory,
-                    onCategorySelected = { category ->
-                        selectedCategory = category
-                    }
-                )
+//                CommunityCategoriesList(
+//                    categories = categories,
+//                    selectedCategory = selectedCategory,
+//                    onCategorySelected = { category ->
+//                        selectedCategory = category
+//                    }
+//                )
 
                 Spacer(modifier = Modifier.height(8.dp))
 
@@ -247,7 +260,8 @@ fun CommunityScreen(navController: NavController) {
                                         )
                                     },
                                     onCommentClick = {
-                                        expandedPostId = if (expandedPostId == post.postId) null else post.postId
+                                        expandedPostId =
+                                            if (expandedPostId == post.postId) null else post.postId
                                     },
                                     onAddComment = { postId, comment ->
                                         viewModel.addComment(postId, comment) {
@@ -274,9 +288,9 @@ fun NewPostSheet(
 ) {
     val focusRequester = remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
+//    LaunchedEffect(Unit) {
+//        focusRequester.requestFocus()
+//    }
 
     Column(
         modifier = Modifier
@@ -322,7 +336,7 @@ fun NewPostSheet(
                 .height(180.dp)
                 .focusRequester(focusRequester),
             placeholder = { Text("What's on your mind?") },
-            colors = androidx.compose.material3.TextFieldDefaults.outlinedTextFieldColors(
+            colors = outlinedTextFieldColors(
                 focusedBorderColor = MaterialTheme.colorScheme.primary,
                 unfocusedBorderColor = Color.LightGray
             )
@@ -521,6 +535,7 @@ fun PostCard(
                         onClick = {
                             if (commentText.isNotBlank()) {
                                 val newComment = Comment(
+                                    commentId = "", // Add the commentId explicitly
                                     userId = currentUser?.uid ?: "",
                                     userName = currentUser?.displayName ?: "User",
                                     content = commentText,

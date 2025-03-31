@@ -45,6 +45,7 @@ import com.example.mindspark.profile.ui.sections.SecurityScreen
 import com.example.mindspark.profile.ui.sections.TermsScreen
 import com.example.mindspark.transactions.ui.EReceiptScreen
 import com.example.mindspark.transactions.ui.TransactionsScreen
+import com.google.firebase.auth.FirebaseAuth
 
 fun NavGraphBuilder.UserNavigation(navController: NavController) {
     composable(

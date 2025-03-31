@@ -8,15 +8,15 @@ data class Post(
     val profileImageUrl: String = "",
     val content: String = "",
     val imageUrl: String = "",
-    val category: String = "All",  // Added category field
+    val category: String = "All",
     val timestamp: Long = System.currentTimeMillis(),
     val likes: Int = 0,
     val likedBy: List<String> = listOf(),
-    val comments: List<Comment>? = listOf()  // Added comments list
+    val comments: List<Comment>? = listOf()
 )
 
 data class Comment(
-    val commentId: String = "",
+    val commentId: String = "",  // This field needs to be initialized in your code
     val userId: String = "",
     val userName: String = "",
     val content: String = "",
