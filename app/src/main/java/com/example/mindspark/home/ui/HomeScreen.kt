@@ -221,6 +221,9 @@ fun HomeScreen(navController: NavController) {
             )
             Spacer(modifier = Modifier.padding(bottom = 20.dp))
         }
+
+        // Add the Floating Chat Button
+//        FloatingChatButton()
     }
 }
 
