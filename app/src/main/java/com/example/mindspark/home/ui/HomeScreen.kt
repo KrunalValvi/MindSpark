@@ -214,8 +214,9 @@ fun HomeScreen(navController: NavController) {
 
             // Mentors List
             TopMentorsListHorizontal(
-                mentors = MentorData.getTopMentors(),
+                mentors = emptyList(), // Pass empty list as fallback, Firebase data will be fetched inside the component
                 onMentorClick = { mentor ->
+                    // Use userId instead of id for more reliable navigation if needed
                     navController.navigate("SingleMentorDetails/${mentor.id}")
                 }
             )

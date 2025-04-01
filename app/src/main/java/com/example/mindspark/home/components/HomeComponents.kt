@@ -1,5 +1,6 @@
 package com.example.mindspark.home.components
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -242,26 +243,131 @@ fun PopularCoursesListHorizontal(courses: List<CourseModel>, onCourseClick: (Cou
     }
 }
 
+// Modified to properly handle mentor images
 @Composable
 fun TopMentorsListHorizontal(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
+    // State to hold the mentors from Firebase
+    var firebaseMentors by remember { mutableStateOf<List<MentorModel>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    // Effect to fetch mentors from Firebase when the component is first composed
+    LaunchedEffect(Unit) {
+        Log.d("TopMentorsListHorizontal", "Fetching mentors from Firebase")
+        fetchMentorsFromFirebase { mentorsList ->
+            Log.d("TopMentorsListHorizontal", "Loaded ${mentorsList.size} mentors from Firebase")
+            // Log each mentor's data for debugging
+            mentorsList.forEach { mentor ->
+                Log.d("TopMentorsListHorizontal", "Mentor: ${mentor.name}, ProfileImageUrl: ${mentor.profileImageUrl}, UserId: ${mentor.userId}")
+            }
+            firebaseMentors = mentorsList
+            isLoading = false
+        }
+    }
+
+    // Display the list of mentors
     LazyRow(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        items(mentors.size) { index ->
-            TopMentorCardHorizontal(mentors[index], onClick = onMentorClick)
+        // Use Firebase mentors if available, otherwise fall back to provided mentors
+        val displayedMentors = if (firebaseMentors.isNotEmpty()) firebaseMentors else mentors
+        Log.d("TopMentorsListHorizontal", "Displaying ${displayedMentors.size} mentors")
+
+        items(displayedMentors.size) { index ->
+            val currentMentor = displayedMentors[index]
+            Log.d("TopMentorsListHorizontal", "Rendering mentor at index $index: ${currentMentor.name}")
+            TopMentorCardHorizontal(currentMentor, onClick = onMentorClick)
         }
     }
 }
 
+// Improved function to fetch mentors from Firebase with better profile image handling
+private fun fetchMentorsFromFirebase(onComplete: (List<MentorModel>) -> Unit) {
+    Log.d("FetchMentors", "Starting to fetch mentors from Firebase")
+    val db = FirebaseFirestore.getInstance()
+    val mentorsList = mutableListOf<MentorModel>()
+
+    // Query users collection for accounts with type "Mentor"
+    db.collection("users")
+        .whereEqualTo("accountType", "Mentor")
+        .get()
+        .addOnSuccessListener { documents ->
+            Log.d("FetchMentors", "Successfully queried Firebase, found ${documents.size()} documents")
+            var idCounter = 1
+            for (document in documents) {
+                val userData = document.data
+                Log.d("FetchMentors", "Processing document ID: ${document.id}, data: $userData")
+
+                // Check if user is a mentor
+                if (userData["accountType"] == "Mentor") {
+                    // Get profile image URL with proper handling
+                    val profileImageUrl = userData["profileImageUrl"] as? String ?: ""
+
+                    // Log what we found
+                    Log.d("FetchMentors", "Found mentor: ${userData["fullName"]}, profile image: $profileImageUrl")
+
+                    // Create a MentorModel from the document
+                    val mentor = MentorModel(
+                        id = idCounter++, // Assign sequential IDs
+                        userId = document.id,
+                        name = userData["fullName"] as? String ?: "Unknown",
+                        profession = userData["profession"] as? String ?: "Mentor",
+                        courses = (userData["courses"] as? Long)?.toInt() ?: 0,
+                        students = (userData["students"] as? Long)?.toInt() ?: 0,
+                        ratings = (userData["ratings"] as? Long)?.toInt() ?: 0,
+                        profileImageUrl = profileImageUrl,
+                        imageRes = R.drawable.ic_profile_placeholder // Default image resource
+                    )
+                    mentorsList.add(mentor)
+                }
+            }
+            Log.d("FetchMentors", "Completed processing ${mentorsList.size} mentors")
+            onComplete(mentorsList)
+        }
+        .addOnFailureListener { exception ->
+            // Log the error and return an empty list
+            Log.e("FetchMentors", "Error getting mentors: ${exception.message}", exception)
+            onComplete(emptyList())
+        }
+}
+
+// Modified to properly handle mentor images
 @Composable
 fun TopMentorsListVertical(mentors: List<MentorModel>, onMentorClick: (MentorModel) -> Unit) {
+    // State to hold the mentors from Firebase
+    var firebaseMentors by remember { mutableStateOf<List<MentorModel>>(emptyList()) }
+    var isLoading by remember { mutableStateOf(true) }
+
+    // Effect to fetch mentors from Firebase when the component is first composed
+    LaunchedEffect(Unit) {
+        Log.d("TopMentorsListVertical", "Fetching mentors from Firebase")
+        fetchMentorsFromFirebase { mentorsList ->
+            // Log the loaded mentors for debugging
+            Log.d("TopMentorsListVertical", "Loaded ${mentorsList.size} mentors from Firebase")
+            mentorsList.forEach { mentor ->
+                Log.d("TopMentorsListVertical", "Mentor: ${mentor.name}, ProfileImageUrl: ${mentor.profileImageUrl}, UserId: ${mentor.userId}")
+            }
+
+            firebaseMentors = mentorsList
+            isLoading = false
+        }
+    }
+
+    // Display the list of mentors
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
-        items(mentors.size) { index ->
-            TopMentorCardVertical(mentors[index], onClick = onMentorClick)
+        // Use Firebase mentors if available, otherwise fall back to provided mentors
+        val displayedMentors = if (firebaseMentors.isNotEmpty()) firebaseMentors else mentors
+
+        // Log which mentors are being displayed
+        Log.d("TopMentorsListVertical", "Displaying ${displayedMentors.size} mentors")
+
+        items(displayedMentors.size) { index ->
+            val currentMentor = displayedMentors[index]
+            Log.d("TopMentorsListVertical", "Rendering mentor at index $index: ${currentMentor.name}, ProfileImageUrl: ${currentMentor.profileImageUrl}")
+            TopMentorCardVertical(currentMentor, onClick = onMentorClick)
         }
     }
 }
