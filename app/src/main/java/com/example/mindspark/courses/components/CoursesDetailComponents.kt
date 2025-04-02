@@ -21,10 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import com.example.mindspark.R
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
@@ -138,8 +142,8 @@ fun CourseDetailComponents(
                 }
             }
         }
-        InstructorsSection(mentors, onMentorClick = onMentorClick)
-        ReviewsSection()
+//        InstructorsSection(mentors, onMentorClick = onMentorClick)
+//        ReviewsSection()
     }
 }
 
@@ -265,36 +269,65 @@ private fun InstructorsSection(mentors: List<MentorModel>, onMentorClick: (Mento
     Column(modifier = Modifier.padding(16.dp)) {
         Text("Instructors", style = MaterialTheme.customTypography.jost.semiBold, fontSize = 18.sp)
         Spacer(Modifier.height(8.dp))
-        mentors.forEach { mentor ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onMentorClick(mentor) },
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Image(
-                    painter = painterResource(id = mentor.imageRes),
-                    contentDescription = "Instructor",
+        
+        if (mentors.isEmpty()) {
+            Text(
+                text = "No instructor information available",
+                style = MaterialTheme.customTypography.mulish.bold,
+                fontSize = 14.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(vertical = 8.dp)
+            )
+        } else {
+            mentors.forEach { mentor ->
+                Row(
                     modifier = Modifier
-                        .size(50.dp)
-                        .clip(CircleShape)
-                )
-                Spacer(Modifier.width(8.dp))
-                Column {
-                    Text(
-                        text = mentor.name,
-                        style = MaterialTheme.customTypography.jost.semiBold,
-                        fontSize = 17.sp
-                    )
-                    Text(
-                        text = mentor.profession,
-                        style = MaterialTheme.customTypography.mulish.bold,
-                        fontSize = 13.sp,
-                        color = Color.Gray
-                    )
+                        .fillMaxWidth()
+                        .clickable { onMentorClick(mentor) },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    // Use AsyncImage for loading profile images from Firebase
+                    if (mentor.profileImageUrl.isNotEmpty()) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(mentor.profileImageUrl)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = "Instructor",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape),
+                            contentScale = ContentScale.Crop,
+                            fallback = painterResource(id = mentor.imageRes),
+                            error = painterResource(id = mentor.imageRes)
+                        )
+                    } else {
+                        Image(
+                            painter = painterResource(id = mentor.imageRes),
+                            contentDescription = "Instructor",
+                            modifier = Modifier
+                                .size(50.dp)
+                                .clip(CircleShape)
+                        )
+                    }
+                    
+                    Spacer(Modifier.width(8.dp))
+                    Column {
+                        Text(
+                            text = mentor.name,
+                            style = MaterialTheme.customTypography.jost.semiBold,
+                            fontSize = 17.sp
+                        )
+                        Text(
+                            text = mentor.profession,
+                            style = MaterialTheme.customTypography.mulish.bold,
+                            fontSize = 13.sp,
+                            color = Color.Gray
+                        )
+                    }
                 }
+                Spacer(Modifier.height(16.dp))
             }
-            Spacer(Modifier.height(16.dp))
         }
     }
 }

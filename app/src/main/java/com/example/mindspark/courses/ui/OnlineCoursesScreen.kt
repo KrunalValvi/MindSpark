@@ -1,5 +1,6 @@
 package com.example.mindspark.courses.ui
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -34,7 +35,6 @@ import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.CustomTextField_Image
 import com.example.mindspark.courses.components.ToggleSelectionRowCourses
 import com.example.mindspark.courses.data.CourseData
-import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.home.components.PopularCoursesListHorizontal
 import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.TopMentorsListVertical
@@ -138,9 +138,11 @@ fun CoursesListScreen(
                     )
 
                     TopMentorsListVertical(
-                        mentors = MentorData.getTopMentors(),
+                        mentors = emptyList(),
                         onMentorClick = { mentor ->
-                            navController.navigate("SingleMentorDetails/${mentor.id}")
+                            Log.d("OnlineCoursesScreen", "Mentor clicked: ${mentor.name}, ID: ${mentor.id}, UserId: ${mentor.userId}")
+                            // Pass the userId (Firebase document ID) instead of the numeric id
+                            navController.navigate("SingleMentorDetails/${mentor.userId}")
                         }
                     )
                 }

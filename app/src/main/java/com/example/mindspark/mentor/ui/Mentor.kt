@@ -1,5 +1,7 @@
 package com.example.mindspark.mentor.ui
 
+import android.R
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -10,15 +12,25 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -34,12 +46,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
+import com.example.mindspark.courses.model.CourseCategory
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.fetchYoutubePlaylistData
 import com.example.mindspark.mentor.components.MentorCoursesList
@@ -224,6 +239,7 @@ fun MentorCourseForm(
 ) {
     val db = FirebaseFirestore.getInstance()
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     // Mutable state variables for course details
     var category by remember { mutableStateOf("") }
@@ -241,8 +257,17 @@ fun MentorCourseForm(
     var imageRes by remember { mutableStateOf("") }
     var youtubePlaylistLink by remember { mutableStateOf("") }
 
-    var refreshTrigger = remember { mutableStateOf(false) }
+    // For dropdown menus
+    var expandedCategory by remember { mutableStateOf(false) }
+    var expandedDifficulty by remember { mutableStateOf(false) }
+    var expandedLanguage by remember { mutableStateOf(false) }
 
+    // Predefined options for dropdowns
+    val categoryOptions = CourseCategory.values().map { it.value }
+    val difficultyOptions = listOf("Beginner", "Intermediate", "Advanced", "All Levels")
+    val languageOptions = listOf("English", "Hindi", "Spanish", "French", "German", "Other")
+
+    var refreshTrigger = remember { mutableStateOf(false) }
 
     // Store the original mentor IDs to prevent overwriting
     var existingMentorIds by remember { mutableStateOf<List<Int>>(emptyList()) }
@@ -293,42 +318,386 @@ fun MentorCourseForm(
             .fillMaxSize()
             .padding(16.dp)
             .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = if (courseId != null) "Edit Course" else "Create New Course",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.padding(bottom = 16.dp)
-        )
-
-        OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Title") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = category, onValueChange = { category = it }, label = { Text("Category") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = price, onValueChange = { price = it }, label = { Text("Price") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = videos, onValueChange = { videos = it }, label = { Text("Videos (Number)") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = hours, onValueChange = { hours = it }, label = { Text("Duration Hours") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = about, onValueChange = { about = it }, label = { Text("About Course") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = difficultyLevel, onValueChange = { difficultyLevel = it }, label = { Text("Difficulty Level") }, modifier = Modifier.fillMaxWidth())
-
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Text("Certification Available")
-            Switch(checked = certification, onCheckedChange = { certification = it })
+        // Header with styling
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(
+                containerColor = Color(0xFF167F71)
+            )
+        ) {
+            Text(
+                text = if (courseId != null) "Edit Course" else "Create New Course",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.White,
+                modifier = Modifier.padding(16.dp)
+            )
         }
 
-        OutlinedTextField(value = language, onValueChange = { language = it }, label = { Text("Language") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = features, onValueChange = { features = it }, label = { Text("Features (comma-separated)") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(value = imageRes, onValueChange = { imageRes = it }, label = { Text("Image URL") }, modifier = Modifier.fillMaxWidth())
-        OutlinedTextField(
-            value = youtubePlaylistLink,
-            onValueChange = { youtubePlaylistLink = it },
-            label = { Text("YouTube Playlist Link") },
-            modifier = Modifier.fillMaxWidth()
-        )
+        Spacer(modifier = Modifier.height(8.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // Course Details Section
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "Course Details",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF167F71)
+                )
 
+                // Title field
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Course Title") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                            contentDescription = "Title",
+                            tint = Color(0xFF167F71)
+                        )
+                    }
+                )
+
+                // Category Dropdown
+                ExposedDropdownMenuBox(
+                    expanded = expandedCategory,
+                    onExpandedChange = { expandedCategory = it },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = category,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Category") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedCategory)
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF167F71),
+                            focusedLabelColor = Color(0xFF167F71)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor(),
+                        leadingIcon = {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                                contentDescription = "Category",
+                                tint = Color(0xFF167F71)
+                            )
+                        }
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedCategory,
+                        onDismissRequest = { expandedCategory = false }
+                    ) {
+                        categoryOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    category = option
+                                    expandedCategory = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Price field
+                OutlinedTextField(
+                    value = price,
+                    onValueChange = { price = it },
+                    label = { Text("Price") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                            contentDescription = "Price",
+                            tint = Color(0xFF167F71)
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+            }
+        }
+
+        // Course Content Section
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "Course Content",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF167F71)
+                )
+
+                // Videos field
+                OutlinedTextField(
+                    value = videos,
+                    onValueChange = { videos = it },
+                    label = { Text("Number of Videos") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                            contentDescription = "Videos",
+                            tint = Color(0xFF167F71)
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                // Hours field
+                OutlinedTextField(
+                    value = hours,
+                    onValueChange = { hours = it },
+                    label = { Text("Duration (Hours)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                            contentDescription = "Hours",
+                            tint = Color(0xFF167F71)
+                        )
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                )
+
+                // YouTube playlist link
+                OutlinedTextField(
+                    value = youtubePlaylistLink,
+                    onValueChange = { youtubePlaylistLink = it },
+                    label = { Text("YouTube Playlist Link") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                            contentDescription = "YouTube Link",
+                            tint = Color(0xFF167F71)
+                        )
+                    }
+                )
+            }
+        }
+
+        // Course Details Section
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                Text(
+                    text = "Additional Information",
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color(0xFF167F71)
+                )
+
+                // About course
+                OutlinedTextField(
+                    value = about,
+                    onValueChange = { about = it },
+                    label = { Text("About Course") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    minLines = 3,
+                    maxLines = 5
+                )
+
+                // Difficulty level dropdown
+                ExposedDropdownMenuBox(
+                    expanded = expandedDifficulty,
+                    onExpandedChange = { expandedDifficulty = it },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = difficultyLevel,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Difficulty Level") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedDifficulty)
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF167F71),
+                            focusedLabelColor = Color(0xFF167F71)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedDifficulty,
+                        onDismissRequest = { expandedDifficulty = false }
+                    ) {
+                        difficultyOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    difficultyLevel = option
+                                    expandedDifficulty = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Language dropdown
+                ExposedDropdownMenuBox(
+                    expanded = expandedLanguage,
+                    onExpandedChange = { expandedLanguage = it },
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    OutlinedTextField(
+                        value = language,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Language") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedLanguage)
+                        },
+                        colors = OutlinedTextFieldDefaults.colors(
+                            focusedBorderColor = Color(0xFF167F71),
+                            focusedLabelColor = Color(0xFF167F71)
+                        ),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = expandedLanguage,
+                        onDismissRequest = { expandedLanguage = false }
+                    ) {
+                        languageOptions.forEach { option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    language = option
+                                    expandedLanguage = false
+                                }
+                            )
+                        }
+                    }
+                }
+
+                // Certification switch with better styling
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Certification Available",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Switch(
+                        checked = certification,
+                        onCheckedChange = { certification = it },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color(0xFF167F71),
+                            checkedTrackColor = Color(0xFFE8F1FF)
+                        )
+                    )
+                }
+
+                // Features field
+                OutlinedTextField(
+                    value = features,
+                    onValueChange = { features = it },
+                    label = { Text("Features (comma-separated)") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                            contentDescription = "Features",
+                            tint = Color(0xFF167F71)
+                        )
+                    }
+                )
+
+                // Image URL field
+                OutlinedTextField(
+                    value = imageRes,
+                    onValueChange = { imageRes = it },
+                    label = { Text("Image URL") },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF167F71),
+                        focusedLabelColor = Color(0xFF167F71)
+                    ),
+                    leadingIcon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_delete), // Replace with appropriate icon
+                            contentDescription = "Image URL",
+                            tint = Color(0xFF167F71)
+                        )
+                    }
+                )
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Save button with improved styling
         Button(
             onClick = {
+                if (title.isBlank() || category.isBlank()) {
+                    Toast.makeText(context, "Title and Category are required", Toast.LENGTH_SHORT).show()
+                    return@Button
+                }
+
                 scope.launch {
                     // Ensure mentorId is included in the mentorIds list
                     val updatedMentorIds = if (existingMentorIds.contains(mentorId)) {
@@ -366,27 +735,34 @@ fun MentorCourseForm(
                     try {
                         if (courseId == null) {
                             db.collection("courses").add(newCourse).await()
-                            println("New course created with mentorIds: ${newCourse.mentorIds}")
+                            Toast.makeText(context, "Course created successfully", Toast.LENGTH_SHORT).show()
                         } else {
                             db.collection("courses").document(courseId).set(newCourse).await()
-                            println("Course updated with mentorIds: ${newCourse.mentorIds}")
+                            Toast.makeText(context, "Course updated successfully", Toast.LENGTH_SHORT).show()
                         }
                         // Force a refresh by changing a state value
                         refreshTrigger.value = !refreshTrigger.value
                         onComplete()
                     } catch (e: Exception) {
-                        println("Error saving course: ${e.message}")
+                        Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                         e.printStackTrace()
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF167F71))
         ) {
-            Text("Save Course")
+            Text(
+                text = if (courseId != null) "Update Course" else "Create Course",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
-
 @Preview(showBackground = true)
 @Composable
 fun MentorScreenPreview() {

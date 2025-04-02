@@ -46,10 +46,6 @@ fun MyCompletedCourseCardHorizontal(
     course: CourseModel,
     onCourseClick: (CourseModel) -> Unit,
 ) {
-    val isCheckedState = remember { mutableStateOf(false) }
-    val checkedImage = painterResource(R.drawable.ic_checked_bookmark)
-    val uncheckedImage = painterResource(R.drawable.ic_unchecked_bookmark)
-
     Card(
         modifier = Modifier
             .padding(8.dp)

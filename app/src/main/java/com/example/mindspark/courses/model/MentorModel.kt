@@ -23,6 +23,7 @@ data class MentorModel(
     val userId: String = "", // Firebase user ID
     val name: String,
     val profession: String,
+    val email: String = "",
     val courses: Int,
     val students: Int,
     val ratings: Int,
@@ -43,7 +44,8 @@ data class MentorModel(
                 students = (document["students"] as? Long)?.toInt() ?: 0,
                 ratings = (document["ratings"] as? Long)?.toInt() ?: 0,
                 profileImageUrl = document["profileImageUrl"] as? String ?: "",
-                imageRes = defaultImageRes
+                imageRes = defaultImageRes,
+                email = document["email"] as? String ?: ""
             )
         }
     }

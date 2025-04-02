@@ -1,5 +1,6 @@
 package com.example.mindspark.navigation
 
+import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -247,15 +248,14 @@ fun NavGraphBuilder.UserNavigation(navController: NavController) {
         VideoPlayerScreen(navController, videoUrl)
     }
 
-
-
     composable(
         "SingleMentorDetails/{mentorId}",
-        arguments = listOf(navArgument("mentorId") { type = NavType.IntType }),
+        arguments = listOf(navArgument("mentorId") { type = NavType.StringType }),
         enterTransition = { slideInHorizontally(initialOffsetX = { it }) + fadeIn(tween(300)) },
         exitTransition = { slideOutHorizontally(targetOffsetX = { -it }) + fadeOut(tween(300)) }
     ) { backStackEntry ->
-        val mentorId = backStackEntry.arguments?.getInt("mentorId") ?: 0
+        val mentorId = backStackEntry.arguments?.getString("mentorId") ?: ""
+        Log.d("Navigation", "Navigating to SingleMentorDetails with mentorId: $mentorId")
         SingleMentorDetails(navController, mentorId)
     }
 

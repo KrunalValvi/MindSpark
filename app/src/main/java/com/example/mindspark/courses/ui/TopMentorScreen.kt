@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.home.components.TopMentorsListVertical
-import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.courses.model.MentorModel
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -80,10 +79,11 @@ fun TopMentorScreen(navController: NavController) {
             else {
                 // Mentors List - the list will be fetched inside the component
                 TopMentorsListVertical(
-                    mentors = MentorData.getTopMentors(), // This is just a fallback
+                    mentors = emptyList(), // This is just a fallback
                     onMentorClick = { mentor ->
-                        Log.d("TopMentorScreen", "Mentor clicked: ${mentor.name}, ID: ${mentor.id}")
-                        navController.navigate("SingleMentorDetails/${mentor.id}")
+                        Log.d("TopMentorScreen", "Mentor clicked: ${mentor.name}, ID: ${mentor.id}, UserId: ${mentor.userId}")
+                        // Pass the userId (Firebase document ID) instead of the numeric id
+                        navController.navigate("SingleMentorDetails/${mentor.userId}")
                     }
                 )
             }

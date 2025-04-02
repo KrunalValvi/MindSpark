@@ -1,6 +1,5 @@
 package com.example.mindspark.myCourses.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,15 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.createGraph
 import com.example.mindspark.R
 import com.example.mindspark.myCourses.model.LessonItem
 import com.example.mindspark.myCourses.model.Section
-import com.example.mindspark.myCourses.ui.MyLessons
 import com.example.mindspark.ui.theme.customTypography
 
 /**
@@ -47,15 +43,15 @@ import com.example.mindspark.ui.theme.customTypography
  */
 
 
-@Preview(showBackground = true)
-@Composable
-fun MyLessonsPreview() {
-    MyLessons(
-        navController = NavController(LocalContext.current).apply {
-            createGraph(startDestination = "MyLessons") {}
-        }
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MyLessonsPreview() {
+//    MyLessons(
+//        navController = NavController(LocalContext.current).apply {
+//            createGraph(startDestination = "MyLessons") {}
+//        }
+//    )
+//}
 
 @Composable
 fun SectionCard(

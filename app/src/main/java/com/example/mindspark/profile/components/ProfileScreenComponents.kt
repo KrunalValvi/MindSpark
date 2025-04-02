@@ -148,14 +148,14 @@ fun SettingsList(navController: NavController) {
             .padding(vertical = 16.dp)
     ) {
         SettingItem(icon = R.drawable.ic_edit, title = "Edit Profile") { navController.navigate("EditProfileScreen")}
-        SettingItem(icon = R.drawable.ic_payment, title = "Payment Option") { navController.navigate("PaymentOptionScreen") }
+//        SettingItem(icon = R.drawable.ic_payment, title = "Payment Option") { navController.navigate("PaymentOptionScreen") }
         SettingItem(icon = R.drawable.ic_notifications, title = "Notifications") { navController.navigate("ProfileNotificationsScreen") }
-        SettingItem(icon = R.drawable.ic_security, title = "Security") { navController.navigate("SecurityScreen") }
-        SettingItem(icon = R.drawable.ic_language, title = "Language") { navController.navigate("LanguageScreen")}
-        SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode") { navController.navigate("AdminScreen") }
+//        SettingItem(icon = R.drawable.ic_security, title = "Security") { navController.navigate("SecurityScreen") }
+//        SettingItem(icon = R.drawable.ic_language, title = "Language") { navController.navigate("LanguageScreen")}
+//        SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode") { navController.navigate("AdminScreen") }
         SettingItem(icon = R.drawable.ic_terms, title = "Terms & Conditions") { navController.navigate("TermsScreen") }
-        SettingItem(icon = R.drawable.ic_help, title = "Help Center") { }
-        SettingItem(icon = R.drawable.ic_invite, title = "Invite Friends") { navController.navigate("InviteFriendsScreen")}
+//        SettingItem(icon = R.drawable.ic_help, title = "Help Center") { }
+//        SettingItem(icon = R.drawable.ic_invite, title = "Invite Friends") { navController.navigate("InviteFriendsScreen")}
     }
 }
 

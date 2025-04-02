@@ -24,7 +24,7 @@ enum class CourseCategory(val value: String) {
     WebDevelopment("Web Development"),
     SEOMarketing("Digital Marketing"),
     Programming("App Development"),
-    UIUXDesign("UI/UX Design"),
+    Marketing("Marketing"),
 //    GameDevelopment("Game Development"),
 //    DataScience("Data Science"),
 //    AIML("AI & Machine Learning"),

@@ -34,7 +34,6 @@ import com.example.mindspark.R
 import com.example.mindspark.auth.components.CustomTextField
 import com.example.mindspark.courses.data.CardData
 import com.example.mindspark.courses.data.CourseData
-import com.example.mindspark.courses.data.MentorData
 import com.example.mindspark.courses.model.CourseCategory
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.home.components.CategoriesListShow
@@ -80,8 +79,10 @@ fun HomeScreen(navController: NavController) {
 
             // Update states
             allCourses = loadedCourses
-            categoryStrings = listOf("All") + loadedCourses.map { it.category }.distinct()
+            categoryStrings = (listOf("All") + loadedCourses.map { it.category }).distinct()
+//            categoryStrings = listOf("All") + loadedCourses.map { it.category }.filter { it != "All" }.distinct()
 
+            // Log the updated categories
             // Update loading state
             isLoading = false
         } catch (e: Exception) {
@@ -217,7 +218,7 @@ fun HomeScreen(navController: NavController) {
                 mentors = emptyList(), // Pass empty list as fallback, Firebase data will be fetched inside the component
                 onMentorClick = { mentor ->
                     // Use userId instead of id for more reliable navigation if needed
-                    navController.navigate("SingleMentorDetails/${mentor.id}")
+                    navController.navigate("SingleMentorDetails/${mentor.userId}")
                 }
             )
             Spacer(modifier = Modifier.padding(bottom = 20.dp))

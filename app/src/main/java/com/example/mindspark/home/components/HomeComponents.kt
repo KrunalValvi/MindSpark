@@ -42,6 +42,7 @@ import com.example.mindspark.courses.model.CourseCategory
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.courses.model.SpecialOfferModel
+import com.example.mindspark.home.components.SpecialOfferCard
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -366,7 +367,7 @@ fun TopMentorsListVertical(mentors: List<MentorModel>, onMentorClick: (MentorMod
 
         items(displayedMentors.size) { index ->
             val currentMentor = displayedMentors[index]
-            Log.d("TopMentorsListVertical", "Rendering mentor at index $index: ${currentMentor.name}, ProfileImageUrl: ${currentMentor.profileImageUrl}")
+            Log.d("TopMentorsListVertical", "Rendering mentor at index $index: ${currentMentor.name}, ProfileImageUrl: ${currentMentor.profileImageUrl}, UserId: ${currentMentor.userId}")
             TopMentorCardVertical(currentMentor, onClick = onMentorClick)
         }
     }

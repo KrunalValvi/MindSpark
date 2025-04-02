@@ -41,6 +41,8 @@ data class CourseModel(
     val certification: Boolean = false,
     val language: String = "",
     val mentorIds: List<Int> = emptyList(),
+    val mentorName: String = "", // Added field for mentor name
+    val creatorId: String = "", // Added field for creator ID
     val features: List<String> = emptyList(),
     val playlistVideos: List<VideoDetails> = emptyList(),
     var isBookmarked: Boolean = false,
