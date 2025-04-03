@@ -53,8 +53,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -84,7 +84,6 @@ import androidx.navigation.NavController
 import coil3.Bitmap
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.community.components.CommunityCategoriesList
 import com.example.mindspark.community.data.CommunityViewModel
 import com.example.mindspark.community.model.Comment
 import com.example.mindspark.community.model.Post
@@ -94,6 +93,7 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -350,7 +350,9 @@ fun PostCard(
     isExpanded: Boolean,
     onLikePost: (String, Boolean) -> Unit,
     onCommentClick: () -> Unit,
-    onAddComment: (String, Comment) -> Unit
+    onAddComment: (String, Comment) -> Unit,
+//    snackbarHostState = snackbarHostState,
+//    coroutineScope = coroutineScope
 ) {
     var profileImageUrl by remember { mutableStateOf("") }
     var showMenu by remember { mutableStateOf(false) }
@@ -360,6 +362,9 @@ fun PostCard(
     var userFullName by remember { mutableStateOf("User") }
     val isLiked = remember { mutableStateOf(post.likedBy.contains(currentUser?.uid)) }
     val commentsCount = post.comments?.size ?: 0
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+
 
     val playStoreUrl = "https://play.google.com/store/apps/details?id=your.package.name"
     val gitHubUrl = "https://github.com/yourusername/yourrepository"
@@ -496,7 +501,10 @@ fun PostCard(
 
                 // Share Button
                 IconButton(onClick = {
-                    shareApp(context, playStoreUrl, gitHubUrl)
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar("Sharing post...")
+                    }
+                    shareApp(context, gitHubUrl, post.content, snackbarHostState, coroutineScope)
                 }) {
                     Icon(
                         imageVector = Icons.Default.Share,
@@ -629,14 +637,44 @@ fun CommentItem(comment: Comment) {
     }
 }
 
-fun shareApp(context: Context, playStoreUrl: String, gitHubUrl: String) {
-    val shareMessage = "Check out this app:\nGoogle Play Store: $playStoreUrl\nGitHub: $gitHubUrl"
+//fun shareApp(context: Context, gitHubUrl: String) {
+//    val shareMessage = """
+//        🚀 Hey! Check out this amazing app!
+//
+//        💻 Explore the source code on GitHub: $gitHubUrl
+//
+//        Let me know what you think! 😃
+//    """.trimIndent()
+//
+//    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+//        type = "text/plain"
+//        putExtra(Intent.EXTRA_TEXT, shareMessage)
+//    }
+//    context.startActivity(Intent.createChooser(shareIntent, "Share via"))
+//}
+
+fun shareApp(context: Context, gitHubUrl: String, postMessage: String, snackbarHostState: SnackbarHostState, coroutineScope: CoroutineScope) {
+    val shareMessage = """
+        🚀 Hey! Check out this amazing post!  
+        
+        📝 "$postMessage"  
+        
+        💻 Explore the app source code on GitHub: $gitHubUrl  
+        
+        Let me know what you think! 😃
+    """.trimIndent()
+
+    coroutineScope.launch {
+        snackbarHostState.showSnackbar("Sharing post...")
+    }
+
     val shareIntent = Intent(Intent.ACTION_SEND).apply {
         type = "text/plain"
         putExtra(Intent.EXTRA_TEXT, shareMessage)
     }
     context.startActivity(Intent.createChooser(shareIntent, "Share via"))
 }
+
 
 fun likePost(
     postId: String,

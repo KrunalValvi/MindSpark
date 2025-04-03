@@ -35,9 +35,9 @@ import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.CustomTextField_Image
 import com.example.mindspark.courses.components.ToggleSelectionRowCourses
 import com.example.mindspark.courses.data.CourseData
-import com.example.mindspark.home.components.PopularCoursesListHorizontal
 import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.TopMentorsListVertical
+import com.example.mindspark.myCourses.components.MyCompletedCourseHorizontal
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
@@ -123,10 +123,11 @@ fun CoursesListScreen(
                     )
 
                     // Popular Courses List (loaded from Firebase)
-                    PopularCoursesListHorizontal(
+                    MyCompletedCourseHorizontal(
+                        navController = navController,
                         courses = courses,
                         onCourseClick = { course ->
-                            navController.navigate("CourseDetailScreen/${course.id}")
+                            navController.navigate("MyLessons")
                         }
                     )
                 }
