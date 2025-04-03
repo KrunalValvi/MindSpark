@@ -3,18 +3,42 @@ package com.example.mindspark.inbox.ui
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,9 +50,14 @@ import com.example.mindspark.inbox.model.MessageModel
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.MutableData
+import com.google.firebase.database.ServerValue
+import com.google.firebase.database.Transaction
+import com.google.firebase.database.ValueEventListener
 import kotlinx.coroutines.tasks.await
-
 
 @Preview(showBackground = true)
 @Composable
@@ -48,6 +77,73 @@ fun ChatDetailScreen(
     val currentUserEmail = FirebaseAuth.getInstance().currentUser?.email ?: ""
     var isLoading by remember { mutableStateOf(true) }
 
+    // Store user's active chat state
+    val userStatusRef = remember {
+        FirebaseDatabase.getInstance().getReference("user_status")
+    }
+
+    // Function to mark messages as read
+    fun markMessagesAsRead(chatId: String, currentUserEmail: String) {
+        val sanitizedEmail = currentUserEmail.replace(".", "_")
+
+        // Update the chat status to reset unread count
+        val statusRef = FirebaseDatabase.getInstance().getReference("chatStatus")
+            .child(sanitizedEmail)
+            .child(chatId)
+
+        statusRef.get().addOnSuccessListener { snapshot ->
+            val currentStatus = snapshot.getValue(ChatStatus::class.java)
+            statusRef.child("unreadCount").setValue(0)
+        }
+
+        // Mark individual messages as read and seen
+        val messagesRef = FirebaseDatabase.getInstance().getReference("chats")
+            .child(chatId)
+            .child("messages")
+
+        messagesRef.orderByChild("receiverEmail").equalTo(sanitizedEmail)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (messageSnapshot in snapshot.children) {
+                        if (messageSnapshot.child("read").getValue(Boolean::class.java) == false) {
+                            messageSnapshot.ref.child("read").setValue(true)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    println("❌ Failed to update message read status: ${error.message}")
+                }
+            })
+
+        // Mark messages sent by the current user as seen if they've been read by the receiver
+        messagesRef.orderByChild("senderEmail").equalTo(sanitizedEmail)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    for (messageSnapshot in snapshot.children) {
+                        if (messageSnapshot.child("read").getValue(Boolean::class.java) == true &&
+                            messageSnapshot.child("seen").getValue(Boolean::class.java) == false
+                        ) {
+                            messageSnapshot.ref.child("seen").setValue(true)
+                        }
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    println("❌ Failed to update message seen status: ${error.message}")
+                }
+            })
+    }
+
+    // Function to delete message
+    fun deleteMessage(chatId: String, messageId: String) {
+        FirebaseDatabase.getInstance().getReference("chats")
+            .child(chatId)
+            .child("messages")
+            .child(messageId)
+            .removeValue()
+    }
+
     val sanitizedCurrentEmail = currentUserEmail.replace(".", "_")
     val sanitizedReceiverEmail = receiverEmail.replace(".", "_")
     val chatId = if (sanitizedCurrentEmail < sanitizedReceiverEmail)
@@ -61,18 +157,29 @@ fun ChatDetailScreen(
     var replyingTo by remember { mutableStateOf<MessageModel?>(null) }
     val listState = rememberLazyListState()
 
+    // Set active chat status when entering the screen
     LaunchedEffect(chatId) {
         isLoading = true
+
+        // Set user's active chat status
+        userStatusRef.child(sanitizedCurrentEmail).setValue(
+            mapOf(
+                "activeChatId" to chatId,
+                "lastActive" to ServerValue.TIMESTAMP
+            )
+        )
 
         // Log that we're marking messages as read
         println("🔄 Marking messages as read on screen enter for chat: $chatId")
 
         markMessagesAsRead(chatId, currentUserEmail)
-        val db = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages")
+        val db =
+            FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages")
 
         db.orderByChild("timestamp").addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val newMessages = snapshot.children.mapNotNull { it.getValue(MessageModel::class.java) }
+                val newMessages =
+                    snapshot.children.mapNotNull { it.getValue(MessageModel::class.java) }
 
                 if (newMessages.isNotEmpty()) {
                     messages = newMessages.sortedBy { it.timestamp }
@@ -94,6 +201,13 @@ fun ChatDetailScreen(
     }
 
     // ✅ Fix: Prevent crashing when messages list is empty
+    // Clear active chat status when leaving the screen
+    DisposableEffect(chatId) {
+        onDispose {
+            userStatusRef.child(sanitizedCurrentEmail).setValue(null)
+        }
+    }
+
     LaunchedEffect(messages) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -122,7 +236,13 @@ fun ChatDetailScreen(
                 onMessageChange = { messageText = it },
                 onSendClick = {
                     if (messageText.isNotEmpty()) {
-                        sendMessage(chatId, sanitizedCurrentEmail, sanitizedReceiverEmail, messageText, replyingTo)
+                        SendMessage(
+                            chatId,
+                            sanitizedCurrentEmail,
+                            sanitizedReceiverEmail,
+                            messageText,
+                            replyingTo
+                        )
                         messageText = ""
                         replyingTo = null
                     }
@@ -150,7 +270,9 @@ fun ChatDetailScreen(
             } else {
                 LazyColumn(
                     state = listState,
-                    modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = 16.dp),
                     reverseLayout = false
                 ) {
                     items(messages) { message ->
@@ -158,7 +280,11 @@ fun ChatDetailScreen(
                             message = message,
                             currentUserEmail = currentUserEmail,
                             onLongPress = {
-                                if (message.senderEmail.replace(".", "_") == sanitizedCurrentEmail) {
+                                if (message.senderEmail.replace(
+                                        ".",
+                                        "_"
+                                    ) == sanitizedCurrentEmail
+                                ) {
                                     selectedMessageId = message.id
                                     showDeleteDialog = true
                                 }
@@ -214,9 +340,11 @@ fun ChatBubble(
     currentUserEmail: String,  // Pass the current user's email
     onLongPress: () -> Unit
 ) {
-    val sanitizedCurrentEmail = currentUserEmail.replace(".", "_")  // Ensure consistency with chatId
+    val sanitizedCurrentEmail =
+        currentUserEmail.replace(".", "_")  // Ensure consistency with chatId
 
-    val isSender = message.senderEmail.replace(".", "_") == sanitizedCurrentEmail  // Compare sanitized emails
+    val isSender =
+        message.senderEmail.replace(".", "_") == sanitizedCurrentEmail  // Compare sanitized emails
 
     Row(
         modifier = Modifier
@@ -253,68 +381,124 @@ fun ChatBubble(
     }
 }
 
-fun sendMessage(
+// Global reference to user status
+private val userStatusRef = FirebaseDatabase.getInstance().getReference("user_status")
+
+fun SendMessage(
     chatId: String,
     senderEmail: String,
     receiverEmail: String,
     messageText: String,
     replyTo: MessageModel? = null
 ) {
-    val db = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages")
-    val messageId = db.push().key ?: return
+    try {
+        val db = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages")
+        val messageId = db.push().key ?: return
 
-    val message = mapOf(
-        "id" to messageId,
-        "senderEmail" to senderEmail,
-        "receiverEmail" to receiverEmail,
-        "messageText" to messageText,
-        "timestamp" to ServerValue.TIMESTAMP,
-        "replyTo" to replyTo?.id,
-        "replyToMessage" to replyTo?.messageText,
-        "read" to false,  // Message initially unread
-        "seen" to false   // Message initially unseen
-    )
+        val message = mapOf(
+            "id" to messageId,
+            "senderEmail" to senderEmail,
+            "receiverEmail" to receiverEmail,
+            "messageText" to messageText,
+            "timestamp" to ServerValue.TIMESTAMP,
+            "replyTo" to replyTo?.id,
+            "replyToMessage" to replyTo?.messageText,
+            "read" to false,  // Message initially unread
+            "seen" to false   // Message initially unseen
+        )
 
-    db.child(messageId).setValue(message)
-        .addOnSuccessListener {
-            println("✅ Message sent successfully: $message")
+        // Get sender's name for notification
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        val senderName = currentUser?.displayName ?: "Someone"
 
-            // Update unread count for the receiver
-            val statusDb = FirebaseDatabase.getInstance().getReference("chatStatus")
-                .child(receiverEmail.replace(".", "_"))
-                .child(chatId)
+        // Get receiver's FCM token
+        val receiverTokenRef = FirebaseDatabase.getInstance().getReference("fcm_tokens")
+            .child(receiverEmail.replace(".", "_"))
 
-            // Increment unread count for receiver
-            statusDb.runTransaction(object : Transaction.Handler {
-                override fun doTransaction(currentData: MutableData): Transaction.Result {
-                    var chatStatus = currentData.getValue(ChatStatus::class.java)
-                        ?: ChatStatus(chatId, receiverEmail, 0, System.currentTimeMillis())
+        // Check if receiver is actively viewing this chat
+        userStatusRef.child(receiverEmail.replace(".", "_")).get()
+            .addOnSuccessListener { statusSnapshot ->
+                val activeChat = statusSnapshot.child("activeChatId").getValue(String::class.java)
+                val lastActive = statusSnapshot.child("lastActive").getValue(Long::class.java)
+                val isReceiverActive = activeChat == chatId && lastActive != null &&
+                        (System.currentTimeMillis() - lastActive < 60000) // Consider active if last active within 1 minute
 
-                    chatStatus = chatStatus.copy(
-                        unreadCount = chatStatus.unreadCount + 1,
-                        lastMessageTimestamp = System.currentTimeMillis()
-                    )
+                // Only send notification if receiver is not actively viewing this chat
+                if (!isReceiverActive) {
+                    receiverTokenRef.get().addOnSuccessListener { tokenSnapshot ->
+                        val receiverToken = tokenSnapshot.getValue(String::class.java)
+                        if (receiverToken != null) {
+                            val notificationData = mapOf(
+                                "title" to senderName,
+                                "body" to messageText,
+                                "chatPartner" to (currentUser?.email ?: ""),
+                                "type" to "chat",
+                                "token" to receiverToken
+                            )
 
-                    currentData.value = chatStatus
-                    return Transaction.success(currentData)
-                }
+                            // Use Firebase Cloud Functions to send the notification
+                            val notificationsRef =
+                                FirebaseDatabase.getInstance().getReference("notifications")
+                                    .child(receiverEmail.replace(".", "_"))
+                                    .push()
 
-                override fun onComplete(error: DatabaseError?, committed: Boolean, snapshot: DataSnapshot?) {
-                    if (error != null) {
-                        println("❌ Failed to update unread count: ${error.message}")
-                    } else {
-                        println("✅ Successfully updated unread count for receiver")
+                            // Store notification in database to trigger cloud function
+                            notificationsRef.setValue(
+                                hashMapOf(
+                                    "token" to receiverToken,
+                                    "data" to notificationData,
+                                    "timestamp" to ServerValue.TIMESTAMP
+                                )
+                            )
+                        }
                     }
                 }
-            })
-        }
-        .addOnFailureListener { error ->
-            println("❌ Failed to send message: ${error.message}")
-        }
+
+                db.child(messageId).setValue(message)
+                    .addOnSuccessListener {
+                        println("✅ Message sent successfully: $message")
+
+                        // Update unread count for the receiver
+                        val statusDb = FirebaseDatabase.getInstance().getReference("chatStatus")
+                            .child(receiverEmail.replace(".", "_"))
+                            .child(chatId)
+
+                        // Increment unread count for receiver
+                        statusDb.runTransaction(object : Transaction.Handler {
+                            override fun doTransaction(currentData: MutableData): Transaction.Result {
+                                var chatStatus = currentData.getValue(ChatStatus::class.java)
+                                    ?: ChatStatus(unreadCount = 0)
+                                
+                                chatStatus = chatStatus.copy(unreadCount = chatStatus.unreadCount + 1)
+                                currentData.setValue(chatStatus)
+                                return Transaction.success(currentData)
+                            }
+
+                            override fun onComplete(
+                                error: DatabaseError?,
+                                committed: Boolean,
+                                currentData: DataSnapshot?
+                            ) {
+                                if (error != null) {
+                                    println("❌ Failed to update unread count: ${error.message}")
+                                } else {
+                                    println("✅ Unread count updated successfully")
+                                }
+                            }
+                        })
+                    }
+                    .addOnFailureListener { error ->
+                        println("❌ Failed to send message: ${error.message}")
+                    }
+            }
+    } catch (e: Exception) {
+        println("❌ Failed to send message: ${e.message}")
+    }
 }
 
+
 // Enhanced markMessagesAsRead function to update both read and seen status
-fun markMessagesAsRead(chatId: String, currentUserEmail: String) {
+private fun markMessagesAsRead(chatId: String, currentUserEmail: String) {
     val sanitizedEmail = currentUserEmail.replace(".", "_")
 
     // Debug log
@@ -365,7 +549,8 @@ fun markMessagesAsRead(chatId: String, currentUserEmail: String) {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (messageSnapshot in snapshot.children) {
                     if (messageSnapshot.child("read").getValue(Boolean::class.java) == true &&
-                        messageSnapshot.child("seen").getValue(Boolean::class.java) == false) {
+                        messageSnapshot.child("seen").getValue(Boolean::class.java) == false
+                    ) {
                         messageSnapshot.ref.child("seen").setValue(true)
                         println("✅ Marked message ${messageSnapshot.key} as seen")
                     }
@@ -402,7 +587,8 @@ suspend fun getLastMessage(chatId: String): String {
     }
 }
 
-fun deleteMessage(chatId: String, messageId: String) {
-    val db = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages").child(messageId)
+private fun deleteMessage(chatId: String, messageId: String) {
+    val db = FirebaseDatabase.getInstance().getReference("chats").child(chatId).child("messages")
+        .child(messageId)
     db.removeValue()
 }

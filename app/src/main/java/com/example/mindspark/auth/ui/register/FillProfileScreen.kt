@@ -74,7 +74,6 @@ import com.example.mindspark.backend.getFirebaseProfileData
 import com.example.mindspark.backend.showDatePicker
 import com.example.mindspark.backend.storeProfileData
 import com.example.mindspark.backend.validateProfile
-import com.example.mindspark.profile.ui.sections.AvatarSelectionDialog
 import com.example.mindspark.profile.ui.sections.decodeBase64ToBitmap
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.Dispatchers
@@ -90,14 +89,15 @@ fun FillProfileScreen(navController: NavController) {
     var showDatePickerState by remember { mutableStateOf(false) }
     val coroutineScope = rememberCoroutineScope()
 
-    // This is now only used for avatar dialog selection if needed
+    // Profile image handling states
     var profileImageUrl by remember { mutableStateOf("") }
     var showAvatarDialog by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
-
-    // New state to hold the selected image URI from the phone.
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var profileImageBase64 by remember { mutableStateOf("") }
+
+    // Add profession error state
+    var professionError by remember { mutableStateOf("") }
 
     // Launcher for image picking from the device.
     val imagePickerLauncher = rememberLauncherForActivityResult(
@@ -310,7 +310,7 @@ fun FillProfileScreen(navController: NavController) {
             // Account Type Dropdown Field (User/Mentor)
             AccountTypeDropdown(
                 selectedAccountType = profileData.accountType,
-                onAccountTypeSelected = { profileData = profileData.copy(accountType = it) }
+                onAccountTypeSelected = { profileData = profileData.copy(accountType = it, profession = "") }
             )
             if (profileData.accountTypeError.isNotEmpty()) {
                 Text(
@@ -319,6 +319,22 @@ fun FillProfileScreen(navController: NavController) {
                     fontSize = 12.sp,
                     modifier = Modifier.padding(start = 8.dp)
                 )
+            }
+
+            // Profession Dropdown - Only visible if accountType is "Mentor"
+            if (profileData.accountType == "Mentor") {
+                ProfessionDropdown(
+                    selectedProfession = profileData.profession ?: "",
+                    onProfessionSelected = { profileData = profileData.copy(profession = it) }
+                )
+                if (professionError.isNotEmpty()) {
+                    Text(
+                        text = professionError,
+                        color = Color.Red,
+                        fontSize = 12.sp,
+                        modifier = Modifier.padding(start = 8.dp)
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(15.dp))
@@ -331,12 +347,22 @@ fun FillProfileScreen(navController: NavController) {
                     val validatedProfile = validateProfile(profileData)
                     profileData = validatedProfile
 
+                    // Additional validation for profession when account type is Mentor
+                    if (profileData.accountType == "Mentor" && (profileData.profession.isNullOrEmpty())) {
+                        professionError = "Please select your profession"
+                        isLoading = false
+                        return@AuthButton
+                    } else {
+                        professionError = ""
+                    }
+
                     if (validatedProfile.fullNameError.isEmpty() &&
                         validatedProfile.dobError.isEmpty() &&
                         validatedProfile.emailError.isEmpty() &&
                         validatedProfile.phoneError.isEmpty() &&
                         validatedProfile.genderError.isEmpty() &&
-                        validatedProfile.accountTypeError.isEmpty()
+                        validatedProfile.accountTypeError.isEmpty() &&
+                        professionError.isEmpty()
                     ) {
                         coroutineScope.launch {
                             // If a new image is selected, convert it to a Base64 string.
@@ -389,21 +415,131 @@ fun FillProfileScreen(navController: NavController) {
             androidx.compose.material3.CircularProgressIndicator(color = Color.White)
         }
     }
+}
 
-    // Uncomment and use this if you want to implement avatar selection dialog
-    /*
-    if (showAvatarDialog) {
-        AvatarSelectionDialog(
-            avatars = avatarUrls,
-            onAvatarSelected = { avatarUrl ->
-                profileImageUrl = avatarUrl
-                profileData = profileData.copy(profileImageUrl = avatarUrl) // Update profileData here
-                showAvatarDialog = false
-            },
-            onDismissRequest = { showAvatarDialog = false }
-        )
+@Composable
+fun ProfessionDropdown(
+    selectedProfession: String,
+    onProfessionSelected: (String) -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    val professions = listOf(
+        "Software Developer",
+        "Data Scientist",
+        "UI/UX Designer",
+        "Product Manager",
+        "Marketing Specialist",
+        "Business Analyst",
+        "Teacher/Educator",
+        "Career Coach",
+        "Finance Expert",
+        "Health Professional"
+    )
+    val rotationState by animateFloatAsState(
+        targetValue = if (expanded) 180f else 0f,
+        label = "dropdown_rotation"
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 10.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { expanded = !expanded }
+                .shadow(
+                    elevation = 4.dp,
+                    shape = RoundedCornerShape(15.dp),
+                    spotColor = Color(0x1A000000),
+                    ambientColor = Color(0x1A000000)
+                )
+                .background(Color.White, RoundedCornerShape(15.dp))
+                .border(
+                    width = 1.dp,
+                    color = if (expanded) Color(0xFF1565C0) else Color.Transparent,
+                    shape = RoundedCornerShape(15.dp)
+                )
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.Start,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Person,  // You might want to use a more specific icon here
+                        contentDescription = "Profession Icon",
+                        tint = Color.Gray,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+
+                    Text(
+                        text = if (selectedProfession.isEmpty()) "Select Profession" else selectedProfession,
+                        style = MaterialTheme.customTypography.mulish.bold,
+                        fontSize = 14.sp,
+                        color = if (selectedProfession.isEmpty()) Color.Gray else Color(0xFF1A1A1A)
+                    )
+                }
+
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "Dropdown Arrow",
+                    tint = Color(0xFF1565C0),
+                    modifier = Modifier.rotate(rotationState)
+                )
+            }
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            modifier = Modifier
+                .width(with(LocalDensity.current) {
+                    (LocalConfiguration.current.screenWidthDp - 48).dp
+                })
+                .background(Color.White, RoundedCornerShape(12.dp))
+                .shadow(4.dp, RoundedCornerShape(12.dp))
+        ) {
+            professions.forEach { profession ->
+                DropdownMenuItem(
+                    onClick = {
+                        onProfessionSelected(profession)
+                        expanded = false
+                    },
+                    text = {
+                        Text(
+                            text = profession,
+                            style = MaterialTheme.customTypography.mulish.bold,
+                            fontSize = 14.sp,
+                            color = if (profession == selectedProfession) Color(0xFF1565C0) else Color.Black
+                        )
+                    },
+                    leadingIcon = if (profession == selectedProfession) {
+                        {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = "Selected",
+                                tint = Color(0xFF1565C0),
+                                modifier = Modifier.size(18.dp)
+                            )
+                        }
+                    } else null,
+                    modifier = Modifier.background(
+                        if (profession == selectedProfession) Color(0xFFF5F9FF) else Color.White
+                    )
+                )
+            }
+        }
     }
-    */
 }
 
 @Composable

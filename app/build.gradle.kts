@@ -87,6 +87,8 @@ dependencies {
     // Firebase
     implementation(platform(libs.google.firebase.bom))
     implementation(libs.google.firebase.auth.ktx)
+    implementation("com.google.firebase:firebase-messaging-ktx:23.4.1")
+    implementation("com.google.firebase:firebase-analytics-ktx:21.5.1")
 
     // Google Play Services
     implementation(libs.play.services.auth.v2041)

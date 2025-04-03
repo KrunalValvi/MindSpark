@@ -32,17 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.rememberAsyncImagePainter
 import com.example.mindspark.R
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
-import androidx.compose.ui.graphics.painter.BitmapPainter
 import com.google.firebase.ktx.Firebase
 
 @Composable
@@ -149,7 +148,7 @@ fun SettingsList(navController: NavController) {
     ) {
         SettingItem(icon = R.drawable.ic_edit, title = "Edit Profile") { navController.navigate("EditProfileScreen")}
 //        SettingItem(icon = R.drawable.ic_payment, title = "Payment Option") { navController.navigate("PaymentOptionScreen") }
-        SettingItem(icon = R.drawable.ic_notifications, title = "Notifications") { navController.navigate("ProfileNotificationsScreen") }
+//        SettingItem(icon = R.drawable.ic_notifications, title = "Notifications") { navController.navigate("ProfileNotificationsScreen") }
 //        SettingItem(icon = R.drawable.ic_security, title = "Security") { navController.navigate("SecurityScreen") }
 //        SettingItem(icon = R.drawable.ic_language, title = "Language") { navController.navigate("LanguageScreen")}
 //        SettingItem(icon = R.drawable.ic_dark_mode, title = "Dark Mode") { navController.navigate("AdminScreen") }

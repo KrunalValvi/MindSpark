@@ -15,6 +15,7 @@ data class ProfileData(
     val nickname: String = "",
     val dateOfBirth: String = "",
     val gender: String = "",
+    val profession: String? = null,
     val accountType: String = "User", // Default to "User"
     val profileImageUrl: String = "", // Added field for profile image URL
     val fullNameError: String = "",
@@ -77,6 +78,7 @@ fun storeProfileData(
         onFailure("User not logged in")
         return
     }
+
     val db = FirebaseFirestore.getInstance()
     val userDoc = hashMapOf(
         "fullName" to profileData.fullName,
@@ -88,6 +90,12 @@ fun storeProfileData(
         "accountType" to profileData.accountType,
         "profileImageUrl" to profileData.profileImageUrl // ✅ Now avatar is saved
     )
+
+    // Only add profession field if the user is a mentor
+    if (profileData.accountType == "Mentor" && !profileData.profession.isNullOrEmpty()) {
+        userDoc["profession"] = profileData.profession
+    }
+
     db.collection("users").document(currentUser.uid)
         .set(userDoc)
         .addOnSuccessListener { onSuccess() }

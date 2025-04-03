@@ -35,6 +35,8 @@ import com.example.mindspark.auth.components.AuthTopBar
 import com.example.mindspark.courses.components.CustomTextField_Image
 import com.example.mindspark.courses.components.ToggleSelectionRowCourses
 import com.example.mindspark.courses.data.CourseData
+import com.example.mindspark.courses.data.MentorData
+import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.TopMentorsListVertical
 import com.example.mindspark.myCourses.components.MyCompletedCourseHorizontal
@@ -51,9 +53,48 @@ fun CoursesListScreen(
 
     // State for courses loaded from Firebase
     var courses by remember { mutableStateOf(listOf<com.example.mindspark.courses.model.CourseModel>()) }
-    // Load courses asynchronously
+    var filteredCourses by remember { mutableStateOf(listOf<com.example.mindspark.courses.model.CourseModel>()) }
+    var mentors by remember { mutableStateOf(listOf<MentorModel>()) }
+    var filteredMentors by remember { mutableStateOf(listOf<MentorModel>()) }
+
+    // Load courses and mentors asynchronously
     LaunchedEffect(Unit) {
         courses = CourseData.getPopularCourses()
+        filteredCourses = courses
+        mentors = MentorData.getAllMentors()
+        filteredMentors = mentors
+    }
+
+    // Filter function with improved search and logging
+    LaunchedEffect(search, selectedOption, courses, mentors) {
+        Log.d("OnlineCoursesScreen", "Search triggered - Query: '$search', Option: $selectedOption")
+        Log.d("OnlineCoursesScreen", "Total mentors before filter: ${mentors.size}")
+        
+        if (search.isBlank()) {
+            filteredCourses = courses
+            filteredMentors = mentors
+            Log.d("OnlineCoursesScreen", "Blank search - showing all items")
+        } else {
+            val searchLower = search.lowercase().trim()
+            when (selectedOption) {
+                "Courses" -> {
+                    filteredCourses = courses.filter { course ->
+                        course.title.lowercase().contains(searchLower) ||
+                        course.category.lowercase().contains(searchLower)
+                    }
+                    Log.d("OnlineCoursesScreen", "Filtered courses: ${filteredCourses.size} of ${courses.size}")
+                }
+                "Mentors" -> {
+                    filteredMentors = mentors.filter { mentor ->
+                        val nameMatch = mentor.name.lowercase().contains(searchLower)
+                        val professionMatch = mentor.profession.lowercase().contains(searchLower)
+                        Log.d("OnlineCoursesScreen", "Checking mentor: ${mentor.name} - nameMatch: $nameMatch, professionMatch: $professionMatch")
+                        nameMatch || professionMatch
+                    }
+                    Log.d("OnlineCoursesScreen", "Filtered mentors: ${filteredMentors.size} of ${mentors.size}")
+                }
+            }
+        }
     }
 
     Scaffold(
@@ -116,30 +157,30 @@ fun CoursesListScreen(
 
             when (selectedOption) {
                 "Courses" -> {
-                    // Popular Courses Section
+                    // Courses Section
                     SectionHeader(
-                        title = "Result for \"Graphic Design\"",
+                        title = if (search.isBlank()) "All Courses" else "Results for \"$search\"",
                         onSeeAllClick = { navController.navigate("PopularCoursesList") }
                     )
 
-                    // Popular Courses List (loaded from Firebase)
+                    // Courses List (filtered)
                     MyCompletedCourseHorizontal(
                         navController = navController,
-                        courses = courses,
+                        courses = filteredCourses,
                         onCourseClick = { course ->
-                            navController.navigate("MyLessons")
+                            navController.navigate("CourseDetailScreen/${course.docId}")
                         }
                     )
                 }
                 "Mentors" -> {
                     // Mentors section
                     SectionHeader(
-                        title = "Available Mentors",
+                        title = if (search.isBlank()) "Available Mentors" else "Results for \"$search\"",
                         onSeeAllClick = { navController.navigate("TopMentorScreen") }
                     )
 
                     TopMentorsListVertical(
-                        mentors = emptyList(),
+                        mentors = filteredMentors,
                         onMentorClick = { mentor ->
                             Log.d("OnlineCoursesScreen", "Mentor clicked: ${mentor.name}, ID: ${mentor.id}, UserId: ${mentor.userId}")
                             // Pass the userId (Firebase document ID) instead of the numeric id

@@ -1,7 +1,6 @@
 package com.example.mindspark.home.components
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -29,7 +27,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -42,7 +39,6 @@ import com.example.mindspark.courses.model.CourseCategory
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.courses.model.SpecialOfferModel
-import com.example.mindspark.home.components.SpecialOfferCard
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.firestore.FirebaseFirestore
 
@@ -91,13 +87,13 @@ fun HomeHeader(navController: NavController) {
                 modifier = Modifier.padding(top = 3.dp)
             )
         }
-        Image(
-            painter = painterResource(R.drawable.ic_notification),
-            contentDescription = "Notifications",
-            modifier = Modifier
-                .size(40.dp)
-                .clickable { navController.navigate("NotificationsScreen") }
-        )
+//        Image(
+//            painter = painterResource(R.drawable.ic_notification),
+//            contentDescription = "Notifications",
+//            modifier = Modifier
+//                .size(40.dp)
+//                .clickable { navController.navigate("NotificationsScreen") }
+//        )
     }
 }
 
