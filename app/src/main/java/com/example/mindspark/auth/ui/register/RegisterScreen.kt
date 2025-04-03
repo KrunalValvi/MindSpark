@@ -23,10 +23,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,11 +46,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.mindspark.R
-import com.example.mindspark.backend.checkUserProfileExists
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.backend.AuthResponse
 import com.example.mindspark.backend.AuthenticationManager
+import com.example.mindspark.backend.checkUserProfileExists
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -68,6 +68,9 @@ fun RegisterScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var isTermsAccepted by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+    // Add validation error state
+    var errorMessage by remember { mutableStateOf("") }
+
     val context = LocalContext.current
     val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
@@ -113,7 +116,10 @@ fun RegisterScreen(navController: NavController) {
 
                 AuthTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = {
+                        email = it
+                        errorMessage = ""
+                    },
                     placeholder = "Email",
                     leadingIcon = {
                         Icon(
@@ -129,7 +135,10 @@ fun RegisterScreen(navController: NavController) {
 
                 AuthTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = {
+                        password = it
+                        errorMessage = ""
+                    },
                     placeholder = "Password",
                     leadingIcon = {
                         Icon(
@@ -154,7 +163,10 @@ fun RegisterScreen(navController: NavController) {
                 ) {
                     RadioButton(
                         selected = isTermsAccepted,
-                        onClick = { isTermsAccepted = !isTermsAccepted }
+                        onClick = {
+                            isTermsAccepted = !isTermsAccepted
+                            errorMessage = ""
+                        }
                     )
                     Text(
                         text = "Agree to Terms & Conditions",
@@ -163,15 +175,53 @@ fun RegisterScreen(navController: NavController) {
                     )
                 }
 
+                // Display error message if present
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.customTypography.mulish.regular,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(10.dp))
 
                 AuthButton(
                     text = "Sign Up",
                     onClick = registerOnClick@{
-                        if (!isNetworkAvailable(context)) {
-                            Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
-                            return@registerOnClick
+                        // Validate inputs
+                        when {
+                            email.trim().isEmpty() -> {
+                                errorMessage = "Please enter your email and password"
+                                return@registerOnClick
+                            }
+                            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                                errorMessage = "Please enter a valid email address"
+                                return@registerOnClick
+                            }
+                            password.trim().isEmpty() -> {
+                                errorMessage = "Please enter your password"
+                                return@registerOnClick
+                            }
+                            password.length < 6 -> {
+                                errorMessage = "Password must be at least 6 characters"
+                                return@registerOnClick
+                            }
+                            !isTermsAccepted -> {
+                                errorMessage = "You must accept the terms and conditions"
+                                return@registerOnClick
+                            }
+                            !isNetworkAvailable(context) -> {
+                                Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
+                                return@registerOnClick
+                            }
                         }
+
                         isLoading = true
                         authenticationManager.createAccountWithEmail(email, password)
                             .onEach { response ->
@@ -181,7 +231,7 @@ fun RegisterScreen(navController: NavController) {
                                         navController.navigate("FillProfileScreen")
                                     }
                                     is AuthResponse.Error -> {
-                                        Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                                        errorMessage = response.message
                                     }
                                 }
                             }
@@ -189,6 +239,7 @@ fun RegisterScreen(navController: NavController) {
                     }
                 )
 
+                // Rest of the code remains the same
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
@@ -203,6 +254,10 @@ fun RegisterScreen(navController: NavController) {
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .clickable {
+                                if (!isNetworkAvailable(context)) {
+                                    Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
+                                    return@clickable
+                                }
                                 isLoading = true
                                 authenticationManager.signInWithGoogle(context)
                                     .onEach { response ->
@@ -219,12 +274,12 @@ fun RegisterScreen(navController: NavController) {
                                                 },
                                                 onError = { error ->
                                                     isLoading = false
-                                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                    errorMessage = error
                                                 }
                                             )
                                         } else if (response is AuthResponse.Error) {
                                             isLoading = false
-                                            Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                                            errorMessage = response.message
                                         }
                                     }
                                     .launchIn(coroutineScope)

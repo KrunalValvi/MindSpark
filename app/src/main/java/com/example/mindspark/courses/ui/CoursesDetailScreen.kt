@@ -1,23 +1,56 @@
 package com.example.mindspark.courses.ui
 
-import android.graphics.BitmapFactory
+import android.app.Activity
 import android.net.Uri
-import android.util.Base64
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.animation.*
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,8 +63,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTopBar
@@ -41,12 +72,14 @@ import com.example.mindspark.courses.data.CourseData
 import com.example.mindspark.courses.model.CourseModel
 import com.example.mindspark.courses.model.CourseReviewModel
 import com.example.mindspark.courses.model.MentorModel
-import com.example.mindspark.inbox.components.decodeBase64Image
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.razorpay.Checkout
+import com.razorpay.PaymentResultListener
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import org.json.JSONObject
 
 private val LightBlueBackground = Color(0xFFF5F9FF)
 
@@ -61,23 +94,108 @@ fun CourseDetailScreen(navController: NavController, id: String) {
     val scrollState = rememberScrollState()
     val isAtBottom = remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    var paymentStatus by remember { mutableStateOf<String?>(null) }
+
+    // Initialize Razorpay Checkout
+    LaunchedEffect(Unit) {
+        Checkout.preload(context)
+    }
+
+    // Payment result callback
+    val activity = context as Activity
+
+    class PaymentActivity : PaymentResultListener {
+        override fun onPaymentSuccess(razorpayPaymentId: String) {
+            paymentStatus = "Payment Successful: $razorpayPaymentId"
+            // Update Firebase with payment status
+            scope.launch {
+                try {
+                    val db = FirebaseFirestore.getInstance()
+                    val userId = FirebaseAuth.getInstance().currentUser?.uid
+                    if (userId != null && course != null) {
+                        val purchaseData = hashMapOf(
+                            "courseId" to id,
+                            "userId" to userId,
+                            "paymentId" to razorpayPaymentId,
+                            "purchaseDate" to com.google.firebase.Timestamp.now(),
+                            "status" to "completed"
+                        )
+
+                        // Add to purchases collection
+                        db.collection("purchases").add(purchaseData).await()
+
+                        // Add to user's purchased courses
+                        db.collection("users").document(userId)
+                            .collection("purchasedCourses")
+                            .document(id)
+                            .set(
+                                hashMapOf(
+                                    "purchaseDate" to com.google.firebase.Timestamp.now(),
+                                    "courseId" to id
+                                )
+                            ).await()
+
+                        Toast.makeText(context, "Course purchased successfully!", Toast.LENGTH_LONG)
+                            .show()
+                    }
+                } catch (e: Exception) {
+                    Log.e("CourseDetailScreen", "Error updating purchase status", e)
+                    Toast.makeText(context, "Error updating purchase status", Toast.LENGTH_SHORT)
+                        .show()
+                }
+            }
+        }
+
+        override fun onPaymentError(code: Int, description: String) {
+            paymentStatus = "Payment Failed: $description"
+            Toast.makeText(context, "Payment failed: $description", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    val paymentListener = PaymentActivity()
+    DisposableEffect(activity) {
+        onDispose {}
+    }
+
+    fun startPayment(course: CourseModel) {
+        val activity = context as? Activity ?: return
+        val checkout = Checkout()
+        checkout.setKeyID("rzp_test_QJ87l2Xl212rFc") // Replace with your test key
+
+        try {
+            val options = JSONObject()
+            options.put("name", "MindSpark")
+            options.put("description", course.title)
+            options.put("currency", "INR")
+            options.put("amount", (course.price.toDouble() * 100).toInt()) // Convert to paise
+            options.put("prefill.email", FirebaseAuth.getInstance().currentUser?.email ?: "")
+            options.put("prefill.contact", "")
+            options.put("theme.color", "#0961F5")
+
+            checkout.open(activity, options)
+        } catch (e: Exception) {
+            Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+            e.printStackTrace()
+        }
+    }
 
     // Fetch course data from Firebase using the document ID
     LaunchedEffect(id) {
         course = CourseData.getCourseByDocId(id)
-        
+
         // Fetch mentors for this course
         if (course != null && course!!.mentorIds.isNotEmpty()) {
             val db = FirebaseFirestore.getInstance()
             val mentorsList = mutableListOf<MentorModel>()
-            
+
             try {
                 // For each mentorId in the course, fetch the mentor data
                 val currentCourse = course // Create a local non-null variable
                 currentCourse?.mentorIds?.forEach { mentorId ->
                     // Try to get mentor from users collection
                     val userDoc = db.collection("users").document(mentorId.toString()).get().await()
-                    
+
                     if (userDoc.exists()) {
                         val userData = userDoc.data
                         if (userData != null) {
@@ -97,7 +215,8 @@ fun CourseDetailScreen(navController: NavController, id: String) {
                         }
                     } else {
                         // Try to get mentor from mentors collection as fallback
-                        val mentorDoc = db.collection("mentors").document(mentorId.toString()).get().await()
+                        val mentorDoc =
+                            db.collection("mentors").document(mentorId.toString()).get().await()
                         if (mentorDoc.exists()) {
                             val mentorData = mentorDoc.data
                             if (mentorData != null) {
@@ -117,14 +236,14 @@ fun CourseDetailScreen(navController: NavController, id: String) {
                         }
                     }
                 }
-                
+
                 // If no mentors found by ID, try to find by creator name
                 if (mentorsList.isEmpty() && course?.mentorName?.isNotEmpty() == true) {
                     val mentorName = course?.mentorName ?: ""
                     val userQuery = db.collection("users")
                         .whereEqualTo("fullName", mentorName)
                         .get().await()
-                    
+
                     if (!userQuery.isEmpty) {
                         val userDoc = userQuery.documents.first()
                         val userData = userDoc.data
@@ -144,14 +263,14 @@ fun CourseDetailScreen(navController: NavController, id: String) {
                         }
                     }
                 }
-                
+
                 mentors = mentorsList
                 Log.d("CourseDetailScreen", "Loaded ${mentors.size} mentors for course")
             } catch (e: Exception) {
                 Log.e("CourseDetailScreen", "Error loading mentors", e)
             }
         }
-        
+
         // Fetch reviews for this course
         try {
             val db = FirebaseFirestore.getInstance()
@@ -172,7 +291,7 @@ fun CourseDetailScreen(navController: NavController, id: String) {
                     reviewerImageUrl = reviewData["reviewerImageUrl"] as? String ?: ""
                 )
             }
-            
+
             reviews = reviewsList
             Log.d("CourseDetailScreen", "Loaded ${reviews.size} reviews for course")
         } catch (e: Exception) {
@@ -213,8 +332,11 @@ fun CourseDetailScreen(navController: NavController, id: String) {
                         course = currentCourse,
                         mentors = mentors,
                         onMentorClick = { mentor ->
-                            Log.d("Navigation", "Navigating to SingleMentorDetails with mentorId: ${mentor.userId}")
-                    navController.navigate("SingleMentorDetails/${mentor.userId}")
+                            Log.d(
+                                "Navigation",
+                                "Navigating to SingleMentorDetails with mentorId: ${mentor.userId}"
+                            )
+                            navController.navigate("SingleMentorDetails/${mentor.userId}")
                         },
                         onPlayVideo = { videoUrl ->
                             // Encode the video URL before passing it to the route.
@@ -238,27 +360,39 @@ fun CourseDetailScreen(navController: NavController, id: String) {
                                     try {
                                         val currentUser = FirebaseAuth.getInstance().currentUser
                                         if (currentUser == null) {
-                                            reviewSubmissionMessage = "Error: Please log in to submit a review"
+                                            reviewSubmissionMessage =
+                                                "Error: Please log in to submit a review"
                                             isSubmittingReview = false
                                             return@launch
                                         }
 
                                         val db = FirebaseFirestore.getInstance()
-                                        val reviewsCollection = db.collection("courses").document(id).collection("reviews")
+                                        val reviewsCollection =
+                                            db.collection("courses").document(id)
+                                                .collection("reviews")
 
                                         // Get the user's profile image from Firestore
                                         var profileImageBase64 = ""
                                         try {
-                                            val userDoc = db.collection("users").document(currentUser.uid).get().await()
+                                            val userDoc =
+                                                db.collection("users").document(currentUser.uid)
+                                                    .get().await()
                                             if (userDoc.exists() && userDoc.data?.containsKey("profileImageUrl") == true) {
-                                                profileImageBase64 = userDoc.data?.get("profileImageUrl") as? String ?: ""
+                                                profileImageBase64 =
+                                                    userDoc.data?.get("profileImageUrl") as? String
+                                                        ?: ""
                                             }
                                         } catch (e: Exception) {
-                                            Log.e("CourseDetailScreen", "Error fetching user profile image", e)
+                                            Log.e(
+                                                "CourseDetailScreen",
+                                                "Error fetching user profile image",
+                                                e
+                                            )
                                         }
 
                                         val reviewData = hashMapOf(
-                                            "reviewerName" to (currentUser.displayName ?: "Anonymous"),
+                                            "reviewerName" to (currentUser.displayName
+                                                ?: "Anonymous"),
                                             "reviewText" to reviewText,
                                             "date" to "Just now", // You can format a proper date here
                                             "likes" to 0,
@@ -268,7 +402,8 @@ fun CourseDetailScreen(navController: NavController, id: String) {
                                         )
 
                                         // Add the review
-                                        val addedReviewRef = reviewsCollection.add(reviewData).await()
+                                        val addedReviewRef =
+                                            reviewsCollection.add(reviewData).await()
 
                                         // Create new review object with the document ID
                                         val newReview = CourseReviewModel(
@@ -324,20 +459,25 @@ fun CourseDetailScreen(navController: NavController, id: String) {
             AuthButton(
                 text = "Purchase Course",
                 onClick = {
-                    navController.navigate("PaymentScreen") {
-                        popUpTo("PaymentScreen") { inclusive = true }
-                    }
+                    course?.let { startPayment(it) }
                 },
                 modifier = Modifier
                     .width(200.dp)
                     .wrapContentHeight()
             )
         }
+
+        // Show payment status if available
+        paymentStatus?.let { status ->
+            Toast.makeText(context, status, Toast.LENGTH_LONG).show()
+            paymentStatus = null
+        }
     }
 }
 
+
 @Composable
-private fun ReviewSection(
+fun ReviewSection(
     courseId: String, // Add courseId parameter
     reviews: List<CourseReviewModel>,
     reviewText: String,
@@ -560,7 +700,8 @@ private fun ReviewItem(courseId: String, review: CourseReviewModel) {
                             scope.launch {
                                 try {
                                     isLiked = !isLiked
-                                    val newLikeCount = if (isLiked) likeCount + 1 else likeCount - 1
+                                    val newLikeCount =
+                                        if (isLiked) likeCount + 1 else likeCount - 1
 
                                     // Update UI immediately for better UX
                                     likeCount = newLikeCount
@@ -577,11 +718,19 @@ private fun ReviewItem(courseId: String, review: CourseReviewModel) {
                                     // Revert UI on error
                                     isLiked = !isLiked
                                     likeCount = review.likes
-                                    Toast.makeText(context, "Failed to update like", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        "Failed to update like",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
                                 }
                             }
                         } else {
-                            Toast.makeText(context, "Please sign in to like reviews", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Please sign in to like reviews",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 ) {
@@ -603,24 +752,5 @@ private fun ReviewItem(courseId: String, review: CourseReviewModel) {
                 }
             }
         }
-    }
-}
-
-
-// Add this function at the top level of your file
-private fun decodeBase64ToBitmap(base64Str: String): android.graphics.Bitmap? {
-    return try {
-        // Remove any data URI prefix if present
-        val pureBase64 = if (base64Str.contains(",")) {
-            base64Str.substringAfter(",")
-        } else {
-            base64Str
-        }
-
-        val decodedBytes = Base64.decode(pureBase64, Base64.DEFAULT)
-        BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.size)
-    } catch (e: Exception) {
-        Log.e("ProfileImage", "Failed to decode image", e)
-        null
     }
 }

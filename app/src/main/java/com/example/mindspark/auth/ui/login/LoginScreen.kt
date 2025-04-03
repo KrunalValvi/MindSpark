@@ -6,17 +6,32 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.White
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
@@ -27,6 +42,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -35,12 +51,10 @@ import com.example.mindspark.auth.components.AuthButton
 import com.example.mindspark.auth.components.AuthTextField
 import com.example.mindspark.backend.AuthResponse
 import com.example.mindspark.backend.AuthenticationManager
+import com.example.mindspark.backend.checkUserProfileExists
 import com.example.mindspark.ui.theme.customTypography
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import androidx.compose.ui.graphics.Color.Companion.White
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.mindspark.backend.checkUserProfileExists
 
 // Helper function to check network connectivity.
 fun isNetworkAvailable(context: Context): Boolean {
@@ -55,6 +69,9 @@ fun LoginScreen(navController: NavController) {
     var password by remember { mutableStateOf("") }
     var isTermsAccepted by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(false) }
+    // Add single error message state
+    var errorMessage by remember { mutableStateOf("") }
+
     val context = LocalContext.current
     val authenticationManager = remember { AuthenticationManager(context) }
     val coroutineScope = rememberCoroutineScope()
@@ -102,7 +119,10 @@ fun LoginScreen(navController: NavController) {
 
                 AuthTextField(
                     value = email,
-                    onValueChange = { email = it },
+                    onValueChange = {
+                        email = it
+                        errorMessage = ""
+                    },
                     placeholder = "Email",
                     leadingIcon = {
                         Icon(
@@ -119,7 +139,10 @@ fun LoginScreen(navController: NavController) {
 
                 AuthTextField(
                     value = password,
-                    onValueChange = { password = it },
+                    onValueChange = {
+                        password = it
+                        errorMessage = ""
+                    },
                     placeholder = "Password",
                     leadingIcon = {
                         Icon(
@@ -133,6 +156,20 @@ fun LoginScreen(navController: NavController) {
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     visualTransformation = PasswordVisualTransformation()
                 )
+
+                // Display error message if present
+                if (errorMessage.isNotEmpty()) {
+                    Text(
+                        text = errorMessage,
+                        color = Color.Red,
+                        style = MaterialTheme.customTypography.mulish.regular,
+                        fontSize = 14.sp,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 4.dp),
+                        textAlign = TextAlign.Center
+                    )
+                }
 
                 Row(
                     modifier = Modifier
@@ -168,10 +205,26 @@ fun LoginScreen(navController: NavController) {
                 AuthButton(
                     text = "Sign In",
                     onClick = myLabel@{
-                        if (!isNetworkAvailable(context)) {
-                            Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
-                            return@myLabel
+                        // Validate inputs
+                        when {
+                            email.trim().isEmpty() -> {
+                                errorMessage = "Please enter your email and password"
+                                return@myLabel
+                            }
+                            !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches() -> {
+                                errorMessage = "Please enter a valid email address"
+                                return@myLabel
+                            }
+                            password.trim().isEmpty() -> {
+                                errorMessage = "Please enter your password"
+                                return@myLabel
+                            }
+                            !isNetworkAvailable(context) -> {
+                                Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
+                                return@myLabel
+                            }
                         }
+
                         isLoading = true
                         authenticationManager.loginWithEmail(email, password)
                             .onEach { response ->
@@ -181,23 +234,14 @@ fun LoginScreen(navController: NavController) {
                                         navController.navigate("HomeScreen")
                                     }
                                     is AuthResponse.Error -> {
-                                        val errorMessage = response.message
-                                        if (errorMessage.contains("password", ignoreCase = true)) {
-                                            Toast.makeText(
-                                                context,
-                                                "This password is wrong. You have to add right password",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else if (errorMessage.contains("user", ignoreCase = true) ||
-                                            errorMessage.contains("not found", ignoreCase = true)
-                                        ) {
-                                            Toast.makeText(
-                                                context,
-                                                "This email is not valid for login",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        } else {
-                                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                                        val errorString = response.message
+                                        errorMessage = when {
+                                            errorString.contains("password", ignoreCase = true) ->
+                                                "This password is wrong. You have to add right password"
+                                            errorString.contains("user", ignoreCase = true) ||
+                                                    errorString.contains("not found", ignoreCase = true) ->
+                                                "This email is not valid for login"
+                                            else -> errorString
                                         }
                                     }
                                 }
@@ -206,7 +250,7 @@ fun LoginScreen(navController: NavController) {
                     }
                 )
 
-
+                // Rest of the code remains the same
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
@@ -221,6 +265,10 @@ fun LoginScreen(navController: NavController) {
                         modifier = Modifier
                             .padding(top = 10.dp)
                             .clickable {
+                                if (!isNetworkAvailable(context)) {
+                                    Toast.makeText(context, "You are offline", Toast.LENGTH_SHORT).show()
+                                    return@clickable
+                                }
                                 isLoading = true
                                 authenticationManager.signInWithGoogle(context)
                                     .onEach { response ->
@@ -237,12 +285,12 @@ fun LoginScreen(navController: NavController) {
                                                 },
                                                 onError = { error ->
                                                     isLoading = false
-                                                    Toast.makeText(context, error, Toast.LENGTH_SHORT).show()
+                                                    errorMessage = error
                                                 }
                                             )
                                         } else if (response is AuthResponse.Error) {
                                             isLoading = false
-                                            Toast.makeText(context, response.message, Toast.LENGTH_SHORT).show()
+                                            errorMessage = response.message
                                         }
                                     }
                                     .launchIn(coroutineScope)

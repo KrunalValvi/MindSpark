@@ -115,7 +115,7 @@ fun PopularCourseCardVertical(course: CourseModel, onCourseClick: (CourseModel) 
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(
-                        text = course.price,
+                        text = "₹ " + course.price,
                         style = MaterialTheme.customTypography.mulish.extraBold,
                         fontSize = 15.sp,
                         color = Color(0xFF007BFF)
@@ -222,7 +222,7 @@ fun PopularCourseCardHorizontal(course: CourseModel, onCourseClick: (CourseModel
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = course.price,
+                    text = "₹ " + course.price,
                     style = MaterialTheme.customTypography.mulish.extraBold,
                     fontSize = 17.sp,
                     color = Color(0xFF007BFF)

@@ -2,17 +2,44 @@ package com.example.mindspark.courses.ui
 
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.painter.BitmapPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -20,16 +47,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.example.mindspark.R
 import com.example.mindspark.auth.components.AuthTopBar
-import com.example.mindspark.courses.components.FollowButton
-import com.example.mindspark.courses.components.MentorCourseItem
 import com.example.mindspark.courses.components.ReviewItem
 import com.example.mindspark.courses.model.MentorCourseModel
 import com.example.mindspark.courses.model.MentorModel
 import com.example.mindspark.courses.model.ReviewModel
+import com.example.mindspark.profile.components.decodeBase64ToBitmap
 import com.example.mindspark.ui.theme.LightBlueBackground
 import com.example.mindspark.ui.theme.customTypography
 import com.google.firebase.auth.FirebaseAuth
@@ -285,12 +309,19 @@ fun SingleMentorDetails(navController: NavController, mentorId: String) {
 
 @Composable
 private fun MentorInfoSection(
-    mentorData: MentorModel,
+    mentorData: MentorModel,  // This already contains the mentor information
     followCount: Int,
     isFollowing: Boolean,
     onFollowToggle: () -> Unit,
     onMessageClick: () -> Unit
 ) {
+    // We don't need to fetch the current user's data
+    // Instead, use the mentorData that's passed to this composable
+
+    // Extract mentor information from mentorData
+//    val mentorName = mentorData.fullName ?: "Mentor"
+    val mentorProfileImageUrl = mentorData.profileImageUrl ?: ""
+
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -299,21 +330,46 @@ private fun MentorInfoSection(
 
         // Profile Image with AsyncImage
         Box(
-            modifier = Modifier
-                .size(100.dp)
-                .clip(CircleShape)
+            modifier = Modifier.size(100.dp),
+            contentAlignment = Alignment.BottomEnd
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(mentorData.profileImageUrl)
-                    .crossfade(true)
-                    .build(),
-                contentDescription = "Profile Picture of ${mentorData.name}",
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                fallback = painterResource(id = mentorData.imageRes),
-                error = painterResource(id = mentorData.imageRes)
-            )
+            if (mentorProfileImageUrl.isNotEmpty()) {
+                // Decode the Base64 string to Bitmap and display it
+                val bitmap = decodeBase64ToBitmap(mentorProfileImageUrl)
+                if (bitmap != null) {
+                    Image(
+                        painter = BitmapPainter(bitmap.asImageBitmap()),
+                        contentDescription = "Mentor Profile Picture",
+                        modifier = Modifier
+                            .size(110.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    // Fallback to placeholder if decoding fails
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_profile_placeholder),
+                        contentDescription = "Mentor Profile Picture",
+                        modifier = Modifier
+                            .size(110.dp)
+                            .clip(CircleShape)
+                            .background(Color.Gray),
+                        contentScale = ContentScale.Crop
+                    )
+                }
+            } else {
+                // Show placeholder if no image is provided
+                Image(
+                    painter = painterResource(id = R.drawable.ic_profile_placeholder),
+                    contentDescription = "Mentor Profile Picture",
+                    modifier = Modifier
+                        .size(110.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
+                    contentScale = ContentScale.Crop
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))

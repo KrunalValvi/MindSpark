@@ -1,6 +1,5 @@
 package com.example.mindspark.myCourses.components
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,13 +28,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.mindspark.R
 import com.example.mindspark.courses.model.CourseModel
@@ -133,21 +129,21 @@ fun MyCompletedCourseCardHorizontal(
                     )
                 }
                 Spacer(modifier = Modifier.height(8.dp))
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 5.dp),
-                    horizontalArrangement = Arrangement.End
-                ) {
-                    Text(
-                        modifier = Modifier.padding(end = 8.dp),
-                        text = "Download Certificate",
-                        style = MaterialTheme.customTypography.mulish.extraBold,
-                        fontSize = 13.sp,
-                        color = Color(0xFF167F71),
-                        textDecoration = TextDecoration.Underline
-                    )
-                }
+//                Row(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 5.dp),
+//                    horizontalArrangement = Arrangement.End
+//                ) {
+//                    Text(
+//                        modifier = Modifier.padding(end = 8.dp),
+//                        text = "Download Certificate",
+//                        style = MaterialTheme.customTypography.mulish.extraBold,
+//                        fontSize = 13.sp,
+//                        color = Color(0xFF167F71),
+//                        textDecoration = TextDecoration.Underline
+//                    )
+//                }
             }
         }
     }
