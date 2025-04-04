@@ -424,16 +424,16 @@ fun ProfessionDropdown(
 ) {
     var expanded by remember { mutableStateOf(false) }
     val professions = listOf(
-        "Software Developer",
-        "Data Scientist",
-        "UI/UX Designer",
-        "Product Manager",
-        "Marketing Specialist",
-        "Business Analyst",
-        "Teacher/Educator",
-        "Career Coach",
-        "Finance Expert",
-        "Health Professional"
+        "Mathematics",
+        "Physics",
+        "Chemistry",
+        "Biology",
+        "Computer Science",
+        "History",
+        "Literature",
+        "Art",
+        "Economics",
+        "Psychology"
     )
     val rotationState by animateFloatAsState(
         targetValue = if (expanded) 180f else 0f,

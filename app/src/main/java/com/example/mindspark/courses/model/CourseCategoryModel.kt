@@ -19,18 +19,14 @@ object CategoryData {
 // Home Screen
 enum class CourseCategory(val value: String) {
     All("All"),
-    GraphicDesign("Graphic Design"),
-    Design("3D Design"),
-    WebDevelopment("Web Development"),
-    SEOMarketing("Digital Marketing"),
-    Programming("App Development"),
-    Marketing("Marketing"),
-//    GameDevelopment("Game Development"),
-//    DataScience("Data Science"),
-//    AIML("AI & Machine Learning"),
-//    CloudComputing("Cloud Computing"),
-//    CyberSecurity("Cybersecurity"),
-//    Blockchain("Blockchain"),
-//    ProductManagement("Product Management"),
-//    DevOps("DevOps")
+    Mathematics("Mathematics"),
+    Physics("Physics"),
+    Chemistry("Chemistry"),
+    Biology("Biology"),
+    ComputerScience("Computer Science"),
+    History("History"),
+    Literature("Literature"),
+    Art("Art"),
+    Economics("Economics"),
+    Psychology("Psychology")
 }
