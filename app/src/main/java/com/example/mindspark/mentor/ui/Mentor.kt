@@ -44,7 +44,6 @@ import androidx.compose.material.icons.outlined.VerifiedUser
 import androidx.compose.material.icons.outlined.VideoLibrary
 import androidx.compose.material.icons.outlined.Videocam
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Badge
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -231,7 +230,7 @@ fun CourseItem(
             .padding(vertical = 8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        shape = RoundedCornerShape(12.dp)
+//        shape = RoundedCornerShape(12.dp)
     ) {
         Column(
             modifier = Modifier.padding(16.dp)
@@ -248,16 +247,16 @@ fun CourseItem(
                     color = TextPrimary
                 )
 
-                Badge(
-                    containerColor = PrimaryBlue,
-                    contentColor = Color.White
-                ) {
-                    Text(
-                        text = course.category,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
+//                Badge(
+//                    containerColor = PrimaryBlue,
+//                    contentColor = Color.White
+//                ) {
+//                    Text(
+//                        text = course.category,
+//                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+//                        style = MaterialTheme.typography.labelMedium
+//                    )
+//                }
             }
 
             Spacer(modifier = Modifier.height(12.dp))
