@@ -4,6 +4,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
@@ -69,20 +70,24 @@ val MaterialTheme.customTypography: CustomTypography
 //    }
 //}
 
-//@Composable
-//fun MindSparkTheme(
-//    darkTheme: Boolean = false,
-//    content: @Composable () -> Unit
-//) {
-//    val colors = if (darkTheme) {
-//        DarkColorScheme
-//    } else {
-//        LightColorScheme
-//    }
-//
-//    MaterialTheme(
-//        colorScheme = colors,
-//        typography = AppTypography,
-//        content = content
-//    )
-//}
+@Composable
+fun MindSparkTheme(
+    darkTheme: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    val colors = if (darkTheme) {
+        DarkColorScheme
+    } else {
+        LightColorScheme
+    }
+
+    CompositionLocalProvider(
+        LocalCustomTypography provides CustomThemeTypography
+    ) {
+        MaterialTheme(
+            colorScheme = colors,
+            typography = AppTypography,
+            content = content
+        )
+    }
+}

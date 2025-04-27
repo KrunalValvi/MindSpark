@@ -423,34 +423,35 @@ fun SendMessage(
                 val isReceiverActive = activeChat == chatId && lastActive != null &&
                         (System.currentTimeMillis() - lastActive < 60000) // Consider active if last active within 1 minute
 
-                // Only send notification if receiver is not actively viewing this chat
-                if (!isReceiverActive) {
-                    receiverTokenRef.get().addOnSuccessListener { tokenSnapshot ->
-                        val receiverToken = tokenSnapshot.getValue(String::class.java)
-                        if (receiverToken != null) {
-                            val notificationData = mapOf(
-                                "title" to senderName,
-                                "body" to messageText,
-                                "chatPartner" to (currentUser?.email ?: ""),
-                                "type" to "chat",
-                                "token" to receiverToken
-                            )
+                // Always get the receiver's token and prepare notification data
+                receiverTokenRef.get().addOnSuccessListener { tokenSnapshot ->
+                    val receiverToken = tokenSnapshot.getValue(String::class.java)
+                    if (receiverToken != null) {
+                        val notificationData = mapOf(
+                            "title" to senderName,
+                            "body" to messageText,
+                            "chatPartner" to (currentUser?.email ?: ""),
+                            "type" to "chat",
+                            "token" to receiverToken
+                        )
 
-                            // Use Firebase Cloud Functions to send the notification
-                            val notificationsRef =
-                                FirebaseDatabase.getInstance().getReference("notifications")
-                                    .child(receiverEmail.replace(".", "_"))
-                                    .push()
+                        // Store notification in database regardless of user's active status
+                        // This ensures notifications are sent even when the app is closed
+                        val notificationsRef =
+                            FirebaseDatabase.getInstance().getReference("notifications")
+                                .child(receiverEmail.replace(".", "_"))
+                                .push()
 
-                            // Store notification in database to trigger cloud function
-                            notificationsRef.setValue(
-                                hashMapOf(
-                                    "token" to receiverToken,
-                                    "data" to notificationData,
-                                    "timestamp" to ServerValue.TIMESTAMP
-                                )
+                        notificationsRef.setValue(
+                            hashMapOf(
+                                "token" to receiverToken,
+                                "data" to notificationData,
+                                "timestamp" to ServerValue.TIMESTAMP,
+                                // Add a flag to indicate if user is active in chat
+                                // The messaging service can use this to decide whether to show a notification
+                                "isReceiverActive" to isReceiverActive
                             )
-                        }
+                        )
                     }
                 }
 

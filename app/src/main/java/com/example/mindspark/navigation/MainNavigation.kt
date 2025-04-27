@@ -17,7 +17,7 @@ import com.example.mindspark.onboarding.ui.IntroScreenStep1
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(navigateToChat: Boolean = false, chatTitle: String = "") {
     // Create a NavController to manage navigation.
     val navController = rememberNavController()
     // Observe the current back stack entry.
@@ -49,6 +49,31 @@ fun AppNavigation() {
                 color = Color(0xFFF5F9FF), // Default app background color.
                 darkIcons = true         // Dark icons on a light background.
             )
+        }
+    }
+    
+    // Handle navigation from notification
+    LaunchedEffect(navigateToChat) {
+        if (navigateToChat) {
+            // Extract email from chat title (assuming format: "Sender Name <email@example.com>")
+            val email = chatTitle.substringAfter("<").substringBefore(">").takeIf { it.contains("@") } 
+                ?: chatTitle.substringAfterLast(" ").takeIf { it.contains("@") } 
+                ?: ""
+            
+            val name = if (email.isNotEmpty()) {
+                chatTitle.substringBefore("<").trim().takeIf { it.isNotEmpty() } 
+                    ?: chatTitle.substringBeforeLast(" ").trim()
+            } else {
+                chatTitle
+            }
+            
+            // Navigate to chat screen with the sender's information
+            if (email.isNotEmpty()) {
+                navController.navigate("ChatDetailScreen/$name/$email") {
+                    // Pop up to the home screen and then navigate to chat
+                    popUpTo("HomeScreen") { inclusive = false }
+                }
+            }
         }
     }
 

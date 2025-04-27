@@ -41,7 +41,6 @@ import com.example.mindspark.home.components.HomeHeader
 import com.example.mindspark.home.components.PopularCoursesListVertical
 import com.example.mindspark.home.components.SectionHeader
 import com.example.mindspark.home.components.SpecialOfferCard
-import com.example.mindspark.home.components.TopMentorsListHorizontal
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -214,13 +213,13 @@ fun HomeScreen(navController: NavController) {
             )
 
             // Mentors List
-            TopMentorsListHorizontal(
-                mentors = emptyList(), // Pass empty list as fallback, Firebase data will be fetched inside the component
-                onMentorClick = { mentor ->
-                    // Use userId instead of id for more reliable navigation if needed
-                    navController.navigate("SingleMentorDetails/${mentor.userId}")
-                }
-            )
+//            TopMentorsListHorizontal(
+//                mentors = emptyList(), // Pass empty list as fallback, Firebase data will be fetched inside the component
+//                onMentorClick = { mentor ->
+//                    // Use userId instead of id for more reliable navigation if needed
+//                    navController.navigate("SingleMentorDetails/${mentor.userId}")
+//                }
+//            )
             Spacer(modifier = Modifier.padding(bottom = 20.dp))
         }
 

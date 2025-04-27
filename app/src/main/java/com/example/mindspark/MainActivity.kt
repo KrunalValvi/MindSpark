@@ -20,8 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import com.example.mindspark.navigation.AppNavigation
+import com.example.mindspark.ui.theme.MindSparkTheme
 import com.example.mindspark.utils.NoInternetWarning
 import com.example.mindspark.utils.rememberNetworkState
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.common.GoogleApiAvailability
 
 class MainActivity : ComponentActivity() {
     private val requestPermissionLauncher = registerForActivityResult(
@@ -41,12 +44,14 @@ class MainActivity : ComponentActivity() {
                 ) == PackageManager.PERMISSION_GRANTED -> {
                     // Permission is already granted
                 }
+
                 shouldShowRequestPermissionRationale(
                     Manifest.permission.POST_NOTIFICATIONS
                 ) -> {
                     // Show in-app rationale and request permission
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                 }
+
                 else -> {
                     // Directly ask for the permission
                     requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -55,56 +60,75 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        
+
         // Check notification permission when app starts
         checkNotificationPermission()
-        
+        checkPlayServices()
+
         setContent {
-            var showPermissionDialog by remember { mutableStateOf(false) }
-            
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                ContextCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.POST_NOTIFICATIONS
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                showPermissionDialog = true
-            }
+            MindSparkTheme {
+                var showPermissionDialog by remember { mutableStateOf(false) }
 
-            val isConnected = rememberNetworkState(this)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    showPermissionDialog = true
+                }
 
-            if (showPermissionDialog) {
-                AlertDialog(
-                    onDismissRequest = { showPermissionDialog = false },
-                    title = { Text("Enable Notifications") },
-                    text = {
-                        Text(
-                            "To receive chat messages and important updates, please enable notifications for MindSpark.",
-                            modifier = Modifier.padding(vertical = 8.dp)
-                        )
-                    },
-                    confirmButton = {
-                        Button(onClick = {
-                            showPermissionDialog = false
-                            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                        }) {
-                            Text("Enable")
+                val isConnected = rememberNetworkState(this)
+                val navigateToChat = intent.getBooleanExtra("navigate_to_chat", false)
+                val chatTitle = intent.getStringExtra("chat_title") ?: ""
+                val senderEmail = intent.getStringExtra("sender_email") ?: ""
+
+                if (showPermissionDialog) {
+                    AlertDialog(
+                        onDismissRequest = { showPermissionDialog = false },
+                        title = { Text("Enable Notifications") },
+                        text = {
+                            Text(
+                                "To receive chat messages and important updates, please enable notifications for MindSpark.",
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        },
+                        confirmButton = {
+                            Button(onClick = {
+                                showPermissionDialog = false
+                                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            }) {
+                                Text("Enable")
+                            }
+                        },
+                        dismissButton = {
+                            Button(onClick = { showPermissionDialog = false }) {
+                                Text("Later")
+                            }
                         }
-                    },
-                    dismissButton = {
-                        Button(onClick = { showPermissionDialog = false }) {
-                            Text("Later")
-                        }
-                    }
-                )
-            }
+                    )
+                }
 
-            Column {
-                NoInternetWarning(isConnected = isConnected.value)
-                AppNavigation()
+                Column {
+                    NoInternetWarning(isConnected = isConnected.value)
+                    AppNavigation(
+                        navigateToChat = navigateToChat,
+                        chatTitle = if (senderEmail.isNotEmpty()) "$chatTitle <$senderEmail>" else chatTitle
+                    )
+                }
             }
+        }   
+    }
+
+    fun checkPlayServices() {
+        val apiAvailability = GoogleApiAvailability.getInstance()
+        val resultCode = apiAvailability.isGooglePlayServicesAvailable(this)
+        if (resultCode != ConnectionResult.SUCCESS) {
+            apiAvailability.getErrorDialog(this, resultCode, 9000)?.show()
         }
     }
 }
+
